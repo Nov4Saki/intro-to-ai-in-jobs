@@ -5,7 +5,6 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowCounterClockwise,
-  ArrowDown,
   ArrowLeft,
   ArrowRight,
   CaretLeft,
@@ -14,8 +13,6 @@ import {
   CheckCircle,
   Confetti,
   DotsSixVertical,
-  FunnelSimple,
-  GearSix,
   HandTap,
   HighlighterCircle,
   House,
@@ -23,7 +20,6 @@ import {
   Lightbulb,
   LinkSimpleHorizontal,
   NoteBlank,
-  Robot,
   SealCheck,
   SelectionInverse,
   ShieldCheck,
@@ -36,7 +32,6 @@ import {
 import type {
   Activity,
   BucketSortPrompt,
-  BucketTone,
   ChoicePrompt,
   DraftReviewPrompt,
   MatchingPrompt,
@@ -59,6 +54,7 @@ import {
   recordCompletion,
   type SessionProgressMap,
 } from "@/engine/progress-store";
+import { BucketSortBoard } from "./bucket-sort-board";
 import { MECHANIC_META } from "./hub-bento";
 import { CopyLinkButton, ThemeToggle } from "./theme-toggle";
 
@@ -90,41 +86,6 @@ const LIP_CYCLE = [
     Icon: ShieldCheck,
   },
 ] as const;
-
-const BUCKET_TONE_META: Record<
-  BucketTone,
-  {
-    lip: string;
-    medallionBg: string;
-    medallionInk: string;
-    Icon: typeof Robot;
-  }
-> = {
-  teal: {
-    lip: "deck-lip-teal",
-    medallionBg: "bg-[var(--medallion-teal)]",
-    medallionInk: "text-[var(--medallion-teal-ink)]",
-    Icon: Robot,
-  },
-  indigo: {
-    lip: "deck-lip-indigo",
-    medallionBg: "bg-[var(--medallion-indigo)]",
-    medallionInk: "text-[var(--medallion-indigo-ink)]",
-    Icon: GearSix,
-  },
-  coral: {
-    lip: "deck-lip-coral",
-    medallionBg: "bg-[var(--medallion-coral)]",
-    medallionInk: "text-[var(--medallion-coral-ink)]",
-    Icon: ShieldCheck,
-  },
-  gold: {
-    lip: "deck-lip-gold",
-    medallionBg: "bg-[var(--medallion-gold)]",
-    medallionInk: "text-[var(--medallion-gold-ink)]",
-    Icon: Lightbulb,
-  },
-};
 
 function permuteDeterministically<T extends { id: string }>(
   items: readonly T[]
@@ -314,7 +275,7 @@ export function ActivityPlayer({
 
           <div className="flex items-center gap-2.5">
             {!state.completed && (
-              <span className="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-1 text-xs font-bold text-[var(--text-secondary)] tabular-nums">
+              <span className="whitespace-nowrap rounded-full border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-1 text-xs font-bold text-[var(--text-secondary)] tabular-nums">
                 اللعبة {ARABIC_DIGITS[state.currentIndex] ?? state.currentIndex + 1}{" "}
                 من {ARABIC_DIGITS[totalPrompts - 1] ?? totalPrompts}
               </span>
@@ -423,7 +384,6 @@ export function ActivityPlayer({
                   lastFeedback={state.lastFeedback}
                   resolved={state.currentVerdict !== null}
                   onSortItem={handleBucketSortStep}
-                  reduceMotion={Boolean(reduceMotion)}
                 />
               )}
 
@@ -523,7 +483,7 @@ function HowToPlayStrip({ text }: { text: string }) {
 }
 
 /* ============================================================================
- * 1. BUCKET-SORT -> Multi-Item Category Bucket Sorting (Drag & Drop + 1-Tap)
+ * 1. BUCKET-SORT -> Drag Pieces into Actual Named Buckets!
  * ============================================================================ */
 function BucketSortStage({
   prompt,
@@ -531,237 +491,33 @@ function BucketSortStage({
   lastFeedback,
   resolved,
   onSortItem,
-  reduceMotion,
 }: {
   prompt: BucketSortPrompt;
   sortedItemIds: readonly string[];
   lastFeedback: Verdict | null;
   resolved: boolean;
   onSortItem: (itemId: string, bucketId: string) => Verdict;
-  reduceMotion: boolean;
 }) {
-  const [dragOverBucketId, setDragOverBucketId] = useState<string | null>(null);
-  const [shakeCard, setShakeCard] = useState(false);
-
-  const unsortedItems = prompt.items.filter(
-    (item) => !sortedItemIds.includes(item.id)
-  );
-  const activeItem = unsortedItems[0] ?? null;
-  const nextUpItem = unsortedItems[1] ?? null;
-
-  function triggerSort(bucketId: string) {
-    if (!activeItem || resolved) return;
-    setDragOverBucketId(null);
-    const verdict = onSortItem(activeItem.id, bucketId);
-    if (!verdict.promptResolved && verdict.outcome === "revisit") {
-      setShakeCard(true);
-      setTimeout(() => setShakeCard(false), 380);
-    }
-  }
-
-  const bucketGridCols =
-    prompt.buckets.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
-
   return (
     <div>
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-block rounded-xl bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--medallion-teal-ink)]">
-          {prompt.contextTag}
-        </span>
+      <span className="inline-block rounded-xl bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--medallion-teal-ink)]">
+        {prompt.contextTag}
+      </span>
 
-        {/* Visual card stack progress dots */}
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-bold text-[var(--text-secondary)] tabular-nums">
-            تم فرز {sortedItemIds.length} من {prompt.items.length}
-          </span>
-          <div className="flex items-center gap-1" aria-hidden="true">
-            {prompt.items.map((item) => {
-              const isSorted = sortedItemIds.includes(item.id);
-              const isActive = activeItem?.id === item.id;
-              return (
-                <span
-                  key={item.id}
-                  className={`h-2.5 rounded-full transition-all ${
-                    isSorted
-                      ? "w-2.5 bg-[var(--accent)]"
-                      : isActive
-                      ? "w-5 bg-[var(--lip-gold)]"
-                      : "w-2.5 bg-[var(--border-strong)]"
-                  }`}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <h2 className="mb-3 text-lg font-bold text-[var(--text-primary)] sm:text-xl">
+      <h2 className="mt-3 mb-3 text-lg font-bold text-[var(--text-primary)] sm:text-xl">
         {prompt.title}
       </h2>
 
       <HowToPlayStrip text={prompt.instruction} />
 
-      {/* Active Card Deck Spotlight */}
-      {!resolved && activeItem && (
-        <div className="relative mx-auto mb-6 max-w-2xl">
-          {/* Stacked card shadow behind when more cards remain */}
-          {nextUpItem && (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-3 -bottom-2 h-full rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] opacity-75"
-            />
-          )}
-
-          <motion.div
-            key={activeItem.id}
-            initial={reduceMotion ? false : { opacity: 0, y: -10, scale: 0.98 }}
-            animate={
-              shakeCard && !reduceMotion
-                ? { opacity: 1, y: 0, scale: 1, x: [0, -8, 8, -5, 5, 0] }
-                : { opacity: 1, y: 0, scale: 1, x: 0 }
-            }
-            transition={{ duration: 0.25 }}
-            draggable
-            onDragStart={(e) => {
-              const evt = e as unknown as React.DragEvent<HTMLDivElement>;
-              evt.dataTransfer?.setData("text/plain", activeItem.id);
-            }}
-            className="deck-card deck-lip-gold relative z-10 cursor-grab rounded-2xl bg-[var(--surface-card)] p-5 shadow-md active:cursor-grabbing sm:p-6"
-          >
-            <div className="mb-2.5 flex items-center justify-between gap-2 text-xs font-bold text-[var(--text-muted)]">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--medallion-gold)] px-2.5 py-0.5 text-[var(--medallion-gold-ink)]">
-                <FunnelSimple size={14} weight="fill" />
-                <span>
-                  البطاقة الحالية ({sortedItemIds.length + 1} من{" "}
-                  {prompt.items.length})
-                </span>
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <span>اسحب أو اضغط على الصندوق</span>
-                <DotsSixVertical size={18} weight="bold" />
-              </span>
-            </div>
-
-            <p className="text-base font-bold leading-relaxed text-[var(--text-primary)] sm:text-lg">
-              {activeItem.label}
-            </p>
-
-            <div className="mt-3 flex items-center justify-center gap-1 text-xs font-bold text-[var(--accent)]">
-              <span>اختر الصندوق المناسب بالأسفل</span>
-              <ArrowDown size={14} weight="bold" />
-            </div>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Per-card instant feedback */}
-      {!resolved && lastFeedback && (
-        <motion.div
-          key={lastFeedback.headline + sortedItemIds.length}
-          initial={reduceMotion ? false : { opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`mb-5 flex items-start gap-2.5 rounded-xl border p-3.5 text-sm leading-relaxed ${
-            lastFeedback.outcome === "accurate"
-              ? "border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]"
-              : "border-[var(--verdict-partial-border)] bg-[var(--verdict-partial-bg)] text-[var(--verdict-partial-text)]"
-          }`}
-        >
-          {lastFeedback.outcome === "accurate" ? (
-            <CheckCircle size={19} weight="fill" className="mt-0.5 shrink-0" />
-          ) : (
-            <Info size={19} weight="fill" className="mt-0.5 shrink-0" />
-          )}
-          <div>
-            <p className="font-bold">{lastFeedback.headline}</p>
-            <p className="mt-0.5 opacity-95">{lastFeedback.explanation}</p>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Category Buckets */}
-      <div className={`grid grid-cols-1 gap-4 ${bucketGridCols}`}>
-        {prompt.buckets.map((bucket) => {
-          const style = BUCKET_TONE_META[bucket.tone];
-          const Icon = style.Icon;
-          const sortedHere = prompt.items.filter(
-            (i) => i.bucketId === bucket.id && sortedItemIds.includes(i.id)
-          );
-          const isOver = dragOverBucketId === bucket.id;
-
-          return (
-            <button
-              key={bucket.id}
-              type="button"
-              disabled={resolved}
-              onClick={() => triggerSort(bucket.id)}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (!resolved) setDragOverBucketId(bucket.id);
-              }}
-              onDragLeave={() => setDragOverBucketId(null)}
-              onDrop={(e) => {
-                e.preventDefault();
-                triggerSort(bucket.id);
-              }}
-              className={`tactile-btn deck-card flex flex-col justify-between rounded-2xl p-4 text-right transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] sm:p-5 ${
-                style.lip
-              } ${
-                isOver
-                  ? "scale-[1.01] bg-[var(--accent-soft)]/55 ring-2 ring-[var(--accent)]"
-                  : resolved
-                  ? "bg-[var(--surface-card)]"
-                  : "deck-hover-lift bg-[var(--surface-card)] hover:border-[var(--accent)]"
-              }`}
-            >
-              <div className="w-full">
-                <div className="flex w-full items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${style.medallionBg} ${style.medallionInk}`}
-                    >
-                      <Icon size={21} weight="duotone" />
-                    </span>
-                    <div>
-                      <span className="block text-base font-bold text-[var(--text-primary)]">
-                        {bucket.label}
-                      </span>
-                      <span className="mt-0.5 block text-xs text-[var(--text-secondary)]">
-                        {bucket.hint}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="rounded-full bg-[var(--surface-subtle)] px-2.5 py-0.5 text-xs font-bold text-[var(--text-secondary)] tabular-nums">
-                    {sortedHere.length}
-                  </span>
-                </div>
-
-                {/* Open Bucket Drop Bin */}
-                <div className="mt-3.5 flex min-h-[68px] flex-col justify-center gap-1.5 rounded-xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--surface-page)]/65 p-2.5">
-                  {sortedHere.length === 0 ? (
-                    <span className="text-center text-xs font-semibold text-[var(--text-muted)]">
-                      {resolved ? "لا توجد بطاقات هنا" : "+ اضغط أو أفلت البطاقة هنا"}
-                    </span>
-                  ) : (
-                    sortedHere.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-start gap-1.5 rounded-lg border border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] px-2.5 py-1.5 text-xs font-semibold text-[var(--verdict-accurate-text)]"
-                      >
-                        <Check
-                          size={14}
-                          weight="bold"
-                          className="mt-0.5 shrink-0"
-                        />
-                        <span className="leading-snug">{item.label}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+      <BucketSortBoard
+        buckets={prompt.buckets}
+        items={prompt.items}
+        sortedItemIds={sortedItemIds}
+        lastFeedback={lastFeedback}
+        resolved={resolved}
+        onSortItem={onSortItem}
+      />
     </div>
   );
 }
@@ -896,7 +652,7 @@ function SnapMatchStage({
                     setHoverExampleId(null);
                   }}
                   onClick={() => handleTapConcept(pair.id)}
-                  className={`tactile-btn deck-card deck-lip-teal flex items-center justify-between gap-3 rounded-2xl p-4 text-right transition-all ${
+                  className={`tactile-btn deck-card deck-lip-teal flex items-center justify-between gap-3 rounded-2xl p-4 text-right transition-[transform,border-color,background-color,box-shadow] ${
                     isSelected
                       ? "bg-[var(--accent-soft)] ring-2 ring-[var(--accent)]"
                       : "deck-hover-lift bg-[var(--surface-card)] hover:border-[var(--accent)]"
@@ -946,7 +702,7 @@ function SnapMatchStage({
                     }
                   }}
                   onClick={() => handleTapExample(pair.id)}
-                  className={`tactile-btn deck-card deck-lip-indigo flex items-center justify-between gap-3 rounded-2xl p-4 text-right transition-all ${
+                  className={`tactile-btn deck-card deck-lip-indigo flex items-center justify-between gap-3 rounded-2xl p-4 text-right transition-[transform,border-color,background-color,box-shadow] ${
                     isSelected || isHoverTarget
                       ? "bg-[var(--accent-soft)] ring-2 ring-[var(--accent)]"
                       : waitingForMatch
@@ -1113,7 +869,7 @@ function SequenceStage({
                   const droppedId = e.dataTransfer.getData("text/plain");
                   if (droppedId) handleDropIntoSlot(idx, droppedId);
                 }}
-                className={`relative flex min-h-[124px] w-full flex-col justify-between rounded-2xl p-4 transition-all ${
+                className={`relative flex min-h-[124px] w-full flex-col justify-between rounded-2xl p-4 transition-[transform,border-color,background-color,box-shadow] ${
                   stepId
                     ? isLocked
                       ? "deck-card border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]"
@@ -1554,7 +1310,7 @@ function OddOneOutStage({
               type="button"
               disabled={resolved || wasCheckedMember}
               onClick={() => onPick(item.id)}
-              className={`tactile-btn deck-card flex flex-col justify-between rounded-2xl p-5 text-right transition-all ${style.lip} ${cardCls}`}
+              className={`tactile-btn deck-card flex flex-col justify-between rounded-2xl p-5 text-right transition-[transform,border-color,background-color,box-shadow] ${style.lip} ${cardCls}`}
             >
               <div>
                 <div className="mb-3 flex w-full items-center justify-between gap-2">

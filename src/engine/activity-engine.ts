@@ -220,7 +220,7 @@ function evaluateBucketSortStep(
   if (state.sortedItemIds.includes(itemId)) {
     const alreadyVerdict: Verdict = {
       outcome: "accurate",
-      headline: "هذه البطاقة في صندوقها بالفعل",
+      headline: "هذه القطعة داخل دلوها بالفعل",
       explanation: targetItem.explanation,
       promptResolved: false,
     };
@@ -230,8 +230,8 @@ function evaluateBucketSortStep(
   if (targetItem.bucketId !== bucketId) {
     const slipVerdict: Verdict = {
       outcome: "revisit",
-      headline: `ليست في صندوق "${chosenBucket.label}"`,
-      explanation: `تلميح: ${chosenBucket.hint}. جرّب وضع البطاقة في صندوق آخر!`,
+      headline: `ليست في دلو "${chosenBucket.label}"`,
+      explanation: `تلميح: ${chosenBucket.hint}. جرّب سحب القطعة إلى دلو آخر!`,
       promptResolved: false,
     };
     return {
@@ -250,7 +250,7 @@ function evaluateBucketSortStep(
   if (!allSorted) {
     const stepVerdict: Verdict = {
       outcome: "accurate",
-      headline: `رائع! دخلت في "${chosenBucket.label}" (${updatedSorted.length} من ${prompt.items.length})`,
+      headline: `رائع! دخلت في دلو "${chosenBucket.label}" (${updatedSorted.length} من ${prompt.items.length})`,
       explanation: targetItem.explanation,
       promptResolved: false,
     };
@@ -271,8 +271,8 @@ function evaluateBucketSortStep(
     outcome: finalOutcome,
     headline:
       finalOutcome === "accurate"
-        ? "فرز متقن! وضعتَ جميع البطاقات في صناديقها الصحيحة"
-        : "أحسنت! اكتمل فرز جميع البطاقات في صناديقها المناسبة",
+        ? "فرز متقن! وضعتَ جميع القطع في دِلائها الصحيحة"
+        : "أحسنت! اكتمل فرز جميع القطع في الدِّلاء المناسبة",
     explanation: prompt.completionNote,
     promptResolved: true,
   };

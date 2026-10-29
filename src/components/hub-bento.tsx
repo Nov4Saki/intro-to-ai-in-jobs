@@ -35,7 +35,7 @@ export const MECHANIC_META: Record<
   Mechanic,
   { label: string; Icon: typeof FunnelSimple }
 > = {
-  "bucket-sort": { label: "صناديق التصنيف", Icon: FunnelSimple },
+  "bucket-sort": { label: "دِلاء التصنيف", Icon: FunnelSimple },
   matching: { label: "وصّل البطاقات", Icon: LinkSimpleHorizontal },
   sequence: { label: "رتّب المسار", Icon: ListNumbers },
   "draft-review": { label: "القلم الفوسفوري", Icon: HighlighterCircle },
