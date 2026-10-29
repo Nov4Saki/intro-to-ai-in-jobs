@@ -5,17 +5,21 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowCounterClockwise,
+  ArrowDown,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   Check,
   CheckCircle,
   FlagBanner,
   GearSix,
   House,
   Info,
+  Plus,
   Question,
   Robot,
   WarningCircle,
+  X,
 } from "@phosphor-icons/react";
 import type {
   Activity,
@@ -23,6 +27,7 @@ import type {
   DraftReviewPrompt,
   MatchingPrompt,
   MythFactPrompt,
+  SequencePrompt,
   TriageBucket,
   TriagePrompt,
   Verdict,
@@ -38,24 +43,24 @@ import {
   getBrowserStorageAdapter,
   recordCompletion,
 } from "@/engine/progress-store";
+import { MECHANIC_META } from "./hub-bento";
 import { CopyLinkButton, ThemeToggle } from "./theme-toggle";
 
 const ARABIC_OPTION_LETTERS = ["أ", "ب", "ج", "د", "هـ"];
 
-function permuteExamplesDeterministically<T extends { id: string }>(
+function permuteDeterministically<T extends { id: string }>(
   items: readonly T[]
 ): T[] {
   const copy = [...items];
   copy.sort((a, b) => {
     const hashA = a.id
       .split("")
-      .reduce((acc, ch, idx) => acc + ch.charCodeAt(0) * (idx + 7), 0);
+      .reduce((acc, ch, idx) => acc + ch.charCodeAt(0) * (idx + 11), 0);
     const hashB = b.id
       .split("")
-      .reduce((acc, ch, idx) => acc + ch.charCodeAt(0) * (idx + 7), 0);
+      .reduce((acc, ch, idx) => acc + ch.charCodeAt(0) * (idx + 11), 0);
     return hashB - hashA;
   });
-  // Ensure at least one offset if sort happened to match original order
   if (copy.length > 1 && copy.every((item, idx) => item.id === items[idx].id)) {
     const first = copy.shift()!;
     copy.push(first);
@@ -73,7 +78,6 @@ export function ActivityPlayer({
   const reduceMotion = useReducedMotion();
   const [state, setState] = useState(() => startActivity(activity));
 
-  // Per-prompt local UI selections
   const [selectedTriage, setSelectedTriage] = useState<TriageBucket | null>(null);
   const [selectedMythFact, setSelectedMythFact] = useState<
     "myth" | "fact" | null
@@ -81,9 +85,13 @@ export function ActivityPlayer({
   const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
   const [selectedConceptId, setSelectedConceptId] = useState<string | null>(null);
   const [flaggedSegmentIds, setFlaggedSegmentIds] = useState<string[]>([]);
+  const [orderedStepIds, setOrderedStepIds] = useState<string[]>([]);
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
 
   const currentPrompt = getCurrentPrompt(state);
+  const currentMechanicMeta = MECHANIC_META[currentPrompt.mechanic];
+  const CurrentMechanicIcon = currentMechanicMeta.Icon;
+
   const totalPrompts = activity.prompts.length;
   const progressRatio = state.completed
     ? 1
@@ -106,6 +114,7 @@ export function ActivityPlayer({
     setSelectedChoiceId(null);
     setSelectedConceptId(null);
     setFlaggedSegmentIds([]);
+    setOrderedStepIds([]);
     setErrorBanner(null);
   }
 
@@ -143,7 +152,9 @@ export function ActivityPlayer({
   function handleMatchingExamplePick(examplePairId: string) {
     if (state.currentVerdict) return;
     if (!selectedConceptId) {
-      setErrorBanner("اختر المهمة من العمود الأيمن أولاً، ثم انقر على المثال المطابق لها.");
+      setErrorBanner(
+        "اختر المهمة أو المفهوم من العمود الأيمن أولاً، ثم انقر على العبارة المطابقة له."
+      );
       return;
     }
     setErrorBanner(null);
@@ -184,9 +195,28 @@ export function ActivityPlayer({
     setState(res.state);
   }
 
+  function handleSubmitSequence(expectedCount: number) {
+    if (state.currentVerdict) return;
+    if (orderedStepIds.length < expectedCount) {
+      setErrorBanner("أضف جميع الخطوات إلى قائمة الترتيب أولاً ثم تحقّق من الترتيب.");
+      return;
+    }
+    setErrorBanner(null);
+    const res = submitResponse(state, {
+      mechanic: "sequence",
+      orderedStepIds,
+    });
+    setState(res.state);
+  }
+
   const shuffledExamples = useMemo(() => {
     if (currentPrompt.mechanic !== "matching") return [];
-    return permuteExamplesDeterministically(currentPrompt.pairs);
+    return permuteDeterministically(currentPrompt.pairs);
+  }, [currentPrompt]);
+
+  const shuffledSequencePool = useMemo(() => {
+    if (currentPrompt.mechanic !== "sequence") return [];
+    return permuteDeterministically(currentPrompt.stepsInOrder);
   }, [currentPrompt]);
 
   return (
@@ -200,7 +230,7 @@ export function ActivityPlayer({
               className="tactile-btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-page)] px-3 py-2 text-sm font-medium text-[var(--text-primary)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
             >
               <ArrowRight size={16} weight="bold" />
-              <span>كل الأنشطة</span>
+              <span>كل الأجزاء</span>
             </Link>
             <span className="hidden text-sm font-semibold text-[var(--text-primary)] sm:inline">
               {activity.shortTitle}
@@ -210,14 +240,13 @@ export function ActivityPlayer({
           <div className="flex items-center gap-2.5">
             {!state.completed && (
               <span className="rounded-xl bg-[var(--surface-subtle)] px-3 py-1.5 text-xs font-semibold text-[var(--text-secondary)] tabular-nums">
-                {state.currentIndex + 1} / {totalPrompts}
+                التحدي {state.currentIndex + 1} من {totalPrompts}
               </span>
             )}
-            <CopyLinkButton label="مشاركة النشاط" compact />
+            <CopyLinkButton label="مشاركة الرابط" compact />
             <ThemeToggle />
           </div>
         </div>
-        {/* Thin hardware-accelerated progress line without heavy track clutter */}
         <div className="h-[2px] w-full overflow-hidden bg-transparent">
           <div
             style={{ transform: `scaleX(${progressRatio})` }}
@@ -227,12 +256,15 @@ export function ActivityPlayer({
       </header>
 
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 sm:py-12">
-        {/* Activity intro header */}
+        {/* Section header */}
         <div className="mb-8">
-          <p className="text-xs font-semibold text-[var(--accent)]">
-            {activity.agendaSlot}
-          </p>
-          <h1 className="mt-1.5 text-2xl font-bold leading-snug text-[var(--text-primary)] sm:text-3xl">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+            <span className="rounded-xl bg-[var(--accent-soft)] px-3 py-1 text-[var(--accent)]">
+              {activity.partBadge} ({activity.slideRange})
+            </span>
+            <span className="text-[var(--text-muted)]">{activity.agendaSlot}</span>
+          </div>
+          <h1 className="mt-2.5 text-2xl font-bold leading-snug text-[var(--text-primary)] sm:text-3xl">
             {activity.title}
           </h1>
           <p className="mt-2 max-w-[65ch] text-sm leading-relaxed text-[var(--text-secondary)] sm:text-base">
@@ -259,6 +291,38 @@ export function ActivityPlayer({
               transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               className="surface-elevated rounded-2xl p-5 sm:p-8"
             >
+              {/* Current game mechanic indicator inside the section's mixed sequence */}
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-subtle)] pb-4">
+                <span className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--surface-subtle)] px-3 py-1 text-xs font-semibold text-[var(--text-primary)]">
+                  <CurrentMechanicIcon
+                    size={16}
+                    weight="duotone"
+                    className="text-[var(--accent)]"
+                  />
+                  <span>نمط التحدي: {currentMechanicMeta.label}</span>
+                </span>
+
+                {/* Step dots showing progress across the mixed games */}
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  {activity.prompts.map((p, idx) => {
+                    const isCurrent = idx === state.currentIndex;
+                    const isDone = idx < state.currentIndex;
+                    return (
+                      <span
+                        key={p.id}
+                        className={`h-2 rounded-full transition-all ${
+                          isCurrent
+                            ? "w-6 bg-[var(--accent)]"
+                            : isDone
+                            ? "w-2 bg-[var(--accent)] opacity-55"
+                            : "w-2 bg-[var(--border-strong)]"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+
               {currentPrompt.mechanic === "triage" && (
                 <TriageStage
                   prompt={currentPrompt}
@@ -312,6 +376,47 @@ export function ActivityPlayer({
                 />
               )}
 
+              {currentPrompt.mechanic === "sequence" && (
+                <SequenceStage
+                  prompt={currentPrompt}
+                  poolSteps={shuffledSequencePool}
+                  orderedIds={orderedStepIds}
+                  resolved={state.currentVerdict !== null}
+                  onAddStep={(id) => {
+                    if (state.currentVerdict) return;
+                    setErrorBanner(null);
+                    setOrderedStepIds((prev) =>
+                      prev.includes(id) ? prev : [...prev, id]
+                    );
+                  }}
+                  onRemoveStep={(id) => {
+                    if (state.currentVerdict) return;
+                    setErrorBanner(null);
+                    setOrderedStepIds((prev) => prev.filter((x) => x !== id));
+                  }}
+                  onMoveStep={(index, direction) => {
+                    if (state.currentVerdict) return;
+                    setOrderedStepIds((prev) => {
+                      const target = index + direction;
+                      if (target < 0 || target >= prev.length) return prev;
+                      const copy = [...prev];
+                      const temp = copy[index];
+                      copy[index] = copy[target];
+                      copy[target] = temp;
+                      return copy;
+                    });
+                  }}
+                  onClear={() => {
+                    if (state.currentVerdict) return;
+                    setErrorBanner(null);
+                    setOrderedStepIds([]);
+                  }}
+                  onSubmit={() =>
+                    handleSubmitSequence(currentPrompt.stepsInOrder.length)
+                  }
+                />
+              )}
+
               {errorBanner && (
                 <div
                   role="alert"
@@ -334,6 +439,194 @@ export function ActivityPlayer({
           )}
         </AnimatePresence>
       </main>
+    </div>
+  );
+}
+
+function SequenceStage({
+  prompt,
+  poolSteps,
+  orderedIds,
+  resolved,
+  onAddStep,
+  onRemoveStep,
+  onMoveStep,
+  onClear,
+  onSubmit,
+}: {
+  prompt: SequencePrompt;
+  poolSteps: readonly { id: string; label: string }[];
+  orderedIds: readonly string[];
+  resolved: boolean;
+  onAddStep: (id: string) => void;
+  onRemoveStep: (id: string) => void;
+  onMoveStep: (index: number, direction: -1 | 1) => void;
+  onClear: () => void;
+  onSubmit: () => void;
+}) {
+  const stepMap = useMemo(
+    () => new Map(prompt.stepsInOrder.map((s) => [s.id, s])),
+    [prompt.stepsInOrder]
+  );
+
+  const remainingSteps = poolSteps.filter((s) => !orderedIds.includes(s.id));
+
+  return (
+    <div>
+      <span className="inline-block rounded-xl bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
+        {prompt.contextTag}
+      </span>
+
+      <h2 className="mt-3 text-lg font-bold text-[var(--text-primary)] sm:text-xl">
+        {prompt.title}
+      </h2>
+      <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+        {prompt.instruction}
+      </p>
+
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-12">
+        {/* Available Pool */}
+        <div className="md:col-span-5">
+          <p className="mb-2 text-xs font-semibold text-[var(--text-muted)]">
+            العناصر المتاحة ({remainingSteps.length})
+          </p>
+          {remainingSteps.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-page)] p-5 text-center text-xs text-[var(--text-muted)]">
+              نُقلت جميع العناصر إلى قائمة الترتيب. يمكنك تعديل مواضعها أو اعتماد الترتيب.
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              {remainingSteps.map((step) => (
+                <button
+                  key={step.id}
+                  type="button"
+                  disabled={resolved}
+                  onClick={() => onAddStep(step.id)}
+                  className="tactile-btn flex items-center justify-between gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-page)] p-3.5 text-right text-sm font-medium leading-relaxed text-[var(--text-primary)] hover:border-[var(--accent)]"
+                >
+                  <span>{step.label}</span>
+                  <Plus
+                    size={16}
+                    weight="bold"
+                    className="shrink-0 text-[var(--accent)]"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Ordered Slots */}
+        <div className="flex flex-col justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-4 sm:p-5 md:col-span-7">
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-bold text-[var(--text-primary)]">
+                ترتيبك المختار (من الأول إلى الأخير)
+              </p>
+              {!resolved && orderedIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={onClear}
+                  className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                >
+                  إعادة ضبط
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              {prompt.stepsInOrder.map((expectedStep, slotIdx) => {
+                const chosenId = orderedIds[slotIdx];
+                const chosenStep = chosenId ? stepMap.get(chosenId) : undefined;
+                const isExactMatch = resolved && chosenId === expectedStep.id;
+
+                if (!chosenStep) {
+                  return (
+                    <div
+                      key={expectedStep.id}
+                      className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-card)]/60 p-3.5 text-xs text-[var(--text-muted)]"
+                    >
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-subtle)] font-bold tabular-nums">
+                        {slotIdx + 1}
+                      </span>
+                      <span>انقر على عنصر من القائمة لإضافته في الموضع {slotIdx + 1}</span>
+                    </div>
+                  );
+                }
+
+                let rowClass =
+                  "border-[var(--border-subtle)] bg-[var(--surface-card)] text-[var(--text-primary)]";
+                if (resolved) {
+                  rowClass = isExactMatch
+                    ? "border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]"
+                    : "border-[var(--verdict-revisit-border)] bg-[var(--verdict-revisit-bg)] text-[var(--verdict-revisit-text)]";
+                }
+
+                return (
+                  <div
+                    key={`${chosenStep.id}-${slotIdx}`}
+                    className={`flex items-center justify-between gap-2 rounded-xl border p-3 text-sm ${rowClass}`}
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-current/25 text-xs font-bold tabular-nums">
+                        {slotIdx + 1}
+                      </span>
+                      <span className="font-medium leading-relaxed">
+                        {chosenStep.label}
+                      </span>
+                    </div>
+
+                    {!resolved ? (
+                      <div className="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          aria-label="تحريك لأعلى"
+                          disabled={slotIdx === 0}
+                          onClick={() => onMoveStep(slotIdx, -1)}
+                          className="rounded-lg p-1.5 text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] disabled:opacity-30"
+                        >
+                          <ArrowUp size={14} weight="bold" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="تحريك لأسفل"
+                          disabled={slotIdx === orderedIds.length - 1}
+                          onClick={() => onMoveStep(slotIdx, 1)}
+                          className="rounded-lg p-1.5 text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] disabled:opacity-30"
+                        >
+                          <ArrowDown size={14} weight="bold" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="إزالة من الترتيب"
+                          onClick={() => onRemoveStep(chosenStep.id)}
+                          className="rounded-lg p-1.5 text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]"
+                        >
+                          <X size={14} weight="bold" />
+                        </button>
+                      </div>
+                    ) : isExactMatch ? (
+                      <CheckCircle size={18} weight="fill" className="shrink-0" />
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {!resolved && (
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                onClick={onSubmit}
+                className="tactile-btn whitespace-nowrap rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+              >
+                تحقّق من الترتيب
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -599,10 +892,9 @@ function MatchingStage({
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-12">
-        {/* Right column in RTL: Concepts */}
         <div className="flex flex-col gap-2.5 md:col-span-5">
           <p className="mb-1 text-xs font-semibold text-[var(--text-muted)]">
-            1. اختر المهمة
+            1. اختر العنصر الأول
           </p>
           {prompt.pairs.map((pair) => {
             const isMatched = matchedPairIds.includes(pair.id);
@@ -624,7 +916,7 @@ function MatchingStage({
                 type="button"
                 disabled={isMatched || resolved}
                 onClick={() => onSelectConcept(pair.id)}
-                className={`tactile-btn flex items-center justify-between gap-2 rounded-xl border p-3.5 text-right text-sm font-bold sm:text-base ${cls}`}
+                className={`tactile-btn flex items-center justify-between gap-2 rounded-xl border p-3.5 text-right text-sm font-bold ${cls}`}
               >
                 <span>{pair.concept}</span>
                 {isMatched && <Check size={18} weight="bold" />}
@@ -633,10 +925,9 @@ function MatchingStage({
           })}
         </div>
 
-        {/* Left column in RTL: Shuffled Examples */}
         <div className="flex flex-col gap-2.5 md:col-span-7">
           <p className="mb-1 text-xs font-semibold text-[var(--text-muted)]">
-            2. اربطها بالموقف المطابق
+            2. اربطه بما يطابقه
           </p>
           {shuffledExamples.map((pair) => {
             const isMatched = matchedPairIds.includes(pair.id);
@@ -656,7 +947,11 @@ function MatchingStage({
               >
                 <span>{pair.example}</span>
                 {isMatched && (
-                  <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0" />
+                  <CheckCircle
+                    size={18}
+                    weight="fill"
+                    className="mt-0.5 shrink-0"
+                  />
                 )}
               </button>
             );
@@ -664,7 +959,6 @@ function MatchingStage({
         </div>
       </div>
 
-      {/* Step micro-feedback before the entire round resolves */}
       {!resolved && lastFeedback && (
         <div
           className={`mt-4 flex items-start gap-2.5 rounded-xl border p-3.5 text-sm ${
@@ -707,7 +1001,6 @@ function DraftReviewStage({
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Source Notes & Constraints */}
         <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-4 sm:p-5 lg:col-span-5">
           <h3 className="text-sm font-bold text-[var(--text-primary)]">
             الملاحظات والقواعد المرجعية
@@ -715,14 +1008,13 @@ function DraftReviewStage({
           <ul className="mt-3 flex flex-col gap-2.5 text-sm leading-relaxed text-[var(--text-secondary)]">
             {prompt.sourceNotes.map((note, idx) => (
               <li key={idx} className="flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
                 <span>{note}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Clickable AI Draft */}
         <div className="flex flex-col justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-page)] p-4 sm:p-5 lg:col-span-7">
           <div>
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-subtle)] pb-2.5">
@@ -842,7 +1134,7 @@ function VerdictPanel({
           onClick={onNext}
           className="tactile-btn inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
         >
-          <span>{isLastPrompt ? "عرض النتيجة" : "الموقف التالي"}</span>
+          <span>{isLastPrompt ? "عرض نتيجة الجزء" : "التحدي التالي"}</span>
           <ArrowLeft size={16} weight="bold" />
         </button>
       </div>
@@ -874,7 +1166,7 @@ function CompletionView({
     >
       <div className="inline-flex items-center gap-2 rounded-xl bg-[var(--verdict-accurate-bg)] px-3.5 py-1.5 text-xs font-bold text-[var(--verdict-accurate-text)]">
         <CheckCircle size={18} weight="fill" />
-        <span>اكتمل النشاط</span>
+        <span>اكتمل {activity.partBadge}</span>
       </div>
 
       <h2 className="mt-4 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
@@ -891,7 +1183,7 @@ function CompletionView({
             {summary.accurateCount}
           </p>
           <p className="mt-0.5 text-xs font-medium text-[var(--text-secondary)]">
-            إجابات دقيقة
+            تحديات متقنة
           </p>
         </div>
         <div>
@@ -919,7 +1211,7 @@ function CompletionView({
               href={`/${nextActivity.slug}/`}
               className="tactile-btn inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)]"
             >
-              <span>النشاط التالي: {nextActivity.shortTitle}</span>
+              <span>انتقل إلى {nextActivity.shortTitle}</span>
               <ArrowLeft size={16} weight="bold" />
             </Link>
           ) : (
@@ -946,7 +1238,7 @@ function CompletionView({
           href="/"
           className="text-sm font-medium text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text-primary)] hover:underline"
         >
-          عرض جميع أنشطة الجلسة
+          عرض جميع أجزاء الجلسة
         </Link>
       </div>
     </motion.section>

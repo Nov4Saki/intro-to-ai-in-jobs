@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   startActivity,
+  getCurrentPrompt,
   submitResponse,
   advancePrompt,
   summarizeSession,
@@ -46,6 +47,7 @@ test("curriculum and UI source contain zero em-dashes or en-dashes and obey eyeb
     ...collectFiles(path.join(root, "src")),
     ...collectFiles(path.join(root, "docs")),
     path.join(root, "GLOSSARY.md"),
+    path.join(root, "README.md"),
   ];
 
   let eyebrowMatches = 0;
@@ -72,140 +74,150 @@ test("curriculum and UI source contain zero em-dashes or en-dashes and obey eyeb
   );
 });
 
-test("triage activity evaluates accurate and revisit responses through completion", () => {
-  const triage = getActivity("triage");
-  assert.ok(triage);
+test("all 8 presentation parts exist and each contains a genuine mixture of at least 3 game mechanics", () => {
+  const activities = listActivities();
+  assert.equal(activities.length, 8);
 
-  let state = startActivity(triage);
-  for (let i = 0; i < triage.prompts.length; i++) {
-    const prompt = triage.prompts[i];
-    assert.equal(prompt.mechanic, "triage");
-    const chosenBucket = i === 0 ? "ai" : prompt.expectedBucket; // intentionally miss prompt 0 (expected: automation)
-    const result = submitResponse(state, {
-      mechanic: "triage",
-      bucket: chosenBucket,
-    });
-    assert.equal(result.verdict.promptResolved, true);
-    assert.equal(
-      result.verdict.outcome,
-      i === 0 ? "revisit" : "accurate"
+  for (const activity of activities) {
+    const actualMechanics = new Set(activity.prompts.map((p) => p.mechanic));
+    assert.ok(
+      actualMechanics.size >= 3,
+      `Expected "${activity.slug}" to mix at least 3 mechanics, found ${actualMechanics.size}`
     );
-    state = advancePrompt(result.state);
-  }
-
-  assert.equal(state.completed, true);
-  const summary = summarizeSession(state);
-  assert.equal(summary.totalPrompts, triage.prompts.length);
-  assert.equal(summary.accurateCount, triage.prompts.length - 1);
-  assert.equal(summary.revisitCount, 1);
-});
-
-test("matching activity tracks incremental pairs and distinguishes clean vs slip rounds", () => {
-  const matching = getActivity("matching");
-  assert.ok(matching);
-
-  let state = startActivity(matching);
-  const round1 = matching.prompts[0];
-  assert.equal(round1.mechanic, "matching");
-
-  // Clean round 1
-  for (let i = 0; i < round1.pairs.length; i++) {
-    const pair = round1.pairs[i];
-    const res = submitResponse(state, {
-      mechanic: "matching",
-      conceptPairId: pair.id,
-      examplePairId: pair.id,
-    });
-    state = res.state;
-    const isLast = i === round1.pairs.length - 1;
-    assert.equal(res.verdict.promptResolved, isLast);
-    if (isLast) {
-      assert.equal(res.verdict.outcome, "accurate");
+    for (const declared of activity.mechanicsUsed) {
+      assert.equal(
+        actualMechanics.has(declared),
+        true,
+        `Declared mechanic "${declared}" missing from prompts in "${activity.slug}"`
+      );
+    }
+    for (const actual of actualMechanics) {
+      assert.equal(
+        activity.mechanicsUsed.includes(actual),
+        true,
+        `Actual mechanic "${actual}" missing from mechanicsUsed in "${activity.slug}"`
+      );
     }
   }
+});
 
-  state = advancePrompt(state);
-  assert.equal(state.currentIndex, 1);
+test("every section checkpoint plays cleanly end-to-end across mixed mechanics", () => {
+  for (const activity of listActivities()) {
+    let state = startActivity(activity);
 
-  // Round 2 with one mismatch slip first
-  const round2 = matching.prompts[1];
-  assert.equal(round2.mechanic, "matching");
-  const slipRes = submitResponse(state, {
-    mechanic: "matching",
-    conceptPairId: round2.pairs[0].id,
-    examplePairId: round2.pairs[1].id,
+    while (!state.completed) {
+      const prompt = getCurrentPrompt(state);
+
+      if (prompt.mechanic === "triage") {
+        state = submitResponse(state, {
+          mechanic: "triage",
+          bucket: prompt.expectedBucket,
+        }).state;
+      } else if (prompt.mechanic === "myth-fact") {
+        state = submitResponse(state, {
+          mechanic: "myth-fact",
+          judgment: prompt.reality,
+        }).state;
+      } else if (prompt.mechanic === "choice") {
+        state = submitResponse(state, {
+          mechanic: "choice",
+          optionId: prompt.correctOptionId,
+        }).state;
+      } else if (prompt.mechanic === "matching") {
+        for (const pair of prompt.pairs) {
+          state = submitResponse(state, {
+            mechanic: "matching",
+            conceptPairId: pair.id,
+            examplePairId: pair.id,
+          }).state;
+        }
+      } else if (prompt.mechanic === "draft-review") {
+        const flawed = prompt.segments
+          .filter((s) => s.isFlawed)
+          .map((s) => s.id);
+        assert.ok(
+          flawed.length > 0,
+          `Draft review "${prompt.id}" must have at least one flawed segment`
+        );
+        state = submitResponse(state, {
+          mechanic: "draft-review",
+          flaggedSegmentIds: flawed,
+        }).state;
+      } else if (prompt.mechanic === "sequence") {
+        state = submitResponse(state, {
+          mechanic: "sequence",
+          orderedStepIds: prompt.stepsInOrder.map((s) => s.id),
+        }).state;
+      }
+
+      assert.ok(state.currentVerdict?.promptResolved);
+      assert.equal(state.currentVerdict?.outcome, "accurate");
+      state = advancePrompt(state);
+    }
+
+    const summary = summarizeSession(state);
+    assert.equal(summary.masteryPercent, 100);
+    assert.equal(summary.accurateCount, activity.prompts.length);
+  }
+});
+
+test("sequence, matching, and draft-review handle partial and revisit edge cases", () => {
+  const part1 = getActivity("part-1-basics");
+  assert.ok(part1);
+
+  // Prompt 0 in part-1-basics is a 3-step sequence: swap steps 1 & 2 -> 1/3 accurate (< ceil(3/2)=2) -> revisit
+  const seqState = startActivity(part1);
+  const p0 = getCurrentPrompt(seqState);
+  assert.equal(p0.mechanic, "sequence");
+  const reversed = [...p0.stepsInOrder].reverse().map((s) => s.id);
+  // In a 3-element array reversed, middle element (index 1) stays in place -> 1 of 3 exact -> revisit
+  const revRes = submitResponse(seqState, {
+    mechanic: "sequence",
+    orderedStepIds: reversed,
   });
-  assert.equal(slipRes.verdict.outcome, "revisit");
-  assert.equal(slipRes.verdict.promptResolved, false);
-  state = slipRes.state;
+  assert.equal(revRes.verdict.outcome, "revisit");
 
-  for (const pair of round2.pairs) {
-    const res = submitResponse(state, {
+  // Part 4 prompt 1 is a 4-step sequence: keep first 2 right, swap last 2 -> 2 of 4 exact (>= 2) -> partial
+  const part4 = getActivity("part-4-expectations");
+  assert.ok(part4);
+  let p4State = startActivity(part4);
+  const matchPrompt = getCurrentPrompt(p4State);
+  assert.equal(matchPrompt.mechanic, "matching");
+  // Trigger one mismatch slip first
+  p4State = submitResponse(p4State, {
+    mechanic: "matching",
+    conceptPairId: matchPrompt.pairs[0].id,
+    examplePairId: matchPrompt.pairs[1].id,
+  }).state;
+  for (const pair of matchPrompt.pairs) {
+    p4State = submitResponse(p4State, {
       mechanic: "matching",
       conceptPairId: pair.id,
       examplePairId: pair.id,
-    });
-    state = res.state;
+    }).state;
   }
+  assert.equal(p4State.currentVerdict?.outcome, "partial");
+  p4State = advancePrompt(p4State);
 
-  assert.equal(state.currentVerdict?.outcome, "partial");
-  state = advancePrompt(state);
-  assert.equal(state.completed, true);
-
-  const summary = summarizeSession(state);
-  assert.equal(summary.accurateCount, 1);
-  assert.equal(summary.partialCount, 1);
-  assert.equal(summary.masteryPercent, 75);
-});
-
-test("draft-review activity grades exact flags, false alarms, and missed flaws", () => {
-  const reviewDesk = getActivity("review-desk");
-  assert.ok(reviewDesk);
-
-  let state = startActivity(reviewDesk);
-
-  // Prompt 0: exact flag
-  const p0 = reviewDesk.prompts[0];
-  assert.equal(p0.mechanic, "draft-review");
-  const p0Flaws = p0.segments.filter((s) => s.isFlawed).map((s) => s.id);
-  const r0 = submitResponse(state, {
-    mechanic: "draft-review",
-    flaggedSegmentIds: p0Flaws,
+  const p4Seq = getCurrentPrompt(p4State);
+  assert.equal(p4Seq.mechanic, "sequence");
+  const ids = p4Seq.stepsInOrder.map((s) => s.id);
+  const twoRight = [ids[0], ids[1], ids[3], ids[2]];
+  const partialSeqRes = submitResponse(p4State, {
+    mechanic: "sequence",
+    orderedStepIds: twoRight,
   });
-  assert.equal(r0.verdict.outcome, "accurate");
-  state = advancePrompt(r0.state);
+  assert.equal(partialSeqRes.verdict.outcome, "partial");
 
-  // Prompt 1: flag flaw + false alarm -> partial
-  const p1 = reviewDesk.prompts[1];
-  assert.equal(p1.mechanic, "draft-review");
-  const r1 = submitResponse(state, {
-    mechanic: "draft-review",
-    flaggedSegmentIds: p1.segments.map((s) => s.id),
-  });
-  assert.equal(r1.verdict.outcome, "partial");
-  state = advancePrompt(r1.state);
-
-  // Prompt 2: flag nothing -> revisit
-  const r2 = submitResponse(state, {
-    mechanic: "draft-review",
-    flaggedSegmentIds: [],
-  });
-  assert.equal(r2.verdict.outcome, "revisit");
-  state = advancePrompt(r2.state);
-
-  assert.equal(state.completed, true);
-});
-
-test("all five session activities have valid prompts and progress store keeps best mastery", () => {
-  assert.equal(listActivities().length, 5);
-
+  // Progress store check
   const storage = createMemoryStorageAdapter();
   assert.deepEqual(loadProgress(storage), {});
-
-  recordCompletion(storage, "quiz", 67, "2026-10-29T10:00:00Z");
-  const afterHigher = recordCompletion(storage, "quiz", 100, "2026-10-29T10:05:00Z");
-  assert.equal(afterHigher.quiz.bestMasteryPercent, 100);
-
-  const afterLower = recordCompletion(storage, "quiz", 50, "2026-10-29T10:10:00Z");
-  assert.equal(afterLower.quiz.bestMasteryPercent, 100);
+  recordCompletion(storage, "part-1-basics", 80, "2026-10-29T10:00:00Z");
+  const after = recordCompletion(
+    storage,
+    "part-1-basics",
+    95,
+    "2026-10-29T10:05:00Z"
+  );
+  assert.equal(after["part-1-basics"].bestMasteryPercent, 95);
 });

@@ -1,15 +1,16 @@
 import type {
   Activity,
   AttendeeResponse,
+  ChoicePrompt,
   DraftReviewPrompt,
   MatchingPrompt,
   MythFactPrompt,
   Prompt,
+  SequencePrompt,
   TriageBucket,
   TriagePrompt,
   Verdict,
   VerdictOutcome,
-  ChoicePrompt,
 } from "../domain/types.ts";
 
 export interface ActivitySessionState {
@@ -66,7 +67,6 @@ export function submitResponse(
     throw new Error("Cannot submit a response after the activity is completed.");
   }
 
-  // Idempotent guard if the current prompt was already resolved
   if (state.currentVerdict !== null) {
     return { state, verdict: state.currentVerdict };
   }
@@ -79,7 +79,12 @@ export function submitResponse(
   }
 
   if (prompt.mechanic === "matching" && response.mechanic === "matching") {
-    return evaluateMatchingStep(state, prompt, response.conceptPairId, response.examplePairId);
+    return evaluateMatchingStep(
+      state,
+      prompt,
+      response.conceptPairId,
+      response.examplePairId
+    );
   }
 
   let verdict: Verdict;
@@ -89,8 +94,13 @@ export function submitResponse(
     verdict = evaluateMythFact(prompt, response.judgment);
   } else if (prompt.mechanic === "choice" && response.mechanic === "choice") {
     verdict = evaluateChoice(prompt, response.optionId);
-  } else if (prompt.mechanic === "draft-review" && response.mechanic === "draft-review") {
+  } else if (
+    prompt.mechanic === "draft-review" &&
+    response.mechanic === "draft-review"
+  ) {
     verdict = evaluateDraftReview(prompt, response.flaggedSegmentIds);
+  } else if (prompt.mechanic === "sequence" && response.mechanic === "sequence") {
+    verdict = evaluateSequence(prompt, response.orderedStepIds);
   } else {
     throw new Error("Unsupported prompt mechanic.");
   }
@@ -345,6 +355,67 @@ function evaluateDraftReview(
     outcome: "revisit",
     headline: "مرّ الخلل دون رصد!",
     explanation: prompt.takeaway,
+    promptResolved: true,
+    details,
+  };
+}
+
+function evaluateSequence(
+  prompt: SequencePrompt,
+  orderedStepIds: readonly string[]
+): Verdict {
+  const expected = prompt.stepsInOrder;
+  if (orderedStepIds.length !== expected.length) {
+    throw new Error("Submitted sequence length does not match expected steps.");
+  }
+
+  const validIds = new Set(expected.map((s) => s.id));
+  if (
+    new Set(orderedStepIds).size !== expected.length ||
+    orderedStepIds.some((id) => !validIds.has(id))
+  ) {
+    throw new Error("Submitted sequence contains invalid or duplicate step IDs.");
+  }
+
+  let exactMatches = 0;
+  const details = expected.map((step, idx) => {
+    const accurate = orderedStepIds[idx] === step.id;
+    if (accurate) exactMatches += 1;
+    return {
+      label: `${idx + 1}. ${step.label}`,
+      note: accurate ? "في موضعه الصحيح" : "موضع مختلف",
+      accurate,
+    };
+  });
+
+  if (exactMatches === expected.length) {
+    return {
+      outcome: "accurate",
+      headline: "ترتيب سليم من البداية إلى النهاية!",
+      explanation: prompt.explanation,
+      promptResolved: true,
+      details,
+    };
+  }
+
+  const canonicalLine = expected
+    .map((s, idx) => `(${idx + 1}) ${s.label}`)
+    .join(" ثم ");
+
+  if (exactMatches >= Math.ceil(expected.length / 2)) {
+    return {
+      outcome: "partial",
+      headline: `أصبت في ${exactMatches} من ${expected.length} مواضع`,
+      explanation: `${prompt.explanation} الترتيب الصحيح: ${canonicalLine}.`,
+      promptResolved: true,
+      details,
+    };
+  }
+
+  return {
+    outcome: "revisit",
+    headline: "تحتاج الخطوات إلى إعادة ترتيب",
+    explanation: `${prompt.explanation} الترتيب الصحيح: ${canonicalLine}.`,
     promptResolved: true,
     details,
   };

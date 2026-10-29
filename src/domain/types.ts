@@ -3,7 +3,8 @@ export type Mechanic =
   | "matching"
   | "myth-fact"
   | "draft-review"
-  | "choice";
+  | "choice"
+  | "sequence";
 
 export type TriageBucket = "ai" | "automation" | "unsure";
 
@@ -73,12 +74,28 @@ export interface ChoicePrompt {
   readonly correctOptionId: string;
 }
 
+export interface SequenceStep {
+  readonly id: string;
+  readonly label: string;
+}
+
+export interface SequencePrompt {
+  readonly id: string;
+  readonly mechanic: "sequence";
+  readonly contextTag: string;
+  readonly title: string;
+  readonly instruction: string;
+  readonly stepsInOrder: readonly SequenceStep[];
+  readonly explanation: string;
+}
+
 export type Prompt =
   | TriagePrompt
   | MatchingPrompt
   | MythFactPrompt
   | DraftReviewPrompt
-  | ChoicePrompt;
+  | ChoicePrompt
+  | SequencePrompt;
 
 export type AttendeeResponse =
   | { readonly mechanic: "triage"; readonly bucket: TriageBucket }
@@ -92,7 +109,11 @@ export type AttendeeResponse =
       readonly mechanic: "draft-review";
       readonly flaggedSegmentIds: readonly string[];
     }
-  | { readonly mechanic: "choice"; readonly optionId: string };
+  | { readonly mechanic: "choice"; readonly optionId: string }
+  | {
+      readonly mechanic: "sequence";
+      readonly orderedStepIds: readonly string[];
+    };
 
 export type VerdictOutcome = "accurate" | "partial" | "revisit";
 
@@ -112,10 +133,12 @@ export interface Verdict {
 
 export interface Activity {
   readonly slug: string;
+  readonly partBadge: string;
+  readonly slideRange: string;
   readonly title: string;
   readonly shortTitle: string;
   readonly subtitle: string;
-  readonly mechanic: Mechanic;
+  readonly mechanicsUsed: readonly Mechanic[];
   readonly agendaSlot: string;
   readonly estimatedMinutes: number;
   readonly learningGoal: string;

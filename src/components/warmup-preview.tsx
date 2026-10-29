@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowCounterClockwise, CheckCircle, Question, Robot, GearSix } from "@phosphor-icons/react";
+import {
+  ArrowCounterClockwise,
+  CheckCircle,
+  GearSix,
+  Question,
+  Robot,
+} from "@phosphor-icons/react";
 import type { Activity, TriageBucket, TriagePrompt } from "@/domain/types";
 import { startActivity, submitResponse } from "@/engine/activity-engine";
 
@@ -37,10 +43,12 @@ export function WarmupPreview({ prompt }: { prompt: TriagePrompt }) {
   const miniActivity: Activity = useMemo(
     () => ({
       slug: "warmup",
+      partBadge: "التمهيد",
+      slideRange: "الشريحة 4",
       title: prompt.contextTag,
       shortTitle: prompt.contextTag,
       subtitle: "",
-      mechanic: "triage",
+      mechanicsUsed: ["triage"],
       agendaSlot: "",
       estimatedMinutes: 1,
       learningGoal: "",
