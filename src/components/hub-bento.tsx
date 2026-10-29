@@ -6,18 +6,20 @@ import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
   Brain,
-  Cards,
   ChatCenteredDots,
   CheckCircle,
   Clock,
+  FunnelSimple,
   HighlighterCircle,
   Lightbulb,
+  LinkSimpleHorizontal,
   ListNumbers,
   Scales,
+  SelectionInverse,
   ShieldCheck,
-  SlidersHorizontal,
   Sparkle,
   Stack,
+  Trophy,
 } from "@phosphor-icons/react";
 import type { Activity, Mechanic } from "@/domain/types";
 import {
@@ -31,14 +33,15 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const MECHANIC_META: Record<
   Mechanic,
-  { label: string; Icon: typeof SlidersHorizontal }
+  { label: string; Icon: typeof FunnelSimple }
 > = {
-  sequence: { label: "رتّب الشريحة", Icon: ListNumbers },
-  matching: { label: "بطاقات الذاكرة", Icon: Cards },
-  triage: { label: "فرز البطاقات", Icon: SlidersHorizontal },
-  "draft-review": { label: "الملاحظة الصفراء", Icon: HighlighterCircle },
+  "bucket-sort": { label: "صناديق التصنيف", Icon: FunnelSimple },
+  matching: { label: "وصّل البطاقات", Icon: LinkSimpleHorizontal },
+  sequence: { label: "رتّب المسار", Icon: ListNumbers },
+  "draft-review": { label: "القلم الفوسفوري", Icon: HighlighterCircle },
   "myth-fact": { label: "خرافة أم حقيقة", Icon: Scales },
-  choice: { label: "تذكّر الفكرة", Icon: Lightbulb },
+  "odd-one-out": { label: "اكتشف الدخيلة", Icon: SelectionInverse },
+  choice: { label: "قرار الموقف", Icon: Lightbulb },
 };
 
 const CARD_THEMES = [
@@ -88,7 +91,7 @@ const CARD_THEMES = [
     lip: "deck-lip-indigo",
     medallionBg: "bg-[var(--medallion-indigo)]",
     medallionInk: "text-[var(--medallion-indigo-ink)]",
-    CardIcon: Cards,
+    CardIcon: FunnelSimple,
   },
 ] as const;
 
@@ -113,13 +116,13 @@ export function HubProgressPill({ total }: { total: number }) {
 
   return (
     <span className="hidden items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-1.5 text-xs font-semibold text-[var(--text-secondary)] sm:inline-flex">
-      <CheckCircle
+      <Trophy
         size={15}
-        weight={completedCount > 0 ? "fill" : "regular"}
+        weight={completedCount > 0 ? "fill" : "duotone"}
         className="text-[var(--accent)]"
       />
       <span className="tabular-nums">
-        {completedCount} من {total} محطات مسترجعة
+        {completedCount} من {total} أجزاء منجزة
       </span>
     </span>
   );
@@ -169,16 +172,16 @@ export function HubBentoGrid({
         const theme = CARD_THEMES[idx % CARD_THEMES.length];
         const CardIcon = theme.CardIcon;
 
-        // Slide-deck surface variation across the 8 bento cells
-        const isCoffeeCard = idx === 2; // Part 3 right before the 10-min break (Slide 18)
-        const isStickyNoteCard = idx === 5; // Part 6 yellow sticky note (Slide 26)
+        const isCoffeeCard = idx === 2;
+        const isStickyNoteCard = idx === 5;
         const isSubtleSandCard = idx === 1 || idx === 6;
         const isMintFinaleCard = idx === 7;
-        const hasPolicyShield = idx === 4; // Part 5 institutional shield (Slide 24)
+        const hasPolicyShield = idx === 4;
 
         let surfaceCls = `deck-card ${theme.lip} bg-[var(--surface-card)]`;
         if (isStickyNoteCard) {
-          surfaceCls = "deck-sticky-note border-t-[5px] border-t-[var(--lip-gold)]";
+          surfaceCls =
+            "deck-sticky-note border-t-[5px] border-t-[var(--lip-gold)]";
         } else if (isSubtleSandCard) {
           surfaceCls = `deck-card ${theme.lip} bg-[var(--surface-subtle)]`;
         } else if (isMintFinaleCard) {
@@ -201,7 +204,9 @@ export function HubBentoGrid({
             {isCoffeeCard && (
               <div className="flex items-center justify-between border-b border-[var(--border-subtle)] bg-[#0e8a82] px-5 py-3 text-white">
                 <div>
-                  <p className="text-xs font-bold opacity-90">محطة ما قبل الاستراحة</p>
+                  <p className="text-xs font-bold opacity-95">
+                    ألعاب ما قبل الاستراحة
+                  </p>
                   <p className="text-xs opacity-80">ترافق الشرائح 15 إلى 18</p>
                 </div>
                 <img
@@ -249,7 +254,7 @@ export function HubBentoGrid({
                     ) : record ? (
                       <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] px-2.5 py-0.5 text-xs font-bold text-[var(--verdict-accurate-text)]">
                         <CheckCircle size={14} weight="fill" />
-                        <span>مكتمل</span>
+                        <span>أحسنت · مكتمل</span>
                       </span>
                     ) : null}
                   </div>
@@ -282,7 +287,7 @@ export function HubBentoGrid({
                   )}
                 </div>
 
-                {/* Friendly game-card tags inside this section */}
+                {/* Friendly game-type tags inside this section */}
                 <div className="mt-4 flex flex-wrap items-center gap-1.5">
                   {activity.mechanicsUsed.map((mech) => {
                     const meta = MECHANIC_META[mech];
@@ -302,7 +307,7 @@ export function HubBentoGrid({
                     );
                   })}
                   <span className="px-1 text-xs font-semibold text-[var(--text-muted)] tabular-nums">
-                    ({activity.prompts.length} بطاقات)
+                    ({activity.prompts.length} ألعاب سريعة)
                   </span>
                 </div>
               </div>
@@ -313,7 +318,7 @@ export function HubBentoGrid({
                   className="tactile-btn inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
                 >
                   <span>
-                    {record ? "أعد تنشيط الذاكرة" : "العب بطاقات الجزء"}
+                    {record ? "العب الجزء مرة أخرى" : "ابدأ ألعاب الجزء"}
                   </span>
                   <ArrowLeft size={16} weight="bold" />
                 </Link>

@@ -79,16 +79,16 @@ export default function HomePage() {
 
       <main>
         {/* Section 1: Asymmetric Split Hero fitting initial viewport */}
-        <section className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-7xl items-center px-4 pt-8 pb-12 sm:px-6 md:pt-12 lg:min-h-[680px] lg:max-h-[880px] lg:px-8">
+        <section className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-7xl items-center px-4 pt-8 pb-12 sm:px-6 md:pt-10 lg:min-h-[680px] lg:px-8">
           <div className="grid w-full grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Hero text stack: strictly 4 elements */}
             <div className="w-full lg:col-span-6">
               <p className="inline-block rounded-full border border-[var(--border-strong)] bg-[var(--surface-card)] px-3.5 py-1 text-xs font-bold uppercase tracking-[0.08em] text-[var(--accent)]">
-                دورة الذكاء الاصطناعي - المدرب {session.trainerName}
+                دورة الذكاء الاصطناعي · المدرب {session.trainerName}
               </p>
 
               <h1 className="mt-4 text-4xl font-bold leading-[1.2] tracking-tight text-[var(--text-primary)] sm:text-5xl lg:text-[3.25rem]">
-                نشّط ذاكرتك بعد كل جزء ببطاقات تفاعلية خفيفة
+                العب وطبّق أفكار كل جزء بأنشطة تفاعلية سريعة
                 <span
                   aria-hidden="true"
                   className="mt-4 block h-1.5 w-16 rounded-full bg-[var(--lip-coral)]"
@@ -96,7 +96,7 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
-                ثماني محطات ودّية ترافق شرائح العرض بالترتيب، وتجمع قلب بطاقات الذاكرة وترتيب الخطوات والملاحظات الصفراء بلا درجات أو ضغط.
+                ثماني محطات ترافق شرائح العرض بالترتيب: افرز البطاقات في الصناديق، وصّل الأمثلة، رتّب الخطوات، وظلّل الهفوات بالقلم الأصفر بلا درجات أو تعقيد.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3.5">
@@ -104,7 +104,7 @@ export default function HomePage() {
                   href="/part-1-basics/"
                   className="tactile-btn inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] sm:text-base"
                 >
-                  <span>ابدأ بالجزء الأول</span>
+                  <span>ابدأ ألعاب الجزء الأول</span>
                   <ArrowLeft size={18} weight="bold" />
                 </Link>
 
@@ -112,12 +112,12 @@ export default function HomePage() {
                   href="#sections"
                   className="tactile-btn inline-flex items-center whitespace-nowrap rounded-xl border border-[var(--border-strong)] bg-[var(--surface-card)] px-6 py-3.5 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] sm:text-base"
                 >
-                  تصفّح محطات الجلسة
+                  تصفّح جميع الأجزاء
                 </a>
               </div>
             </div>
 
-            {/* Slide 1 cover illustration + interactive Slide 4 warm-up card */}
+            {/* Slide 1 cover illustration + interactive 3-card Bucket Sort demo */}
             <div className="w-full lg:col-span-6">
               <WarmupPreview prompt={session.warmupPrompt} />
             </div>
@@ -131,10 +131,10 @@ export default function HomePage() {
         >
           <div className="mb-10 max-w-[62ch]">
             <h2 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-3xl">
-              محطات تنشيط الذاكرة حسب أجزاء الشرائح
+              الألعاب التفاعلية حسب أجزاء العرض التقديمي
             </h2>
             <p className="mt-2.5 text-base leading-relaxed text-[var(--text-secondary)]">
-              بعد انتهاء كل جزء من العرض التقديمي، افتح محطته لاسترجاع أهم أفكاره عبر بطاقات مقلوبة وترتيب بصري خفيف.
+              بعد انتهاء كل جزء من الشرائح، افتح محطته واستمتع بمزيج من صناديق التصنيف وتوصيل الأزواج وترتيب المسارات وكشف الجمل الدخيلة.
             </p>
           </div>
 
@@ -193,7 +193,7 @@ export default function HomePage() {
       <footer className="border-t border-[var(--border-subtle)] bg-[var(--surface-card)]">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-8 text-sm text-[var(--text-secondary)] sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <p>
-            {session.title} ({session.hijriDate}) - إعداد وتدريب{" "}
+            {session.title} ({session.hijriDate}) · إعداد وتدريب{" "}
             {session.trainerName}
           </p>
           <nav

@@ -1,20 +1,37 @@
 export type Mechanic =
-  | "triage"
+  | "bucket-sort"
   | "matching"
-  | "myth-fact"
+  | "sequence"
   | "draft-review"
-  | "choice"
-  | "sequence";
+  | "myth-fact"
+  | "odd-one-out"
+  | "choice";
 
-export type TriageBucket = "ai" | "automation" | "unsure";
+export type BucketTone = "teal" | "coral" | "gold" | "indigo";
 
-export interface TriagePrompt {
+export interface BucketCategory {
   readonly id: string;
-  readonly mechanic: "triage";
-  readonly contextTag: string;
-  readonly scenario: string;
-  readonly expectedBucket: TriageBucket;
+  readonly label: string;
+  readonly hint: string;
+  readonly tone: BucketTone;
+}
+
+export interface BucketSortItem {
+  readonly id: string;
+  readonly label: string;
+  readonly bucketId: string;
   readonly explanation: string;
+}
+
+export interface BucketSortPrompt {
+  readonly id: string;
+  readonly mechanic: "bucket-sort";
+  readonly contextTag: string;
+  readonly title: string;
+  readonly instruction: string;
+  readonly buckets: readonly BucketCategory[];
+  readonly items: readonly BucketSortItem[];
+  readonly completionNote: string;
 }
 
 export interface MatchingPair {
@@ -59,6 +76,23 @@ export interface DraftReviewPrompt {
   readonly takeaway: string;
 }
 
+export interface OddOneOutItem {
+  readonly id: string;
+  readonly label: string;
+  readonly isOdd: boolean;
+  readonly note: string;
+}
+
+export interface OddOneOutPrompt {
+  readonly id: string;
+  readonly mechanic: "odd-one-out";
+  readonly contextTag: string;
+  readonly title: string;
+  readonly groupRule: string;
+  readonly items: readonly OddOneOutItem[];
+  readonly explanation: string;
+}
+
 export interface ChoiceOption {
   readonly id: string;
   readonly label: string;
@@ -90,15 +124,20 @@ export interface SequencePrompt {
 }
 
 export type Prompt =
-  | TriagePrompt
+  | BucketSortPrompt
   | MatchingPrompt
   | MythFactPrompt
   | DraftReviewPrompt
+  | OddOneOutPrompt
   | ChoicePrompt
   | SequencePrompt;
 
 export type AttendeeResponse =
-  | { readonly mechanic: "triage"; readonly bucket: TriageBucket }
+  | {
+      readonly mechanic: "bucket-sort";
+      readonly itemId: string;
+      readonly bucketId: string;
+    }
   | {
       readonly mechanic: "matching";
       readonly conceptPairId: string;
@@ -109,6 +148,7 @@ export type AttendeeResponse =
       readonly mechanic: "draft-review";
       readonly flaggedSegmentIds: readonly string[];
     }
+  | { readonly mechanic: "odd-one-out"; readonly itemId: string }
   | { readonly mechanic: "choice"; readonly optionId: string }
   | {
       readonly mechanic: "sequence";
@@ -154,6 +194,6 @@ export interface Session {
   readonly trainerName: string;
   readonly hijriDate: string;
   readonly durationMinutes: number;
-  readonly warmupPrompt: TriagePrompt;
+  readonly warmupPrompt: BucketSortPrompt;
   readonly activities: readonly Activity[];
 }

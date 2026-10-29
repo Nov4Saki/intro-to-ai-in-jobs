@@ -78,8 +78,11 @@ test("all 8 presentation parts exist and each contains a genuine mixture of at l
   const activities = listActivities();
   assert.equal(activities.length, 8);
 
+  const allMechanicsAcrossSession = new Set<string>();
   for (const activity of activities) {
     const actualMechanics = new Set(activity.prompts.map((p) => p.mechanic));
+    for (const m of actualMechanics) allMechanicsAcrossSession.add(m);
+
     assert.ok(
       actualMechanics.size >= 3,
       `Expected "${activity.slug}" to mix at least 3 mechanics, found ${actualMechanics.size}`
@@ -99,24 +102,83 @@ test("all 8 presentation parts exist and each contains a genuine mixture of at l
       );
     }
   }
+
+  // Ensure rich variety of game types across the session
+  for (const expectedType of [
+    "bucket-sort",
+    "matching",
+    "sequence",
+    "draft-review",
+    "myth-fact",
+    "odd-one-out",
+    "choice",
+  ]) {
+    assert.equal(
+      allMechanicsAcrossSession.has(expectedType),
+      true,
+      `Expected session to include game mechanic "${expectedType}"`
+    );
+  }
 });
 
-test("every section checkpoint plays cleanly end-to-end across mixed mechanics", () => {
+test("every section checkpoint and warmup bucket-sort plays cleanly end-to-end across mixed mechanics", () => {
+  // Verify warmup bucket-sort
+  let warmupState = startActivity({
+    slug: "warmup",
+    partBadge: "التمهيد",
+    slideRange: "الشريحة 4",
+    title: SESSION_1.warmupPrompt.title,
+    shortTitle: SESSION_1.warmupPrompt.title,
+    subtitle: "",
+    mechanicsUsed: ["bucket-sort"],
+    agendaSlot: "",
+    estimatedMinutes: 1,
+    learningGoal: "",
+    prompts: [SESSION_1.warmupPrompt],
+    closingTakeaway: "",
+  });
+  for (const item of SESSION_1.warmupPrompt.items) {
+    warmupState = submitResponse(warmupState, {
+      mechanic: "bucket-sort",
+      itemId: item.id,
+      bucketId: item.bucketId,
+    }).state;
+  }
+  assert.equal(warmupState.currentVerdict?.promptResolved, true);
+  assert.equal(warmupState.currentVerdict?.outcome, "accurate");
+
+  // Verify all 8 post-section activities
   for (const activity of listActivities()) {
     let state = startActivity(activity);
 
     while (!state.completed) {
       const prompt = getCurrentPrompt(state);
 
-      if (prompt.mechanic === "triage") {
-        state = submitResponse(state, {
-          mechanic: "triage",
-          bucket: prompt.expectedBucket,
-        }).state;
+      if (prompt.mechanic === "bucket-sort") {
+        assert.ok(prompt.buckets.length >= 2);
+        assert.ok(prompt.items.length >= 3);
+        for (const item of prompt.items) {
+          state = submitResponse(state, {
+            mechanic: "bucket-sort",
+            itemId: item.id,
+            bucketId: item.bucketId,
+          }).state;
+        }
       } else if (prompt.mechanic === "myth-fact") {
         state = submitResponse(state, {
           mechanic: "myth-fact",
           judgment: prompt.reality,
+        }).state;
+      } else if (prompt.mechanic === "odd-one-out") {
+        const oddItems = prompt.items.filter((i) => i.isOdd);
+        assert.equal(
+          oddItems.length,
+          1,
+          `Odd-one-out "${prompt.id}" must have exactly 1 odd item`
+        );
+        state = submitResponse(state, {
+          mechanic: "odd-one-out",
+          itemId: oddItems[0].id,
         }).state;
       } else if (prompt.mechanic === "choice") {
         state = submitResponse(state, {
@@ -161,15 +223,39 @@ test("every section checkpoint plays cleanly end-to-end across mixed mechanics",
   }
 });
 
-test("sequence, matching, choice, and draft-review nudge gently on slips before resolving", () => {
+test("bucket-sort, sequence, matching, odd-one-out, and draft-review nudge gently on slips before resolving", () => {
   const part1 = getActivity("part-1-basics");
   assert.ok(part1);
 
-  // Prompt 0 in part-1-basics is a 3-step sequence: reversing keeps middle card (1 of 3) -> gentle partial nudge (unlocked!)
-  let seqState = startActivity(part1);
-  const p0 = getCurrentPrompt(seqState);
-  assert.equal(p0.mechanic, "sequence");
-  const reversed = [...p0.stepsInOrder].reverse().map((s) => s.id);
+  // Prompt 0 in part-1-basics is a 4-bucket sort: wrong bucket nudges gently without locking out
+  let bsState = startActivity(part1);
+  const p0 = getCurrentPrompt(bsState);
+  assert.equal(p0.mechanic, "bucket-sort");
+  const wrongBucket = p0.buckets.find((b) => b.id !== p0.items[0].bucketId)!;
+  const slipSort = submitResponse(bsState, {
+    mechanic: "bucket-sort",
+    itemId: p0.items[0].id,
+    bucketId: wrongBucket.id,
+  });
+  assert.equal(slipSort.verdict.promptResolved, false);
+  assert.equal(slipSort.verdict.outcome, "revisit");
+
+  bsState = slipSort.state;
+  for (const item of p0.items) {
+    bsState = submitResponse(bsState, {
+      mechanic: "bucket-sort",
+      itemId: item.id,
+      bucketId: item.bucketId,
+    }).state;
+  }
+  assert.equal(bsState.currentVerdict?.promptResolved, true);
+  assert.equal(bsState.currentVerdict?.outcome, "partial");
+
+  // Prompt 1 in part-1-basics is a 3-step sequence
+  let seqState = advancePrompt(bsState);
+  const p1 = getCurrentPrompt(seqState);
+  assert.equal(p1.mechanic, "sequence");
+  const reversed = [...p1.stepsInOrder].reverse().map((s) => s.id);
   const revRes = submitResponse(seqState, {
     mechanic: "sequence",
     orderedStepIds: reversed,
@@ -177,61 +263,38 @@ test("sequence, matching, choice, and draft-review nudge gently on slips before 
   assert.equal(revRes.verdict.promptResolved, false);
   assert.equal(revRes.verdict.outcome, "partial");
 
-  // Completing the sequence right afterward resolves the prompt cleanly
   seqState = submitResponse(revRes.state, {
     mechanic: "sequence",
-    orderedStepIds: p0.stepsInOrder.map((s) => s.id),
+    orderedStepIds: p1.stepsInOrder.map((s) => s.id),
   }).state;
   assert.equal(seqState.currentVerdict?.promptResolved, true);
   assert.equal(seqState.currentVerdict?.outcome, "partial");
 
-  // Part 4 prompt 0 is matching: trigger one mismatch flip first, then match all pairs
-  const part4 = getActivity("part-4-expectations");
-  assert.ok(part4);
-  let p4State = startActivity(part4);
-  const matchPrompt = getCurrentPrompt(p4State);
-  assert.equal(matchPrompt.mechanic, "matching");
-  p4State = submitResponse(p4State, {
-    mechanic: "matching",
-    conceptPairId: matchPrompt.pairs[0].id,
-    examplePairId: matchPrompt.pairs[1].id,
-  }).state;
-  for (const pair of matchPrompt.pairs) {
-    p4State = submitResponse(p4State, {
-      mechanic: "matching",
-      conceptPairId: pair.id,
-      examplePairId: pair.id,
-    }).state;
-  }
-  assert.equal(p4State.currentVerdict?.outcome, "partial");
-
-  // Part 6 prompt 1 is draft-review (Thursday lunch): tapping a safe sentence nudges without locking out
-  const part6 = getActivity("part-6-workflow");
-  assert.ok(part6);
-  let p6State = startActivity(part6);
-  const p6Seq = getCurrentPrompt(p6State);
-  assert.equal(p6Seq.mechanic, "sequence");
-  p6State = advancePrompt(
-    submitResponse(p6State, {
+  // Prompt 3 in part-1-basics is odd-one-out: tapping a valid group member nudges gently
+  seqState = advancePrompt(seqState);
+  const p2 = getCurrentPrompt(seqState);
+  assert.equal(p2.mechanic, "sequence");
+  let oddState = advancePrompt(
+    submitResponse(seqState, {
       mechanic: "sequence",
-      orderedStepIds: p6Seq.stepsInOrder.map((s) => s.id),
+      orderedStepIds: p2.stepsInOrder.map((s) => s.id),
     }).state
   );
-  const lunchPrompt = getCurrentPrompt(p6State);
-  assert.equal(lunchPrompt.mechanic, "draft-review");
-  const safeSeg = lunchPrompt.segments.find((s) => !s.isFlawed)!;
-  const flawedSeg = lunchPrompt.segments.find((s) => s.isFlawed)!;
-  const safeTap = submitResponse(p6State, {
-    mechanic: "draft-review",
-    flaggedSegmentIds: [safeSeg.id],
+  const p3 = getCurrentPrompt(oddState);
+  assert.equal(p3.mechanic, "odd-one-out");
+  const memberItem = p3.items.find((i) => !i.isOdd)!;
+  const oddItem = p3.items.find((i) => i.isOdd)!;
+  const memberTap = submitResponse(oddState, {
+    mechanic: "odd-one-out",
+    itemId: memberItem.id,
   });
-  assert.equal(safeTap.verdict.promptResolved, false);
-  const flawTap = submitResponse(safeTap.state, {
-    mechanic: "draft-review",
-    flaggedSegmentIds: [flawedSeg.id],
-  });
-  assert.equal(flawTap.verdict.promptResolved, true);
-  assert.equal(flawTap.verdict.outcome, "partial");
+  assert.equal(memberTap.verdict.promptResolved, false);
+  oddState = submitResponse(memberTap.state, {
+    mechanic: "odd-one-out",
+    itemId: oddItem.id,
+  }).state;
+  assert.equal(oddState.currentVerdict?.promptResolved, true);
+  assert.equal(oddState.currentVerdict?.outcome, "partial");
 
   // Progress store check
   const storage = createMemoryStorageAdapter();

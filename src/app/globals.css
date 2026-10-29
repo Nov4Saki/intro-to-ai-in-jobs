@@ -191,40 +191,6 @@ html.dark {
   }
 }
 
-/* 3D Memory Flip Cards (GPU-accelerated rotateY) */
-.memory-perspective {
-  perspective: 1100px;
-}
-
-.memory-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 360ms var(--ease-out-strong);
-}
-
-.memory-card-inner[data-flipped="false"] {
-  transform: rotateY(180deg);
-}
-
-.memory-card-inner[data-flipped="true"] {
-  transform: rotateY(0deg);
-}
-
-.memory-face {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.memory-face-back {
-  position: absolute;
-  inset: 0;
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -236,25 +202,6 @@ html.dark {
   .tactile-btn:active:not(:disabled),
   .deck-hover-lift:hover:not(:disabled),
   .deck-hover-lift:active:not(:disabled) {
-    transform: none;
-  }
-  .memory-card-inner {
-    transform-style: flat;
-    transition: none;
-  }
-  .memory-card-inner[data-flipped="false"],
-  .memory-card-inner[data-flipped="true"] {
-    transform: none;
-  }
-  .memory-card-inner[data-flipped="false"] .memory-face-front {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .memory-card-inner[data-flipped="true"] .memory-face-back {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .memory-face-back {
     transform: none;
   }
 }
