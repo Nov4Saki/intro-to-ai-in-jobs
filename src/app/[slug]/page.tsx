@@ -34,14 +34,10 @@ export default async function ActivityPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const all = listActivities();
-  const idx = all.findIndex((a) => a.slug === slug);
-  if (idx === -1) {
+  const activity = getActivity(slug);
+  if (!activity) {
     notFound();
   }
 
-  const activity = all[idx];
-  const nextActivity = idx + 1 < all.length ? all[idx + 1] : null;
-
-  return <ActivityPlayer activity={activity} nextActivity={nextActivity} />;
+  return <ActivityPlayer activity={activity} />;
 }

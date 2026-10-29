@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowCounterClockwise,
   ArrowLeft,
-  ArrowRight,
   CaretLeft,
   ChatCenteredDots,
   Check,
   CheckCircle,
+  Clock,
   Confetti,
   DotsSixVertical,
   HandTap,
   HighlighterCircle,
-  House,
   Info,
   Lightbulb,
   LinkSimpleHorizontal,
@@ -40,7 +38,6 @@ import type {
   SequencePrompt,
   Verdict,
 } from "@/domain/types";
-import { listActivities } from "@/content/session-1";
 import {
   advancePrompt,
   getCurrentPrompt,
@@ -109,10 +106,8 @@ function permuteDeterministically<T extends { id: string }>(
 
 export function ActivityPlayer({
   activity,
-  nextActivity,
 }: {
   activity: Activity;
-  nextActivity: Activity | null;
 }) {
   const reduceMotion = useReducedMotion();
   const [hydrated, setHydrated] = useState(false);
@@ -260,15 +255,11 @@ export function ActivityPlayer({
       {/* Top sticky bar */}
       <header className="sticky top-0 z-30 h-16 border-b border-[var(--border-subtle)] bg-[var(--surface-page)]/92 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="tactile-btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
-            >
-              <ArrowRight size={16} weight="bold" />
-              <span>كل الأجزاء</span>
-            </Link>
-            <span className="hidden text-sm font-bold text-[var(--text-primary)] sm:inline">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-block rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-1.5 text-xs font-bold text-[var(--accent)]">
+              {activity.partBadge}
+            </span>
+            <span className="text-sm font-bold text-[var(--text-primary)] sm:text-base">
               {activity.shortTitle}
             </span>
           </div>
@@ -315,8 +306,6 @@ export function ActivityPlayer({
               key="completion"
               activity={activity}
               state={state}
-              nextActivity={nextActivity}
-              progressMap={progressMap}
               onRestart={handleRestart}
               reduceMotion={Boolean(reduceMotion)}
             />
@@ -1513,25 +1502,15 @@ const CONFETTI_PARTICLES = [
 function CompletionView({
   activity,
   state,
-  nextActivity,
-  progressMap,
   onRestart,
   reduceMotion,
 }: {
   activity: Activity;
   state: ReturnType<typeof startActivity>;
-  nextActivity: Activity | null;
-  progressMap: SessionProgressMap;
   onRestart: () => void;
   reduceMotion: boolean;
 }) {
   const summary = summarizeSession(state);
-  const allActivities = listActivities();
-  const completedSlugs = new Set([
-    ...Object.keys(progressMap),
-    activity.slug,
-  ]);
-  const isFinalPart = nextActivity === null;
 
   return (
     <motion.section
@@ -1591,9 +1570,7 @@ function CompletionView({
         </span>
 
         <h2 className="mt-4 text-3xl font-bold leading-tight text-[var(--text-primary)] sm:text-4xl">
-          {isFinalPart
-            ? "عمل رائع ومميز! أتممت جميع ألعاب الجلسة الأولى"
-            : `رائع جداً! أتقنت ألعاب ${activity.partBadge} بنجاح`}
+          أتقنت ألعاب {activity.partBadge} بنجاح
         </h2>
 
         <p className="mt-2.5 max-w-[56ch] text-sm font-medium leading-relaxed text-[var(--text-secondary)] sm:text-base">
@@ -1632,73 +1609,36 @@ function CompletionView({
         </p>
       </div>
 
-      {/* 8-Station Session Progress Strip */}
-      <div className="mt-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)]/70 p-4">
-        <div className="mb-2.5 flex items-center justify-between text-xs font-bold text-[var(--text-secondary)]">
-          <span>تقدّمك في أجزاء الجلسة</span>
-          <span className="tabular-nums text-[var(--accent)]">
-            {completedSlugs.size} من {allActivities.length} أجزاء مكتملة
-          </span>
-        </div>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
-          {allActivities.map((act, idx) => {
-            const done = completedSlugs.has(act.slug);
-            const isThis = act.slug === activity.slug;
-            return (
-              <Link
-                key={act.slug}
-                href={`/${act.slug}/`}
-                className={`flex items-center justify-center gap-1 rounded-xl border px-2 py-1.5 text-xs font-bold transition-colors ${
-                  done
-                    ? "border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]"
-                    : "border-[var(--border-subtle)] bg-[var(--surface-card)] text-[var(--text-muted)] hover:border-[var(--accent)]"
-                } ${isThis ? "ring-2 ring-[var(--lip-gold)]" : ""}`}
-              >
-                {done && <Check size={12} weight="bold" />}
-                <span>ج{ARABIC_DIGITS[idx]}</span>
-              </Link>
-            );
-          })}
+      {/* Classroom standby message: wait for the trainer's cue */}
+      <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)]/80 p-4 sm:p-5 text-right">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--medallion-teal-ink)]">
+          <Clock size={22} weight="duotone" />
+        </span>
+        <div>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] sm:text-base">
+            اكتمل نشاط {activity.partBadge} بنجاح
+          </h3>
+          <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)] sm:text-sm">
+            تابع الآن مع المدرّب في القاعة؛ وسيرسل لكم رابط النشاط التالي فور انتهاء الجزء القادم من العرض التقديمي.
+          </p>
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          {nextActivity ? (
-            <Link
-              href={`/${nextActivity.slug}/`}
-              className="tactile-btn inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-bold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] sm:text-base"
-            >
-              <span>انتقل إلى {nextActivity.shortTitle}</span>
-              <ArrowLeft size={18} weight="bold" />
-            </Link>
-          ) : (
-            <Link
-              href="/"
-              className="tactile-btn inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-bold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] sm:text-base"
-            >
-              <House size={19} weight="bold" />
-              <span>العودة إلى لوحة الجلسة الرئيسية</span>
-            </Link>
-          )}
-
-          <button
-            type="button"
-            onClick={onRestart}
-            className="tactile-btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-card)] px-4 py-3.5 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--accent)]"
-          >
-            <ArrowCounterClockwise size={16} weight="bold" />
-            <span>إعادة لعب هذا الجزء</span>
-          </button>
-        </div>
-
-        <Link
-          href="/"
-          className="text-sm font-semibold text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text-primary)] hover:underline"
+      {/* Action Buttons: Standalone replay and copy link without external links */}
+      <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={onRestart}
+          className="tactile-btn inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-bold text-[var(--accent-ink)] hover:bg-[var(--accent-hover)] sm:text-base"
         >
-          عرض جميع الأجزاء الثمانية
-        </Link>
+          <ArrowCounterClockwise size={18} weight="bold" />
+          <span>إعادة لعب هذا الجزء</span>
+        </button>
+
+        <CopyLinkButton
+          relativePath={activity.slug}
+          label="مشاركة رابط هذا النشاط"
+        />
       </div>
     </motion.section>
   );

@@ -1,11 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowCounterClockwise,
-  ArrowLeft,
   HandGrabbing,
   Trophy,
 } from "@phosphor-icons/react";
@@ -106,25 +104,16 @@ export function WarmupPreview({ prompt }: { prompt: BucketSortPrompt }) {
             transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
             className="mb-4 rounded-xl border border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] p-3.5 text-[var(--verdict-accurate-text)]"
           >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ffc93c] text-[#1e2a4a]">
-                  <Trophy size={22} weight="fill" />
-                </span>
-                <div>
-                  <p className="text-sm font-bold">أحسنت! فرز رائع</p>
-                  <p className="mt-0.5 text-xs opacity-95">
-                    {prompt.completionNote}
-                  </p>
-                </div>
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ffc93c] text-[#1e2a4a]">
+                <Trophy size={22} weight="fill" />
+              </span>
+              <div>
+                <p className="text-sm font-bold">أحسنت! فرز رائع</p>
+                <p className="mt-0.5 text-xs opacity-95">
+                  {prompt.completionNote}
+                </p>
               </div>
-              <Link
-                href="/part-1-basics/"
-                className="tactile-btn inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--accent)] px-3.5 py-2 text-xs font-bold text-[var(--accent-ink)]"
-              >
-                <span>الجزء 1</span>
-                <ArrowLeft size={14} weight="bold" />
-              </Link>
             </div>
           </motion.div>
         )}
