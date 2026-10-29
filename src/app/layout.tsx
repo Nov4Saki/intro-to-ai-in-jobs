@@ -1,36 +1,10 @@
 import type { Metadata } from "next";
-import {
-  IBM_Plex_Mono,
-  IBM_Plex_Sans_Arabic,
-  Readex_Pro,
-} from "next/font/google";
 import "./globals.css";
 
-const readexPro = Readex_Pro({
-  subsets: ["arabic", "latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const ibmPlexArabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "مقدمة في الذكاء الاصطناعي - بطاقات الذاكرة التفاعلية للجلسة الأولى",
+  title: "مقدمة في الذكاء الاصطناعي · الأنشطة والألعاب التفاعلية للجلسة الأولى",
   description:
-    "بطاقات ذاكرة وألعاب تفاعلية خفيفة ترافق شرائح الجلسة الأولى لفهم الذكاء الاصطناعي ودوره في العمل اليومي.",
+    "أنشطة وألعاب تفاعلية خفيفة ترافق شرائح الجلسة الأولى لفهم الذكاء الاصطناعي ودوره في العمل اليومي.",
 };
 
 const themeInitScript = `
@@ -52,13 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ar"
-      dir="rtl"
-      suppressHydrationWarning
-      className={`${readexPro.variable} ${ibmPlexArabic.variable} ${ibmPlexMono.variable}`}
-    >
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@500;600;700&display=swap"
+        />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="antialiased selection:bg-[var(--accent-soft)] selection:text-[var(--text-primary)]">

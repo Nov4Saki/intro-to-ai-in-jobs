@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 :root {
+  --font-display: "Readex Pro", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
   /* Exact slide-deck warm ivory canvas & deep royal indigo ink */
   --surface-page: #faf6ee;
   --surface-card: #ffffff;
