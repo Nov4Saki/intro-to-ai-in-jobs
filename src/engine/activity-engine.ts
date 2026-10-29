@@ -89,20 +89,43 @@ export function submitResponse(
 
   let verdict: Verdict;
   if (prompt.mechanic === "triage" && response.mechanic === "triage") {
-    verdict = evaluateTriage(prompt, response.bucket);
+    verdict = evaluateTriage(prompt, response.bucket, state.hadSlipInCurrentPrompt);
   } else if (prompt.mechanic === "myth-fact" && response.mechanic === "myth-fact") {
     verdict = evaluateMythFact(prompt, response.judgment);
   } else if (prompt.mechanic === "choice" && response.mechanic === "choice") {
-    verdict = evaluateChoice(prompt, response.optionId);
+    verdict = evaluateChoice(
+      prompt,
+      response.optionId,
+      state.hadSlipInCurrentPrompt
+    );
   } else if (
     prompt.mechanic === "draft-review" &&
     response.mechanic === "draft-review"
   ) {
-    verdict = evaluateDraftReview(prompt, response.flaggedSegmentIds);
+    verdict = evaluateDraftReview(
+      prompt,
+      response.flaggedSegmentIds,
+      state.hadSlipInCurrentPrompt
+    );
   } else if (prompt.mechanic === "sequence" && response.mechanic === "sequence") {
-    verdict = evaluateSequence(prompt, response.orderedStepIds);
+    verdict = evaluateSequence(
+      prompt,
+      response.orderedStepIds,
+      state.hadSlipInCurrentPrompt
+    );
   } else {
     throw new Error("Unsupported prompt mechanic.");
+  }
+
+  if (!verdict.promptResolved) {
+    return {
+      state: {
+        ...state,
+        hadSlipInCurrentPrompt: true,
+        lastFeedback: verdict,
+      },
+      verdict,
+    };
   }
 
   return {
@@ -145,7 +168,7 @@ export function summarizeSession(state: ActivitySessionState): ActivitySummary {
   const partialCount = state.outcomes.filter((o) => o === "partial").length;
   const revisitCount = state.outcomes.filter((o) => o === "revisit").length;
 
-  const weightedPoints = accurateCount + partialCount * 0.5;
+  const weightedPoints = accurateCount + partialCount * 0.75 + revisitCount * 0.5;
   const masteryPercent = Math.round((weightedPoints / totalPrompts) * 100);
 
   return {
@@ -158,24 +181,31 @@ export function summarizeSession(state: ActivitySessionState): ActivitySummary {
   };
 }
 
-function evaluateTriage(prompt: TriagePrompt, chosen: TriageBucket): Verdict {
+function evaluateTriage(
+  prompt: TriagePrompt,
+  chosen: TriageBucket,
+  hadPriorSlip: boolean
+): Verdict {
   const isAccurate = chosen === prompt.expectedBucket;
   const expectedLabel = BUCKET_LABELS[prompt.expectedBucket];
 
   if (isAccurate) {
+    const outcome: VerdictOutcome = hadPriorSlip ? "partial" : "accurate";
     return {
-      outcome: "accurate",
-      headline: `تصنيف دقيق: ${expectedLabel}`,
+      outcome,
+      headline: `ذاكرة حاضرة: ${expectedLabel}`,
       explanation: prompt.explanation,
       promptResolved: true,
     };
   }
 
+  const chosenLabel = BUCKET_LABELS[chosen];
   return {
     outcome: "revisit",
-    headline: `التصنيف الأدق هو: ${expectedLabel}`,
-    explanation: prompt.explanation,
-    promptResolved: true,
+    headline: `ليست "${chosenLabel}" تماماً`,
+    explanation:
+      "تذكّر ما ورد في البطاقة: هل هناك تعلّم من أمثلة، أم قاعدة ثابتة، أم أن الوصف لا يوضّح الآلية؟ جرّب بطاقة أخرى.",
+    promptResolved: false,
   };
 }
 
@@ -187,30 +217,32 @@ function evaluateMythFact(
   const realityLabel = prompt.reality === "myth" ? "خرافة شائعة" : "حقيقة صحيحة";
 
   return {
-    outcome: isAccurate ? "accurate" : "revisit",
+    outcome: isAccurate ? "accurate" : "partial",
     headline: isAccurate
-      ? `أحسنت! العبارة فعلاً ${realityLabel}`
-      : `انتبه: هذه العبارة ${realityLabel}`,
+      ? `تذكّر سليم! هي فعلاً ${realityLabel}`
+      : `تذكير لطيف من الشريحة: هي ${realityLabel}`,
     explanation: `${prompt.correctionTitle}. ${prompt.explanation}`,
     promptResolved: true,
   };
 }
 
-function evaluateChoice(prompt: ChoicePrompt, optionId: string): Verdict {
+function evaluateChoice(
+  prompt: ChoicePrompt,
+  optionId: string,
+  hadPriorSlip: boolean
+): Verdict {
   const chosenOption = prompt.options.find((opt) => opt.id === optionId);
   if (!chosenOption) {
     throw new Error(`Unknown option id "${optionId}".`);
   }
 
-  const correctOption = prompt.options.find(
-    (opt) => opt.id === prompt.correctOptionId
-  );
   const isAccurate = optionId === prompt.correctOptionId;
 
   if (isAccurate) {
+    const outcome: VerdictOutcome = hadPriorSlip ? "partial" : "accurate";
     return {
-      outcome: "accurate",
-      headline: "اختيار سليم",
+      outcome,
+      headline: "تماماً كما ورد في الشريحة!",
       explanation: chosenOption.rationale,
       promptResolved: true,
     };
@@ -218,9 +250,9 @@ function evaluateChoice(prompt: ChoicePrompt, optionId: string): Verdict {
 
   return {
     outcome: "revisit",
-    headline: "تحتاج إلى إعادة نظر",
-    explanation: `${chosenOption.rationale} الخيار الأفضل: ${correctOption ? correctOption.label : ""}`,
-    promptResolved: true,
+    headline: "جرّب بطاقة مجاورة",
+    explanation: chosenOption.rationale,
+    promptResolved: false,
   };
 }
 
@@ -238,8 +270,8 @@ function evaluateMatchingStep(
   if (state.matchedPairIds.includes(conceptPairId)) {
     const alreadyMatchedVerdict: Verdict = {
       outcome: "accurate",
-      headline: "تم ربط هذا الزوج مسبقاً",
-      explanation: "اختر مفهوماً آخر من القائمة لإكمال المجموعة.",
+      headline: "هذه البطاقة مكشوفة بالفعل",
+      explanation: "اقلب بطاقة أخرى لإكمال الأزواج.",
       promptResolved: false,
     };
     return { state, verdict: alreadyMatchedVerdict };
@@ -248,8 +280,8 @@ function evaluateMatchingStep(
   if (conceptPairId !== examplePairId) {
     const slipVerdict: Verdict = {
       outcome: "revisit",
-      headline: "ليس التطابق الأنسب",
-      explanation: `تأمّل وظيفة "${targetPair.concept}" الأساسية ثم جرّب ربطها بالمثال المطابق.`,
+      headline: "احفظ موضعهما وجرّب زوجاً آخر",
+      explanation: `تذكّر ارتباط "${targetPair.concept}" بما يطابقه في الشريحة.`,
       promptResolved: false,
     };
     return {
@@ -268,7 +300,7 @@ function evaluateMatchingStep(
   if (!allMatched) {
     const stepVerdict: Verdict = {
       outcome: "accurate",
-      headline: `تطابق صحيح (${updatedMatched.length} من ${prompt.pairs.length})`,
+      headline: `تطابق جميل (${updatedMatched.length} من ${prompt.pairs.length})`,
       explanation: `${targetPair.concept}: ${targetPair.example}`,
       promptResolved: false,
     };
@@ -289,8 +321,8 @@ function evaluateMatchingStep(
     outcome: finalOutcome,
     headline:
       finalOutcome === "accurate"
-        ? "اكتملت المجموعة من المحاولة الأولى!"
-        : "اكتملت المجموعة بنجاح",
+        ? "ذاكرة لمّاحة! كشفتَ كل الأزواج من المرة الأولى"
+        : "جميل! اكتملت جميع بطاقات الذاكرة",
     explanation: prompt.completionNote,
     promptResolved: true,
   };
@@ -309,7 +341,8 @@ function evaluateMatchingStep(
 
 function evaluateDraftReview(
   prompt: DraftReviewPrompt,
-  flaggedSegmentIds: readonly string[]
+  flaggedSegmentIds: readonly string[],
+  hadPriorSlip: boolean
 ): Verdict {
   const uniqueFlags = new Set(flaggedSegmentIds);
   const flawedSegments = prompt.segments.filter((s) => s.isFlawed);
@@ -328,41 +361,34 @@ function evaluateDraftReview(
     };
   });
 
-  if (caughtFlaws.length === flawedSegments.length && falseAlarms.length === 0) {
+  if (caughtFlaws.length === flawedSegments.length) {
+    const outcome: VerdictOutcome =
+      hadPriorSlip || falseAlarms.length > 0 ? "partial" : "accurate";
     return {
-      outcome: "accurate",
-      headline: "مراجعة بشرية دقيقة!",
+      outcome,
+      headline: "عين فاحصة! التقطتَ التفصيلة الدخيلة",
       explanation: prompt.takeaway,
       promptResolved: true,
       details,
     };
   }
 
-  if (caughtFlaws.length > 0) {
-    return {
-      outcome: "partial",
-      headline:
-        falseAlarms.length > 0
-          ? "التقطت الخلل، لكنك أشرت أيضاً إلى جملة سليمة"
-          : "التقطت جزءاً من الخلل وفاتك جزء آخر",
-      explanation: prompt.takeaway,
-      promptResolved: true,
-      details,
-    };
-  }
-
+  const firstFalseAlarm = falseAlarms[0];
   return {
     outcome: "revisit",
-    headline: "مرّ الخلل دون رصد!",
-    explanation: prompt.takeaway,
-    promptResolved: true,
+    headline: "هذه الجملة مطابقة للملاحظات الصفراء",
+    explanation: firstFalseAlarm
+      ? `${firstFalseAlarm.note} ابحث عن الجملة الأخرى التي أضافها النظام من عنده.`
+      : "ابحث في المسودة عن الجملة التي لم ترد في الملاحظات الصفراء.",
+    promptResolved: false,
     details,
   };
 }
 
 function evaluateSequence(
   prompt: SequencePrompt,
-  orderedStepIds: readonly string[]
+  orderedStepIds: readonly string[],
+  hadPriorSlip: boolean
 ): Verdict {
   const expected = prompt.stepsInOrder;
   if (orderedStepIds.length !== expected.length) {
@@ -382,41 +408,38 @@ function evaluateSequence(
     const accurate = orderedStepIds[idx] === step.id;
     if (accurate) exactMatches += 1;
     return {
-      label: `${idx + 1}. ${step.label}`,
-      note: accurate ? "في موضعه الصحيح" : "موضع مختلف",
+      label: step.id,
+      note: accurate ? "في موضعه الصحيح" : "يحتاج تبديلاً",
       accurate,
     };
   });
 
   if (exactMatches === expected.length) {
+    const outcome: VerdictOutcome = hadPriorSlip ? "partial" : "accurate";
     return {
-      outcome: "accurate",
-      headline: "ترتيب سليم من البداية إلى النهاية!",
+      outcome,
+      headline: "ترتيب مطابق للشريحة تماماً!",
       explanation: prompt.explanation,
       promptResolved: true,
       details,
     };
   }
 
-  const canonicalLine = expected
-    .map((s, idx) => `(${idx + 1}) ${s.label}`)
-    .join(" ثم ");
-
-  if (exactMatches >= Math.ceil(expected.length / 2)) {
+  if (exactMatches > 0) {
     return {
       outcome: "partial",
-      headline: `أصبت في ${exactMatches} من ${expected.length} مواضع`,
-      explanation: `${prompt.explanation} الترتيب الصحيح: ${canonicalLine}.`,
-      promptResolved: true,
+      headline: `ثبّتنا لك ${exactMatches} من ${expected.length} في مكانها الصحيح`,
+      explanation: "رتّب البطاقات المتبقية لتكتمل سلسلة الشريحة.",
+      promptResolved: false,
       details,
     };
   }
 
   return {
     outcome: "revisit",
-    headline: "تحتاج الخطوات إلى إعادة ترتيب",
-    explanation: `${prompt.explanation} الترتيب الصحيح: ${canonicalLine}.`,
-    promptResolved: true,
+    headline: "قاربت! لنجرّب نقطة البداية من جديد",
+    explanation: "تذكّر أي بطاقة تمثّل الخطوة الأولى على يمين الشريحة.",
+    promptResolved: false,
     details,
   };
 }

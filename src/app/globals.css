@@ -1,59 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --surface-page: #f4f8fa;
+  /* Exact slide-deck warm ivory canvas & deep royal indigo ink */
+  --surface-page: #faf6ee;
   --surface-card: #ffffff;
-  --surface-subtle: #eaf1f5;
-  --surface-navy: #13253a;
-  --text-navy-surface: #f1f6fa;
-  --text-navy-muted: #b8cadb;
-  --border-subtle: #d5e2ea;
-  --border-strong: #b4c8d6;
-  --text-primary: #122338;
-  --text-secondary: #3f556d;
-  --text-muted: #586f87;
-  --accent: #0a7569;
-  --accent-hover: #086056;
-  --accent-soft: #dff3ef;
+  --surface-subtle: #f2ece1;
+  --surface-window-bar: #e8e0cf;
+  --surface-note: #fff3cf;
+  --border-note: #ead084;
+  --surface-navy: #1e2a4a;
+  --surface-navy-band: #24335c;
+  --text-navy-surface: #faf6ee;
+  --text-navy-muted: #c8d2ea;
+  --border-subtle: #e6dfd1;
+  --border-strong: #d2c7b4;
+  --text-primary: #1e2a4a;
+  --text-secondary: #46536b;
+  --text-muted: #56647e;
+
+  /* Locked interactive CTA & focus accent (Deck Teal, 5.20:1 contrast with white) */
+  --accent: #0b7a72;
+  --accent-hover: #08635c;
+  --accent-soft: #dff3f0;
   --accent-ink: #ffffff;
-  --verdict-accurate-bg: #e1f5f0;
-  --verdict-accurate-border: #8fd4c5;
-  --verdict-accurate-text: #09594f;
-  --verdict-partial-bg: #fef4df;
-  --verdict-partial-border: #ebd08e;
-  --verdict-partial-text: #7a5108;
-  --verdict-revisit-bg: #fdece8;
-  --verdict-revisit-border: #efb6aa;
+
+  /* Slide-deck categorical top-lip & pastel medallion palette */
+  --lip-teal: #0e8a82;
+  --medallion-teal: #dff3f0;
+  --medallion-teal-ink: #096962;
+
+  --lip-coral: #e8573a;
+  --medallion-coral: #fde7e0;
+  --medallion-coral-ink: #b83b22;
+
+  --lip-gold: #ffc93c;
+  --medallion-gold: #fff3cf;
+  --medallion-gold-ink: #8a6200;
+
+  --lip-indigo: #223162;
+  --medallion-indigo: #e7eaf5;
+  --medallion-indigo-ink: #223162;
+
+  /* Feedback & highlighter surfaces (matching Slides 27-30) */
+  --verdict-accurate-bg: #dff3f0;
+  --verdict-accurate-border: #86d3c8;
+  --verdict-accurate-text: #095952;
+  --verdict-partial-bg: #fff3cf;
+  --verdict-partial-border: #ebcb75;
+  --verdict-partial-text: #6e4d00;
+  --verdict-revisit-bg: #fde7e0;
+  --verdict-revisit-border: #f2b4a4;
   --verdict-revisit-text: #8c2c19;
-  --shadow-tinted: 0 14px 34px -14px rgba(18, 35, 56, 0.09);
+  --highlight-marker: #ffc93c;
+  --highlight-marker-ink: #1e2a4a;
+
+  --shadow-tinted: 0 12px 30px -14px rgba(30, 42, 74, 0.1);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 html.dark {
-  --surface-page: #0b1522;
-  --surface-card: #122033;
-  --surface-subtle: #182a42;
-  --surface-navy: #162a42;
-  --text-navy-surface: #f1f6fa;
-  --text-navy-muted: #9fb5cc;
-  --border-subtle: #223752;
-  --border-strong: #314d70;
-  --text-primary: #edf3f8;
-  --text-secondary: #a8bdd1;
-  --text-muted: #849db5;
-  --accent: #28b8a8;
-  --accent-hover: #3cc9b9;
-  --accent-soft: #133938;
-  --accent-ink: #071917;
-  --verdict-accurate-bg: #103330;
-  --verdict-accurate-border: #236960;
-  --verdict-accurate-text: #7ce6d8;
-  --verdict-partial-bg: #332711;
-  --verdict-partial-border: #705520;
-  --verdict-partial-text: #f6cf7d;
-  --verdict-revisit-bg: #361916;
-  --verdict-revisit-border: #78332b;
-  --verdict-revisit-text: #f7aba0;
-  --shadow-tinted: 0 18px 40px -16px rgba(3, 8, 15, 0.55);
+  /* Inspired directly by Slides 1, 5, 21, 37 deep indigo slides */
+  --surface-page: #151f38;
+  --surface-card: #1e2c4c;
+  --surface-subtle: #26365c;
+  --surface-window-bar: #2a3b63;
+  --surface-note: #38301a;
+  --border-note: #756028;
+  --surface-navy: #223257;
+  --surface-navy-band: #293c68;
+  --text-navy-surface: #f6f4ee;
+  --text-navy-muted: #c4cee2;
+  --border-subtle: #2e406b;
+  --border-strong: #41588c;
+  --text-primary: #f6f4ee;
+  --text-secondary: #c4cee2;
+  --text-muted: #9aa8c7;
+
+  --accent: #2ec4b6;
+  --accent-hover: #46d4c7;
+  --accent-soft: #173c45;
+  --accent-ink: #07221f;
+
+  --lip-teal: #2ec4b6;
+  --medallion-teal: #173f47;
+  --medallion-teal-ink: #7ce8dd;
+
+  --lip-coral: #f26b4f;
+  --medallion-coral: #422429;
+  --medallion-coral-ink: #ffb3a3;
+
+  --lip-gold: #ffc93c;
+  --medallion-gold: #3d341c;
+  --medallion-gold-ink: #ffd970;
+
+  --lip-indigo: #7c93db;
+  --medallion-indigo: #283863;
+  --medallion-indigo-ink: #c7d4ff;
+
+  --verdict-accurate-bg: #153b40;
+  --verdict-accurate-border: #2b7a75;
+  --verdict-accurate-text: #8cebe0;
+  --verdict-partial-bg: #3b3118;
+  --verdict-partial-border: #856b28;
+  --verdict-partial-text: #ffe08a;
+  --verdict-revisit-bg: #3f2124;
+  --verdict-revisit-border: #873d3d;
+  --verdict-revisit-text: #ffb4a6;
+  --highlight-marker: #ffc93c;
+  --highlight-marker-ink: #151f38;
+
+  --shadow-tinted: 0 18px 38px -16px rgba(6, 10, 22, 0.6);
 }
 
 @layer base {
@@ -85,23 +141,120 @@ html.dark {
   box-shadow: var(--shadow-tinted);
 }
 
+/* Signature slide-deck cards with 5px top colored bar (Slides 6, 7, 14, 15, 19, 25, 31) */
+.deck-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-top-width: 5px;
+  box-shadow: var(--shadow-tinted);
+}
+
+.deck-lip-teal {
+  border-top-color: var(--lip-teal);
+}
+
+.deck-lip-coral {
+  border-top-color: var(--lip-coral);
+}
+
+.deck-lip-gold {
+  border-top-color: var(--lip-gold);
+}
+
+.deck-lip-indigo {
+  border-top-color: var(--lip-indigo);
+}
+
+/* Slide 26 & 36 warm sticky note */
+.deck-sticky-note {
+  background-color: var(--surface-note);
+  border: 1px solid var(--border-note);
+  box-shadow: 0 10px 24px -14px rgba(110, 77, 0, 0.18);
+}
+
+/* Responsive press & hover feedback */
 .tactile-btn {
-  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.16s ease, border-color 0.16s ease;
+  transition: transform 160ms var(--ease-out-strong),
+    background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .tactile-btn:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .deck-hover-lift:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+  .deck-hover-lift:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+/* 3D Memory Flip Cards (GPU-accelerated rotateY) */
+.memory-perspective {
+  perspective: 1100px;
+}
+
+.memory-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 360ms var(--ease-out-strong);
+}
+
+.memory-card-inner[data-flipped="false"] {
+  transform: rotateY(180deg);
+}
+
+.memory-card-inner[data-flipped="true"] {
+  transform: rotateY(0deg);
+}
+
+.memory-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.memory-face-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .tactile-btn {
+  .tactile-btn,
+  .deck-hover-lift {
     transition: none;
   }
-  .tactile-btn:active:not(:disabled) {
+  .tactile-btn:active:not(:disabled),
+  .deck-hover-lift:hover:not(:disabled),
+  .deck-hover-lift:active:not(:disabled) {
+    transform: none;
+  }
+  .memory-card-inner {
+    transform-style: flat;
+    transition: none;
+  }
+  .memory-card-inner[data-flipped="false"],
+  .memory-card-inner[data-flipped="true"] {
+    transform: none;
+  }
+  .memory-card-inner[data-flipped="false"] .memory-face-front {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .memory-card-inner[data-flipped="true"] .memory-face-back {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .memory-face-back {
     transform: none;
   }
 }

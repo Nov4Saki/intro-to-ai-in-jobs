@@ -161,29 +161,36 @@ test("every section checkpoint plays cleanly end-to-end across mixed mechanics",
   }
 });
 
-test("sequence, matching, and draft-review handle partial and revisit edge cases", () => {
+test("sequence, matching, choice, and draft-review nudge gently on slips before resolving", () => {
   const part1 = getActivity("part-1-basics");
   assert.ok(part1);
 
-  // Prompt 0 in part-1-basics is a 3-step sequence: swap steps 1 & 2 -> 1/3 accurate (< ceil(3/2)=2) -> revisit
-  const seqState = startActivity(part1);
+  // Prompt 0 in part-1-basics is a 3-step sequence: reversing keeps middle card (1 of 3) -> gentle partial nudge (unlocked!)
+  let seqState = startActivity(part1);
   const p0 = getCurrentPrompt(seqState);
   assert.equal(p0.mechanic, "sequence");
   const reversed = [...p0.stepsInOrder].reverse().map((s) => s.id);
-  // In a 3-element array reversed, middle element (index 1) stays in place -> 1 of 3 exact -> revisit
   const revRes = submitResponse(seqState, {
     mechanic: "sequence",
     orderedStepIds: reversed,
   });
-  assert.equal(revRes.verdict.outcome, "revisit");
+  assert.equal(revRes.verdict.promptResolved, false);
+  assert.equal(revRes.verdict.outcome, "partial");
 
-  // Part 4 prompt 1 is a 4-step sequence: keep first 2 right, swap last 2 -> 2 of 4 exact (>= 2) -> partial
+  // Completing the sequence right afterward resolves the prompt cleanly
+  seqState = submitResponse(revRes.state, {
+    mechanic: "sequence",
+    orderedStepIds: p0.stepsInOrder.map((s) => s.id),
+  }).state;
+  assert.equal(seqState.currentVerdict?.promptResolved, true);
+  assert.equal(seqState.currentVerdict?.outcome, "partial");
+
+  // Part 4 prompt 0 is matching: trigger one mismatch flip first, then match all pairs
   const part4 = getActivity("part-4-expectations");
   assert.ok(part4);
   let p4State = startActivity(part4);
   const matchPrompt = getCurrentPrompt(p4State);
   assert.equal(matchPrompt.mechanic, "matching");
-  // Trigger one mismatch slip first
   p4State = submitResponse(p4State, {
     mechanic: "matching",
     conceptPairId: matchPrompt.pairs[0].id,
@@ -197,17 +204,34 @@ test("sequence, matching, and draft-review handle partial and revisit edge cases
     }).state;
   }
   assert.equal(p4State.currentVerdict?.outcome, "partial");
-  p4State = advancePrompt(p4State);
 
-  const p4Seq = getCurrentPrompt(p4State);
-  assert.equal(p4Seq.mechanic, "sequence");
-  const ids = p4Seq.stepsInOrder.map((s) => s.id);
-  const twoRight = [ids[0], ids[1], ids[3], ids[2]];
-  const partialSeqRes = submitResponse(p4State, {
-    mechanic: "sequence",
-    orderedStepIds: twoRight,
+  // Part 6 prompt 1 is draft-review (Thursday lunch): tapping a safe sentence nudges without locking out
+  const part6 = getActivity("part-6-workflow");
+  assert.ok(part6);
+  let p6State = startActivity(part6);
+  const p6Seq = getCurrentPrompt(p6State);
+  assert.equal(p6Seq.mechanic, "sequence");
+  p6State = advancePrompt(
+    submitResponse(p6State, {
+      mechanic: "sequence",
+      orderedStepIds: p6Seq.stepsInOrder.map((s) => s.id),
+    }).state
+  );
+  const lunchPrompt = getCurrentPrompt(p6State);
+  assert.equal(lunchPrompt.mechanic, "draft-review");
+  const safeSeg = lunchPrompt.segments.find((s) => !s.isFlawed)!;
+  const flawedSeg = lunchPrompt.segments.find((s) => s.isFlawed)!;
+  const safeTap = submitResponse(p6State, {
+    mechanic: "draft-review",
+    flaggedSegmentIds: [safeSeg.id],
   });
-  assert.equal(partialSeqRes.verdict.outcome, "partial");
+  assert.equal(safeTap.verdict.promptResolved, false);
+  const flawTap = submitResponse(safeTap.state, {
+    mechanic: "draft-review",
+    flaggedSegmentIds: [flawedSeg.id],
+  });
+  assert.equal(flawTap.verdict.promptResolved, true);
+  assert.equal(flawTap.verdict.outcome, "partial");
 
   // Progress store check
   const storage = createMemoryStorageAdapter();

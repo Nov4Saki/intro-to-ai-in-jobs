@@ -28,17 +28,16 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "مقدمة في الذكاء الاصطناعي - الأنشطة التفاعلية للجلسة الأولى",
+  title: "مقدمة في الذكاء الاصطناعي - بطاقات الذاكرة التفاعلية للجلسة الأولى",
   description:
-    "أنشطة صفية تفاعلية لفهم الذكاء الاصطناعي ودوره في العمل اليومي: تصنيف السيناريوهات، توصيل المهام، المراجعة البشرية، وفحص المفاهيم.",
+    "بطاقات ذاكرة وألعاب تفاعلية خفيفة ترافق شرائح الجلسة الأولى لفهم الذكاء الاصطناعي ودوره في العمل اليومي.",
 };
 
 const themeInitScript = `
 (function() {
   try {
     var saved = localStorage.getItem('ai_in_jobs_theme');
-    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved === 'dark' || (!saved && prefersDark)) {
+    if (saved === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');

@@ -12,28 +12,42 @@ import {
 import type { Activity, TriageBucket, TriagePrompt } from "@/domain/types";
 import { startActivity, submitResponse } from "@/engine/activity-engine";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const BUCKETS: {
   id: TriageBucket;
   label: string;
   hint: string;
+  lipClass: string;
+  medallionBg: string;
+  medallionInk: string;
   Icon: typeof Robot;
 }[] = [
   {
     id: "ai",
     label: "ذكاء اصطناعي",
     hint: "يتعلّم من الأمثلة",
+    lipClass: "deck-lip-teal",
+    medallionBg: "bg-[var(--medallion-teal)]",
+    medallionInk: "text-[var(--medallion-teal-ink)]",
     Icon: Robot,
   },
   {
     id: "automation",
     label: "أتمتة تقليدية",
     hint: "قاعدة ثابتة",
+    lipClass: "deck-lip-indigo",
+    medallionBg: "bg-[var(--medallion-indigo)]",
+    medallionInk: "text-[var(--medallion-indigo-ink)]",
     Icon: GearSix,
   },
   {
     id: "unsure",
     label: "غير مؤكد",
-    hint: "المعلومات لا تكفي",
+    hint: "الوصف لا يكفي",
+    lipClass: "deck-lip-gold",
+    medallionBg: "bg-[var(--medallion-gold)]",
+    medallionInk: "text-[var(--medallion-gold-ink)]",
     Icon: Question,
   },
 ];
@@ -59,113 +73,139 @@ export function WarmupPreview({ prompt }: { prompt: TriagePrompt }) {
   );
 
   const [state, setState] = useState(() => startActivity(miniActivity));
-  const [selectedBucket, setSelectedBucket] = useState<TriageBucket | null>(null);
+  const [triedBuckets, setTriedBuckets] = useState<TriageBucket[]>([]);
 
   function handlePick(bucket: TriageBucket) {
     if (state.currentVerdict) return;
-    setSelectedBucket(bucket);
     const res = submitResponse(state, { mechanic: "triage", bucket });
     setState(res.state);
+    if (!res.verdict.promptResolved && !triedBuckets.includes(bucket)) {
+      setTriedBuckets((prev) => [...prev, bucket]);
+    }
   }
 
   function handleReset() {
-    setSelectedBucket(null);
+    setTriedBuckets([]);
     setState(startActivity(miniActivity));
   }
 
+  const resolved = state.currentVerdict !== null;
+
   return (
-    <motion.div
-      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      className="surface-elevated overflow-hidden rounded-2xl"
-    >
-      <div className="aspect-[16/9] w-full overflow-hidden border-b border-[var(--border-subtle)] bg-[var(--surface-subtle)]">
+    <div className="surface-elevated overflow-hidden rounded-2xl">
+      {/* Slide 1 / Slide 11 style window chrome with 3 brand dots */}
+      <div className="flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--surface-window-bar)] px-4 py-2.5">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-[var(--text-primary)]">
+            {prompt.contextTag}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5" aria-hidden="true">
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--lip-teal)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--lip-gold)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--lip-coral)]" />
+        </div>
+      </div>
+
+      {/* Authentic Slide 1 illustration filling banner seamlessly */}
+      <div className="aspect-[16/10] w-full overflow-hidden border-b border-[var(--border-subtle)] bg-[#18224a]">
         <img
-          src="https://picsum.photos/seed/modern-university-desk-light/960/540"
-          alt="مساحة عمل دراسية حديثة ومنظمة"
-          width={960}
-          height={540}
+          src={`${BASE_PATH}/deck-art/cover-inbox.png`}
+          alt="رسم توضيحي من شريحة غلاف الجلسة يوضّح فرز البريد الوارد إلى فواتير ومواعيد ودعم فني"
+          width={1115}
+          height={697}
           className="h-full w-full object-cover"
         />
       </div>
 
       <div className="p-5 sm:p-6">
         <div className="mb-3 flex items-center justify-between gap-2">
-          <span className="rounded-xl bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
-            {prompt.contextTag}
+          <span className="rounded-xl bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--medallion-teal-ink)]">
+            جرّب بطاقة سريعة قبل أن نبدأ
           </span>
-          {state.currentVerdict && (
+          {(resolved || triedBuckets.length > 0) && (
             <button
               type="button"
               onClick={handleReset}
-              className="tactile-btn inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]"
+              className="tactile-btn inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]"
             >
-              <ArrowCounterClockwise size={14} weight="regular" />
-              <span>جرّب مجدداً</span>
+              <ArrowCounterClockwise size={14} weight="bold" />
+              <span>إعادة البطاقة</span>
             </button>
           )}
         </div>
 
-        <p className="mb-4 text-base font-medium leading-relaxed text-[var(--text-primary)]">
+        <p className="mb-4 text-sm font-medium leading-relaxed text-[var(--text-primary)] sm:text-base">
           {prompt.scenario}
         </p>
 
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-          {BUCKETS.map(({ id, label, hint, Icon }) => {
-            const isChosen = selectedBucket === id;
-            const isExpected =
-              state.currentVerdict !== null && prompt.expectedBucket === id;
-            let borderStyle =
-              "border-[var(--border-subtle)] bg-[var(--surface-page)] hover:border-[var(--accent)]";
-            if (state.currentVerdict) {
-              if (isExpected) {
-                borderStyle =
-                  "border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]";
-              } else if (isChosen) {
-                borderStyle =
-                  "border-[var(--verdict-revisit-border)] bg-[var(--verdict-revisit-bg)] text-[var(--verdict-revisit-text)]";
-              } else {
-                borderStyle =
-                  "border-[var(--border-subtle)] bg-[var(--surface-page)] opacity-60";
-              }
-            }
+          {BUCKETS.map(
+            ({ id, label, hint, lipClass, medallionBg, medallionInk, Icon }) => {
+              const wasTried = triedBuckets.includes(id);
+              const isWinner = resolved && prompt.expectedBucket === id;
 
-            return (
-              <button
-                key={id}
-                type="button"
-                disabled={state.currentVerdict !== null}
-                onClick={() => handlePick(id)}
-                className={`tactile-btn flex flex-col items-start rounded-xl border p-3 text-right ${borderStyle}`}
-              >
-                <div className="mb-1 flex w-full items-center justify-between">
-                  <Icon size={18} weight="duotone" />
-                  {isExpected && <CheckCircle size={16} weight="fill" />}
-                </div>
-                <span className="text-sm font-semibold">{label}</span>
-                <span className="text-xs opacity-80">{hint}</span>
-              </button>
-            );
-          })}
+              let stateCls =
+                "deck-card deck-hover-lift bg-[var(--surface-card)] hover:border-[var(--accent)]";
+              if (isWinner) {
+                stateCls =
+                  "deck-card border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]";
+              } else if (wasTried) {
+                stateCls =
+                  "deck-card border-[var(--verdict-partial-border)] bg-[var(--surface-subtle)] opacity-60";
+              } else if (resolved) {
+                stateCls = "deck-card opacity-50";
+              }
+
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  disabled={resolved || wasTried}
+                  onClick={() => handlePick(id)}
+                  className={`tactile-btn flex flex-col items-start rounded-xl p-3 text-right ${lipClass} ${stateCls}`}
+                >
+                  <div className="mb-2 flex w-full items-center justify-between">
+                    <span
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${medallionBg} ${medallionInk}`}
+                    >
+                      <Icon size={17} weight="duotone" />
+                    </span>
+                    {isWinner && (
+                      <CheckCircle
+                        size={18}
+                        weight="fill"
+                        className="text-[var(--accent)]"
+                      />
+                    )}
+                  </div>
+                  <span className="text-sm font-bold">{label}</span>
+                  <span className="mt-0.5 text-xs text-[var(--text-secondary)]">
+                    {hint}
+                  </span>
+                </button>
+              );
+            }
+          )}
         </div>
 
-        {state.currentVerdict && (
+        {state.lastFeedback && (
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}
+            key={state.lastFeedback.headline}
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
             className={`mt-4 rounded-xl border p-3.5 text-sm leading-relaxed ${
-              state.currentVerdict.outcome === "accurate"
+              resolved
                 ? "border-[var(--verdict-accurate-border)] bg-[var(--verdict-accurate-bg)] text-[var(--verdict-accurate-text)]"
-                : "border-[var(--verdict-revisit-border)] bg-[var(--verdict-revisit-bg)] text-[var(--verdict-revisit-text)]"
+                : "border-[var(--verdict-partial-border)] bg-[var(--verdict-partial-bg)] text-[var(--verdict-partial-text)]"
             }`}
           >
-            <p className="font-semibold">{state.currentVerdict.headline}</p>
-            <p className="mt-1 opacity-95">{state.currentVerdict.explanation}</p>
+            <p className="font-bold">{state.lastFeedback.headline}</p>
+            <p className="mt-1 opacity-95">{state.lastFeedback.explanation}</p>
           </motion.div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
