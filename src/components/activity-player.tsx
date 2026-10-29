@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowCounterClockwise,
   ArrowLeft,
+  ArrowRight,
   CaretLeft,
   ChatCenteredDots,
   Check,
@@ -255,11 +257,15 @@ export function ActivityPlayer({
       {/* Top sticky bar */}
       <header className="sticky top-0 z-30 h-16 border-b border-[var(--border-subtle)] bg-[var(--surface-page)]/92 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-block rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-1.5 text-xs font-bold text-[var(--accent)]">
-              {activity.partBadge}
-            </span>
-            <span className="text-sm font-bold text-[var(--text-primary)] sm:text-base">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="tactile-btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-card)] px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            >
+              <ArrowRight size={16} weight="bold" />
+              <span>كل الأجزاء</span>
+            </Link>
+            <span className="hidden text-sm font-bold text-[var(--text-primary)] sm:inline">
               {activity.shortTitle}
             </span>
           </div>
