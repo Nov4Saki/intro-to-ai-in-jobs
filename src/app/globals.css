@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  --surface-page: #f4f8fa;
+  --surface-card: #ffffff;
+  --surface-subtle: #eaf1f5;
+  --surface-navy: #13253a;
+  --text-navy-surface: #f1f6fa;
+  --text-navy-muted: #b8cadb;
+  --border-subtle: #d5e2ea;
+  --border-strong: #b4c8d6;
+  --text-primary: #122338;
+  --text-secondary: #3f556d;
+  --text-muted: #586f87;
+  --accent: #0a7569;
+  --accent-hover: #086056;
+  --accent-soft: #dff3ef;
+  --accent-ink: #ffffff;
+  --verdict-accurate-bg: #e1f5f0;
+  --verdict-accurate-border: #8fd4c5;
+  --verdict-accurate-text: #09594f;
+  --verdict-partial-bg: #fef4df;
+  --verdict-partial-border: #ebd08e;
+  --verdict-partial-text: #7a5108;
+  --verdict-revisit-bg: #fdece8;
+  --verdict-revisit-border: #efb6aa;
+  --verdict-revisit-text: #8c2c19;
+  --shadow-tinted: 0 14px 34px -14px rgba(18, 35, 56, 0.09);
+}
+
+html.dark {
+  --surface-page: #0b1522;
+  --surface-card: #122033;
+  --surface-subtle: #182a42;
+  --surface-navy: #162a42;
+  --text-navy-surface: #f1f6fa;
+  --text-navy-muted: #9fb5cc;
+  --border-subtle: #223752;
+  --border-strong: #314d70;
+  --text-primary: #edf3f8;
+  --text-secondary: #a8bdd1;
+  --text-muted: #849db5;
+  --accent: #28b8a8;
+  --accent-hover: #3cc9b9;
+  --accent-soft: #133938;
+  --accent-ink: #071917;
+  --verdict-accurate-bg: #103330;
+  --verdict-accurate-border: #236960;
+  --verdict-accurate-text: #7ce6d8;
+  --verdict-partial-bg: #332711;
+  --verdict-partial-border: #705520;
+  --verdict-partial-text: #f6cf7d;
+  --verdict-revisit-bg: #361916;
+  --verdict-revisit-border: #78332b;
+  --verdict-revisit-text: #f7aba0;
+  --shadow-tinted: 0 18px 40px -16px rgba(3, 8, 15, 0.55);
+}
+
+@layer base {
+  html {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  }
+}
+
+.surface-elevated {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-tinted);
+}
+
+.tactile-btn {
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.tactile-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .tactile-btn {
+    transition: none;
+  }
+  .tactile-btn:active:not(:disabled) {
+    transform: none;
+  }
+}

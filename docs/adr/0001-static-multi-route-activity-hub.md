@@ -1,0 +1,3 @@
+# Static multi-route hub instead of one repository per activity
+
+We publish all classroom activities from a single static-exported repository where each Activity compiles to its own directory path (`/triage/`, `/matching/`, `/myth-or-fact/`, `/review-desk/`, `/quiz/`) alongside a root Session hub (`/`), while keeping raw trainer slide decks in `materials/` excluded from Git. Separate `github.io` repositories per activity would multiply into twenty repositories across the five-session course, and third-party classroom platforms impose childish themes, participant caps, or weak Arabic right-to-left typography. Static directory routes preserve direct per-activity links for live chat sharing while keeping the trainer's answer-key slides out of the public repository.

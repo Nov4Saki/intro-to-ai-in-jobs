@@ -1,0 +1,14 @@
+# Dependencies and build outputs
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Trainer-only source materials (contains answer keys not meant for public repo inspection)
+materials/
+
+# OS and editor artifacts
+.DS_Store
+Thumbs.db
+.vercel/
