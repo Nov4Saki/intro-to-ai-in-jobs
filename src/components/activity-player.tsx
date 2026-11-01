@@ -57,6 +57,7 @@ import { BucketSortBoard } from "./bucket-sort-board";
 import { MECHANIC_META } from "./hub-bento";
 import { CopyLinkButton, ThemeToggle } from "./theme-toggle";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const ARABIC_DIGITS = ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
 
 const LIP_CYCLE = [
@@ -265,7 +266,17 @@ export function ActivityPlayer({
               <ArrowRight size={16} weight="bold" />
               <span>كل الأجزاء</span>
             </Link>
-            <span className="hidden text-sm font-bold text-[var(--text-primary)] sm:inline">
+            <Link
+              href="/"
+              className="hidden items-center gap-2 transition-opacity hover:opacity-85 sm:flex"
+            >
+              <img
+                src={`${BASE_PATH}/assets/formal-templates/logo-transparent.png`}
+                alt="شركة حلول المستقبل للتدريب"
+                className="h-8 w-auto object-contain dark:brightness-0 dark:invert"
+              />
+            </Link>
+            <span className="hidden text-sm font-bold text-[var(--text-primary)] md:inline">
               {activity.shortTitle}
             </span>
           </div>
@@ -456,6 +467,20 @@ export function ActivityPlayer({
           )}
         </AnimatePresence>
       </main>
+
+      <footer className="border-t border-[var(--border-subtle)] bg-[var(--surface-card)] py-4 text-xs text-[var(--text-secondary)]">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <img
+              src={`${BASE_PATH}/assets/formal-templates/logo-transparent.png`}
+              alt="شركة حلول المستقبل للتدريب"
+              className="h-6 w-auto object-contain dark:brightness-0 dark:invert"
+            />
+            <span className="font-medium">شركة حلول المستقبل للتدريب</span>
+          </div>
+          <span>الذكاء الاصطناعي في العمل</span>
+        </div>
+      </footer>
     </div>
   );
 }
@@ -1645,6 +1670,17 @@ function CompletionView({
           relativePath={activity.slug}
           label="مشاركة رابط هذا النشاط"
         />
+      </div>
+
+      <div className="mt-8 flex items-center justify-center gap-2.5 opacity-85">
+        <img
+          src={`${BASE_PATH}/assets/formal-templates/logo-transparent.png`}
+          alt="شركة حلول المستقبل للتدريب"
+          className="h-7 w-auto object-contain dark:brightness-0 dark:invert"
+        />
+        <span className="text-xs font-semibold text-[var(--text-secondary)]">
+          شركة حلول المستقبل للتدريب
+        </span>
       </div>
     </motion.section>
   );

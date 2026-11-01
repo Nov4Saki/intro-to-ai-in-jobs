@@ -19,6 +19,7 @@ import { CopyLinkButton, ThemeToggle } from "@/components/theme-toggle";
 import { WarmupPreview } from "@/components/warmup-preview";
 import { HubBentoGrid, HubProgressPill } from "@/components/hub-bento";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const ARABIC_DIGITS = ["١", "٢", "٣", "٤"];
 
 const WORKFLOW_STEPS_SESSION_1 = [
@@ -100,10 +101,21 @@ export function SessionHubView({
       {/* Navigation bar, capped at 64px */}
       <header className="sticky top-0 z-30 h-16 border-b border-[var(--border-subtle)] bg-[var(--surface-page)]/92 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <span className="text-base font-bold tracking-tight text-[var(--text-primary)] sm:text-lg">
-              الذكاء الاصطناعي في العمل
-            </span>
+          <div className="flex items-center gap-3.5">
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            >
+              <img
+                src={`${BASE_PATH}/assets/formal-templates/logo-transparent.png`}
+                alt="شركة حلول المستقبل للتدريب"
+                className="h-9 w-auto object-contain dark:brightness-0 dark:invert"
+              />
+              <span className="hidden h-5 w-px bg-[var(--border-strong)] sm:inline-block" />
+              <span className="text-base font-bold tracking-tight text-[var(--text-primary)] sm:text-lg">
+                الذكاء الاصطناعي في العمل
+              </span>
+            </Link>
             <div className="hidden items-center gap-1.5 md:flex">
               {sessions.map((s, idx) => {
                 const isActive = idx === selectedSessionIndex;
@@ -171,6 +183,17 @@ export function SessionHubView({
           <div className="grid w-full grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Hero text stack */}
             <div className="w-full lg:col-span-6">
+              <div className="mb-4 flex items-center gap-3">
+                <img
+                  src={`${BASE_PATH}/assets/formal-templates/logo-transparent.png`}
+                  alt="شركة حلول المستقبل للتدريب"
+                  className="h-11 w-auto object-contain dark:brightness-0 dark:invert"
+                />
+                <span className="text-xs font-bold tracking-wide text-[var(--text-secondary)]">
+                  شركة حلول المستقبل للتدريب
+                </span>
+              </div>
+
               <div className="flex flex-wrap items-center gap-2">
                 <p className="inline-block rounded-full border border-[var(--border-strong)] bg-[var(--surface-card)] px-3.5 py-1 text-xs font-bold uppercase tracking-[0.08em] text-[var(--accent)]">
                   دورة الذكاء الاصطناعي · المدرب {session.trainerName}
@@ -291,9 +314,16 @@ export function SessionHubView({
 
       <footer className="border-t border-[var(--border-subtle)] bg-[var(--surface-card)]">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-8 text-sm text-[var(--text-secondary)] sm:flex-row sm:items-center sm:px-6 lg:px-8">
-          <p>
-            {session.title} ({session.hijriDate}) · إعداد وتدريب {session.trainerName}
-          </p>
+          <div className="flex items-center gap-3">
+            <img
+              src={`${BASE_PATH}/assets/formal-templates/logo-transparent.png`}
+              alt="شركة حلول المستقبل للتدريب"
+              className="h-8 w-auto object-contain dark:brightness-0 dark:invert"
+            />
+            <p>
+              {session.title} ({session.hijriDate}) · إعداد وتدريب {session.trainerName}
+            </p>
+          </div>
           <nav
             aria-label="روابط سريعة لأجزاء الجلسة"
             className="flex flex-wrap gap-3.5"
