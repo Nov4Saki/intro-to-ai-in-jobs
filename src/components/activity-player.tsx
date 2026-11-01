@@ -221,13 +221,21 @@ export function ActivityPlayer({
 
   function handleTapDraftSegment(segmentId: string) {
     if (state.currentVerdict) return;
+    const currentPrompt = getCurrentPrompt(state);
+    if (currentPrompt.mechanic !== "draft-review") return;
+
+    const targetSeg = currentPrompt.segments.find((s) => s.id === segmentId);
+    if (!targetSeg) return;
+
     const res = submitResponse(state, {
       mechanic: "draft-review",
       flaggedSegmentIds: [segmentId],
     });
     setState(res.state);
+
     if (
       !res.verdict.promptResolved &&
+      !targetSeg.isFlawed &&
       !verifiedSafeSegmentIds.includes(segmentId)
     ) {
       setVerifiedSafeSegmentIds((prev) => [...prev, segmentId]);
@@ -1118,7 +1126,13 @@ function DraftReviewStage({
                       </span>
                     )}
 
-                    {(isSafeChecked || (resolved && !seg.isFlawed)) && (
+                    {showFlawHighlight && (
+                      <span className="shrink-0 rounded-md bg-[var(--medallion-gold)] px-2 py-0.5 text-[11px] font-bold text-[var(--medallion-gold-ink)] shadow-xs">
+                        هلوسة تم كشفها
+                      </span>
+                    )}
+
+                    {((isSafeChecked && !seg.isFlawed) || (resolved && !seg.isFlawed)) && (
                       <CheckCircle
                         size={19}
                         weight="fill"
