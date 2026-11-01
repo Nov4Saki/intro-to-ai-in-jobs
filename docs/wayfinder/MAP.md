@@ -26,7 +26,7 @@ Deliver a complete, polished 5-session corporate AI training curriculum for *Fut
 
 ## Decisions so far
 
-- [Brand Integration & Visual Polish for Session 1](tickets/001-session-1-branding.md): Cleaned company logo into high-resolution transparent PNG and SVG, rendered crisp 16:9 widescreen formal background with subtle watermark framing, updated instructor to عبدالرحمن عيسى and date to جمادى الأولى 1448 across all 37 slides without obstructing content.
+- [Brand Integration & Visual Polish for Session 1](tickets/001-session-1-branding.md): Cleaned company logo into high-resolution transparent PNG and SVG, rendered crisp 16:9 widescreen formal background with subtle watermark framing, updated instructor to عبدالرحمن عيسى and date to جمادى الأولى 1448 across all 36 presentation slides (with mentor-only notes excluded), enlarged logo, and replaced 'موسيقى' with 'أناشيد'.
 - [Project Directory Organization](tickets/002-directory-organization.md): Structured asset hierarchy into `assets/formal templates/` and `public/assets/formal-templates/`, standardized PDF names in `materials/session_1/`, and ensured backward compatibility for local file viewing and static web exports.
 
 ---
