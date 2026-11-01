@@ -475,3 +475,68 @@ test("unified content registry lists all sessions and resolves all activities by
     assert.equal(found?.slug, act.slug);
   }
 });
+
+test("deep forensic audit: every prompt across all sessions has valid answer keys, exactly 1 flaw/odd, and non-empty options", () => {
+  for (const session of ALL_SESSIONS) {
+    const allPrompts = [
+      session.warmupPrompt,
+      ...session.activities.flatMap((a) => a.prompts),
+    ];
+
+    for (const prompt of allPrompts) {
+      if (prompt.mechanic === "draft-review") {
+        const flawed = prompt.segments.filter((s) => s.isFlawed);
+        assert.equal(
+          flawed.length,
+          1,
+          `Draft review "${prompt.id}" in session ${session.number} must have exactly 1 flawed segment, found ${flawed.length}`
+        );
+      } else if (prompt.mechanic === "odd-one-out") {
+        const odd = prompt.items.filter((i) => i.isOdd);
+        assert.equal(
+          odd.length,
+          1,
+          `Odd-one-out "${prompt.id}" in session ${session.number} must have exactly 1 odd item, found ${odd.length}`
+        );
+        assert.ok(prompt.items.length >= 3);
+      } else if (prompt.mechanic === "choice") {
+        const correct = prompt.options.find(
+          (o) => o.id === prompt.correctOptionId
+        );
+        assert.ok(
+          correct,
+          `Choice "${prompt.id}" in session ${session.number} correctOptionId "${prompt.correctOptionId}" not found in options`
+        );
+        assert.ok(prompt.options.length >= 3);
+      } else if (prompt.mechanic === "bucket-sort") {
+        assert.ok(prompt.buckets.length >= 2);
+        assert.ok(prompt.items.length >= 3);
+        const validBucketIds = new Set(prompt.buckets.map((b) => b.id));
+        for (const item of prompt.items) {
+          assert.equal(
+            validBucketIds.has(item.bucketId),
+            true,
+            `BucketSort item "${item.id}" references invalid bucket "${item.bucketId}" in prompt "${prompt.id}"`
+          );
+        }
+      } else if (prompt.mechanic === "matching") {
+        assert.ok(prompt.pairs.length >= 3);
+        const pairIds = new Set(prompt.pairs.map((p) => p.id));
+        assert.equal(pairIds.size, prompt.pairs.length, "Pair IDs must be unique");
+      } else if (prompt.mechanic === "sequence") {
+        assert.ok(prompt.stepsInOrder.length >= 3);
+        const stepIds = new Set(prompt.stepsInOrder.map((s) => s.id));
+        assert.equal(
+          stepIds.size,
+          prompt.stepsInOrder.length,
+          "Step IDs must be unique"
+        );
+      } else if (prompt.mechanic === "myth-fact") {
+        assert.ok(
+          prompt.reality === "myth" || prompt.reality === "fact",
+          `MythFact "${prompt.id}" has invalid reality "${prompt.reality}"`
+        );
+      }
+    }
+  }
+});
