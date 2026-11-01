@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getActivity, listActivities } from "@/content/session-1";
+import { findActivity, listAllActivities } from "@/content";
 import { ActivityPlayer } from "@/components/activity-player";
 
 export function generateStaticParams() {
-  return listActivities().map((activity) => ({
+  return listAllActivities().map((activity) => ({
     slug: activity.slug,
   }));
 }
@@ -15,7 +15,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const activity = getActivity(slug);
+  const activity = findActivity(slug);
   if (!activity) {
     return {
       title: "النشاط غير موجود",
@@ -23,7 +23,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${activity.title} - مقدمة في الذكاء الاصطناعي`,
+    title: `${activity.title} - الذكاء الاصطناعي في العمل`,
     description: activity.subtitle,
   };
 }
@@ -34,7 +34,7 @@ export default async function ActivityPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const activity = getActivity(slug);
+  const activity = findActivity(slug);
   if (!activity) {
     notFound();
   }

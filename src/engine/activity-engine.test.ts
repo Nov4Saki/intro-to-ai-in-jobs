@@ -16,6 +16,11 @@ import {
 } from "./progress-store.ts";
 import { SESSION_1, getActivity, listActivities } from "../content/session-1.ts";
 import { SESSION_2, listActivitiesSession2 } from "../content/session-2.ts";
+import {
+  ALL_SESSIONS,
+  findActivity,
+  listAllActivities,
+} from "../content/index.ts";
 
 function collectFiles(dir: string): string[] {
   const results: string[] = [];
@@ -331,5 +336,20 @@ test("session 2 curriculum exists and contains valid multi-mechanic activities",
         `Declared mechanic "${declared}" missing from prompts in "${activity.slug}"`
       );
     }
+  }
+});
+
+test("unified content registry lists all sessions and resolves all activities by slug", () => {
+  assert.equal(ALL_SESSIONS.length, 2);
+  const allActs = listAllActivities();
+  assert.equal(allActs.length, 14);
+
+  const slugs = new Set(allActs.map((a) => a.slug));
+  assert.equal(slugs.size, 14, "Slugs across sessions must be unique");
+
+  for (const act of allActs) {
+    const found = findActivity(act.slug);
+    assert.ok(found, `Expected findActivity to find "${act.slug}"`);
+    assert.equal(found?.slug, act.slug);
   }
 });
