@@ -28,12 +28,12 @@ Deliver a complete, polished 5-session corporate AI training curriculum for *Fut
 
 - [Brand Integration & Visual Polish for Session 1](tickets/001-session-1-branding.md): Cleaned company logo into high-resolution transparent PNG and SVG, rendered crisp 16:9 widescreen formal background with subtle watermark framing, updated instructor to عبدالرحمن عيسى and date to جمادى الأولى 1448 across all 36 presentation slides (with mentor-only notes excluded), enlarged logo, and replaced 'موسيقى' with 'أناشيد'.
 - [Project Directory Organization](tickets/002-directory-organization.md): Structured asset hierarchy into `assets/formal templates/` and `public/assets/formal-templates/`, standardized PDF names in `materials/session_1/`, and ensured backward compatibility for local file viewing and static web exports.
+- [Session 2 Curriculum & Interactive Architecture](tickets/003-session-2-curriculum-design.md): Built 30-slide presentation deck `sessions/session_2/ai-session-2-slides-ar.html` and 30-page high-DPI PDF `materials/session_2/ai-session-2-slides-ar.pdf` with formal branding, enlarged logo, instructor عبدالرحمن عيسى, date جمادى الأولى 1448, and 6 multi-mechanic interactive stations in `src/content/session-2.ts`.
 
 ---
 
 ## Not yet specified
 
-- **Session 2 Curriculum & Stations**: Machine Learning & Generative AI fundamentals (concepts, text/image generation demos, prompt-to-result mechanics).
 - **Session 3 Workplace AI Tools**: Specialized tools in workplace workflows (spreadsheets, document summarization, email classification, automation).
 - **Session 4 Practical Workflows & Prompt Engineering**: Advanced prompting patterns, multi-step chains, error handling, and human-in-the-loop review.
 - **Session 5 Governance, Policy & Future Trends**: Corporate policies, data privacy/leakage safeguards, intellectual property, and ethical AI adoption.

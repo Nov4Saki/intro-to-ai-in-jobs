@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تعلّم الآلة والذكاء الاصطناعي التوليدي  -  الجلسة الثانية</title>
+<style>
+:root{
+  --ink:#1e2a4a; --ink2:#2c3c68; --teal:#0e8a82; --teal-b:#2ec4b6; --teal-t:#dff3f0;
+  --coral:#f26b4f; --coral-d:#c8442a; --coral-t:#fde7e0; --sun:#ffc93c; --sun-t:#fff3cf; --sun-d:#8a6400;
+  --navy-t:#e7eaf5; --bg:#fbf8f2; --muted:#5b6479; --text:#37415b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(min(96vw,170vh)/80)}
+body{font-family:"Segoe UI",Tahoma,"Noto Sans Arabic","DejaVu Sans",Arial,sans-serif;background:#0f172c;color:var(--text);padding:2vh 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+b{color:inherit}
+
+/* ---- slide frame: 80rem x 45rem = 16:9 ---- */
+.slide{position:relative;width:80rem;height:45rem;margin:0 auto 2vh;background:var(--bg) url('../../assets/formal templates/background.jpg') no-repeat center center / cover;overflow:hidden;
+  box-shadow:0 .6rem 2rem rgba(0,0,0,.35);padding:3rem 4.5rem 3.4rem;display:flex;flex-direction:column}
+.slide.dark{background:linear-gradient(135deg,rgba(24,34,74,0.92) 0%,rgba(37,54,106,0.95) 100%), url('../../assets/formal templates/background.jpg') no-repeat center center / cover;color:#fff}
+.slide.teal{background:linear-gradient(135deg,rgba(10,118,111,0.92) 0%,rgba(18,160,149,0.95) 100%), url('../../assets/formal templates/background.jpg') no-repeat center center / cover;color:#fff}
+
+/* Formal Branding Logo Styles */
+.slide-brand{position:absolute;left:4.5rem;top:1.5rem;z-index:20;display:flex;align-items:center;pointer-events:none}
+.brand-logo{height:4.2rem;width:auto;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.1))}
+.dark .brand-logo,.teal .brand-logo{filter:brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0,0,0,.4))}
+header{padding-inline-end:18rem}
+.cover-brand{margin-bottom:1.8rem}
+.cover-logo{height:6.8rem;width:auto;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,.45))}
+.eyebrow{font-size:1.05rem;letter-spacing:.16em;text-transform:uppercase;font-weight:bold;color:var(--teal);margin-bottom:.5rem}
+h2{font-size:2.8rem;line-height:1.1;color:var(--ink)}
+.dark h2,.teal h2{color:#fff}.dark .eyebrow,.teal .eyebrow{color:var(--sun)}
+.content{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:1.8rem;padding-top:1rem}
+.content.split{flex-direction:row;align-items:center;gap:3rem}
+.content.split.top{align-items:stretch}
+.content.center-all{align-items:center;text-align:center;gap:1.4rem}
+.footer{position:absolute;left:4.5rem;right:4.5rem;bottom:1.2rem;display:flex;justify-content:space-between;font-size:.9rem;color:#8b91a3}
+.dark .footer,.teal .footer,.cover .footer{color:rgba(255,255,255,.65)}
+.footer .pn{font-weight:bold}
+
+.statement{font-size:3rem;line-height:1.22;font-weight:bold;max-width:60rem}
+.statement.c{text-align:center;font-size:5rem}
+.mark{color:var(--sun)}
+.teal .mark{color:#fff;background:rgba(255,255,255,.18);border-radius:.4rem;padding:0 .4rem}
+.subline{font-size:1.6rem;line-height:1.35;color:var(--muted)}
+.dark .subline,.teal .subline{color:rgba(255,255,255,.9)}
+.subline.center{text-align:center}
+.slide>.subline{margin-top:.6rem}
+.lead{font-size:1.8rem;color:var(--ink)}
+.big{font-size:2.3rem;line-height:1.25;font-weight:bold;color:var(--ink)}
+.pill{display:inline-block;padding:.5rem 1.4rem;border-radius:2rem;font-weight:bold;font-size:1.35rem}
+.pill.navy{background:var(--ink);color:#fff}
+
+/* check / cross / warn marks */
+.chk,.cross{flex:none;width:2.2rem;height:2.2rem;border-radius:50%;position:relative;display:block}
+.chk{background:var(--teal)}
+.chk::after{content:"";position:absolute;left:.78rem;top:.34rem;width:.6rem;height:1.1rem;border:solid #fff;border-width:0 .25rem .25rem 0;transform:rotate(45deg)}
+.cross{background:var(--coral)}
+.cross::before,.cross::after{content:"";position:absolute;left:.5rem;top:.98rem;width:1.2rem;height:.25rem;background:#fff;border-radius:2px}
+.cross::before{transform:rotate(45deg)}.cross::after{transform:rotate(-45deg)}
+.warn{flex:none;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--sun);color:var(--ink);font-weight:bold;font-size:1.4rem;display:grid;place-items:center}
+.warn.lgw{width:3rem;height:3rem;font-size:2rem}
+
+/* icons */
+.ic{flex:none;width:4.6rem;height:4.6rem;border-radius:50%;display:grid;place-items:center;background:var(--teal-t)}
+.ic svg{width:2.8rem;height:2.8rem}
+.ic.lg{width:6rem;height:6rem}.ic.lg svg{width:3.8rem;height:3.8rem}
+.coral .ic{background:var(--coral-t)}.sun .ic{background:var(--sun-t)}.navy .ic{background:var(--navy-t)}
+
+/* cards */
+.cards{display:grid;gap:1.6rem}
+.c1{grid-template-columns:1fr;flex:1}.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}
+.card{background:#fff;border-radius:1.2rem;padding:1.8rem 1.6rem;box-shadow:0 .2rem 1rem rgba(30,42,74,.09);border-top:.5rem solid var(--teal);display:flex;flex-direction:column;gap:.9rem}
+.card.coral{border-top-color:var(--coral)}.card.sun{border-top-color:var(--sun)}.card.navy{border-top-color:var(--ink)}
+.card h3{font-size:1.75rem;color:var(--ink);line-height:1.15}
+.card p{font-size:1.4rem;line-height:1.35;color:var(--text)}
+.card.wide{padding:2.2rem 2.2rem;gap:1rem}
+.card.wide h3{font-size:2.1rem}.card.wide p{font-size:1.55rem}
+.lab{font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;font-weight:bold;color:var(--teal);margin-top:.5rem}
+.card.coral .lab{color:var(--coral-d)}.card.sun .lab{color:var(--sun-d)}.card.navy .lab{color:var(--ink2)}
+.ex{margin-top:.6rem;background:var(--bg);border-radius:.8rem;padding:1rem 1.2rem;font-size:1.4rem;line-height:1.5;color:var(--ink)}
+.ex b{display:block;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.3rem}
+.card.coral .ex b{color:var(--coral-d)}.card.sun .ex b{color:var(--sun-d)}.card.navy .ex b{color:var(--ink2)}
+
+/* objectives */
+.obj{list-style:none;display:flex;flex-direction:column;gap:1rem}
+.obj li{display:flex;gap:1.4rem;align-items:center;font-size:1.8rem;line-height:1.25;color:var(--ink);background:#fff;border-radius:1rem;padding:.95rem 1.5rem;box-shadow:0 .2rem .8rem rgba(30,42,74,.08)}
+.obj .num{flex:none;width:3rem;height:3rem;border-radius:50%;display:grid;place-items:center;font-weight:bold;font-size:1.5rem;background:var(--teal);color:#fff}
+.obj li.coral .num{background:var(--coral)}.obj li.sun .num{background:var(--sun);color:var(--ink)}.obj li.navy .num{background:var(--ink)}
+
+/* agenda */
+.agenda{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:1rem 1.6rem}
+.ag{display:grid;grid-template-columns:4.2rem 1fr auto;gap:1rem;align-items:center;background:#fff;border-radius:1rem;padding:1rem 1.3rem;box-shadow:0 .2rem .8rem rgba(30,42,74,.08);border-inline-start:.5rem solid var(--teal)}
+.ag .t{font-size:1.2rem;color:var(--muted);font-weight:bold}
+.ag .l{font-size:1.45rem;color:var(--ink);line-height:1.2}
+.ag .m{background:var(--ink);color:#fff;border-radius:2rem;font-weight:bold;font-size:1.1rem;padding:.3rem .9rem;white-space:nowrap}
+.ag.brk{background:var(--sun-t);border-inline-start-color:var(--sun)}.ag.brk .m{background:var(--sun);color:var(--ink)}
+.total{text-align:center}
+
+/* steps */
+.steps{display:flex;align-items:stretch;gap:.8rem}
+.step{flex:1;background:#fff;border-radius:1.2rem;padding:1.6rem 1.3rem 1.8rem;box-shadow:0 .2rem 1rem rgba(30,42,74,.09);border-top:.5rem solid var(--teal);display:flex;flex-direction:column;align-items:center;text-align:center;gap:.9rem;position:relative}
+.step.coral{border-top-color:var(--coral)}.step.sun{border-top-color:var(--sun)}.step.navy{border-top-color:var(--ink)}
+.step.coral .ic{background:var(--coral-t)}.step.sun .ic{background:var(--sun-t)}.step.navy .ic{background:var(--navy-t)}
+.step h3{font-size:1.75rem;color:var(--ink);line-height:1.15}
+.step p{font-size:1.4rem;line-height:1.35;color:var(--text)}
+.sn{position:absolute;top:-1.2rem;inset-inline-start:1.2rem;width:2.4rem;height:2.4rem;border-radius:50%;background:var(--ink);color:var(--sun);font-weight:bold;font-size:1.3rem;display:grid;place-items:center}
+.chev{flex:none;display:grid;place-items:center;width:1.8rem}
+.chev svg{width:1.6rem;height:2.6rem;transform:scaleX(-1)}
+
+/* compare table */
+.vs{display:grid;grid-template-columns:13rem 1fr 1fr;gap:.9rem}
+.vh{border-radius:.9rem .9rem 0 0;color:#fff;font-weight:bold;font-size:1.8rem;text-align:center;padding:1rem}
+.vh.navy{background:var(--ink)}.vh.teal{background:var(--teal)}
+.vl{display:flex;align-items:center;font-weight:bold;font-size:1.2rem;letter-spacing:.1em;text-transform:uppercase;color:var(--coral-d)}
+.vc{background:#fff;border-radius:.9rem;padding:1.5rem 1.2rem;font-size:1.65rem;color:var(--ink);text-align:center;box-shadow:0 .2rem .8rem rgba(30,42,74,.08);display:grid;place-items:center}
+
+/* callout */
+.callout{flex:1;background:var(--ink);color:#fff;border-radius:1.4rem;padding:2.4rem 2.6rem;display:flex;flex-direction:column;gap:.6rem;border-inline-start:.6rem solid var(--sun)}
+.callout-t{font-size:1.7rem;color:rgba(255,255,255,.9)}
+.callout-b{font-size:3.4rem;font-weight:bold;color:var(--sun);line-height:1.1}
+
+/* break */
+.bigicon svg{width:11rem;height:11rem}
+.timepill{background:rgba(255,255,255,.18);border-radius:3rem;padding:.6rem 2rem;font-size:2rem;font-weight:bold}
+
+/* prompt breakdown */
+.prompt-box{background:#fff;border-radius:1.2rem;padding:1.8rem 2rem;border:2px solid #cbd5e1;box-shadow:0 .3rem 1.2rem rgba(30,42,74,.08);display:flex;flex-direction:column;gap:1.2rem}
+.prompt-tag{display:inline-block;padding:.3rem .9rem;border-radius:.6rem;font-weight:bold;font-size:1.2rem}
+.p-role{background:var(--teal-t);color:var(--teal)}
+.p-task{background:var(--sun-t);color:var(--sun-d)}
+.p-rule{background:var(--coral-t);color:var(--coral-d)}
+.p-fmt{background:var(--navy-t);color:var(--ink2)}
+.prompt-text{font-size:1.6rem;line-height:1.6;color:var(--ink)}
+
+/* cover */
+.slide.cover{background:linear-gradient(135deg,rgba(24,34,74,0.90) 0%,rgba(37,54,106,0.94) 100%), url("../../assets/formal templates/background.jpg") no-repeat center center / cover;padding:0;color:#fff;display:block}
+.cover .left{position:absolute;right:4.5rem;top:3.5rem;bottom:4rem;width:38rem;display:flex;flex-direction:column;justify-content:center}
+.cover .tag{align-self:flex-start;border:2px solid var(--sun);color:var(--sun);padding:.4rem 1rem;border-radius:2rem;font-size:1.1rem;margin-bottom:1.4rem;font-weight:bold}
+.cover h1{font-size:3.3rem;line-height:1.35}
+.cover .gold-rule{width:5rem;height:.35rem;background:var(--coral);margin:1.4rem 0 1.2rem;border-radius:2px}
+.cover .sub{font-size:1.6rem;line-height:1.5;color:#dfe7f5}
+.cover .meta{margin-top:2.2rem;display:flex;gap:2.4rem;font-size:1.1rem;color:#c3d1de}
+.cover .meta b{display:block;color:#fff;font-size:1.25rem;margin-top:.3rem;border-bottom:2px dashed rgba(255,255,255,.55);padding-bottom:.25rem;min-width:11rem}
+.cover .art{position:absolute;left:2.5rem;top:3.4rem;width:34rem;height:32.1rem;overflow:visible}
+
+/* typography passes */
+h2,h3{line-height:1.35}
+p{line-height:1.55}
+.statement{line-height:1.45}
+.statement.c,.dark .statement.c{line-height:1.3}
+.card p,.step p{line-height:1.55}
+.c4 .card,.c3 .card{padding:2.2rem 1.6rem;gap:1rem}
+.c4 .card h3,.c3 .card h3{font-size:1.9rem}
+.c4 .card p{font-size:1.45rem}.c3 .card p{font-size:1.55rem}
+
+@page{size:13.333in 7.5in;margin:0}
+@media print{
+  html{font-size:16px}
+  html,body{width:13.333in;margin:0;padding:0;background:#fff}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .slide{width:13.333in;height:7.49in;margin:0;box-shadow:none;break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid}
+  .slide:last-of-type{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<!-- ===== 1 ===== -->
+<section class="slide cover">
+  <div class="left">
+    <div class="cover-brand">
+      <img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="cover-logo">
+    </div>
+    <div class="tag">دورة تدريبية في الذكاء الاصطناعي · الجلسة ٢ من ٥</div>
+    <h1>تعلّم الآلة والذكاء الاصطناعي التوليدي</h1>
+    <div class="gold-rule"></div>
+    <div class="sub">كيف تتعلّم الآلة، ثورة التوليد، وأسرار صياغة المطالبة الفعّالة في العمل اليومي</div>
+    <div class="meta"><div>المدرّب<b>عبدالرحمن عيسى</b></div><div>التاريخ<b>جمادى الأولى 1448</b></div></div>
+  </div>
+  <svg class="art" style="overflow:visible;direction:ltr" viewBox="0 0 560 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of Generative AI prompt window and neural pattern synthesis">
+    <defs><clipPath id="win2clip"><rect x="70" y="60" width="420" height="320" rx="14"/></clipPath></defs>
+    <circle cx="280" cy="240" r="230" fill="#fff" opacity=".04"/>
+    <rect x="80" y="72" width="420" height="320" rx="14" fill="#000" opacity=".22"/>
+    <g clip-path="url(#win2clip)" font-family="Arial,Helvetica,sans-serif">
+      <rect x="70" y="60" width="420" height="320" fill="#faf6ee"/>
+      <rect x="70" y="60" width="420" height="38" fill="#e6dfcd"/>
+      <circle cx="92" cy="79" r="6" fill="#ffc93c"/><circle cx="112" cy="79" r="6" fill="#2ec4b6"/><circle cx="132" cy="79" r="6" fill="#9aa6b6"/>
+      <text x="160" y="84" font-size="13" font-weight="bold" fill="#1e2a4a">محرر الأوامر التوليدية · Prompt Studio</text>
+      <rect x="90" y="115" width="380" height="65" rx="8" fill="#fff" stroke="#ccd5e0" stroke-width="1.5"/>
+      <text x="110" y="142" font-size="12" fill="#0e8a82" font-weight="bold">الأمر:</text>
+      <text x="150" y="142" font-size="12" fill="#1e2a4a">لخّص التقرير الإداري التالي في ثلاثة بنود رئيسية...</text>
+      <rect x="90" y="195" width="380" height="150" rx="8" fill="#eef5f4" stroke="#2ec4b6" stroke-width="1.5"/>
+      <text x="110" y="225" font-size="12" fill="#2ec4b6" font-weight="bold">المخرجات التوليدية الذكية:</text>
+      <rect x="110" y="240" width="340" height="10" rx="4" fill="#0e8a82" opacity=".7"/>
+      <rect x="110" y="260" width="300" height="10" rx="4" fill="#0e8a82" opacity=".5"/>
+      <rect x="110" y="280" width="260" height="10" rx="4" fill="#0e8a82" opacity=".4"/>
+      <circle cx="435" cy="315" r="14" fill="#ffc93c"/>
+      <path d="M430 315l4 4 8-9" fill="none" stroke="#1e2a4a" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </svg>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١ من ٣٠</span></footer>
+</section>
+<!-- ===== 2 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">مرحبًا بكم في الجلسة الثانية</div><h2>ماذا ستتعلمون اليوم</h2></header>
+  <div class="content"><ol class="obj">
+    <li class="teal"><span class="num">١</span><span>فهم كيف تتعلّم الآلة من الأمثلة بدلاً من كتابة القواعد باليد</span></li>
+    <li class="coral"><span class="num">٢</span><span>معرفة أثر جودة البيانات وتنوعها على نتائج النماذج (Garbage In, Garbage Out)</span></li>
+    <li class="sun"><span class="num">٣</span><span>التمييز العملي بين الذكاء التمييزي/التصنيفي والذكاء التوليدي</span></li>
+    <li class="navy"><span class="num">٤</span><span>إتقان المكونات الأربعة لصياغة مطالبة احترافية في بيئة العمل</span></li>
+    <li class="teal"><span class="num">٥</span><span>كشف الهلوسة والتحقق من صحة المخرجات قبل اعتمادها رسمياً</span></li>
+  </ol></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢ من ٣٠</span></footer>
+</section>
+<!-- ===== 3 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">خطة اللقاء</div><h2>ساعتان معًا</h2></header>
+  <div class="content"><div class="agenda">
+    <div class="ag "><div class="t">٠:٠٠</div><div class="l">مقدمة ومراجعة الجلسة الأولى</div><div class="m">١٠ دقائق</div></div>
+    <div class="ag "><div class="t">٠:١٠</div><div class="l">كيف تتعلّم الآلة؟</div><div class="m">٢٠ دقيقة</div></div>
+    <div class="ag "><div class="t">٠:٣٠</div><div class="l">ثورة الذكاء التوليدي</div><div class="m">٢٠ دقيقة</div></div>
+    <div class="ag "><div class="t">٠:٥٠</div><div class="l">تشريح المطالبة الفعّالة</div><div class="m">٢٠ دقيقة</div></div>
+    <div class="ag brk"><div class="t">١:١٠</div><div class="l">استراحة وتنشيط</div><div class="m">١٠ دقائق</div></div>
+    <div class="ag "><div class="t">١:٢٠</div><div class="l">الهلوسة والحدود في بيئة العمل</div><div class="m">٢٠ دقيقة</div></div>
+    <div class="ag "><div class="t">١:٤٠</div><div class="l">نشاط عملي وتطبيقات</div><div class="m">١٥ دقيقة</div></div>
+    <div class="ag "><div class="t">١:٥٥</div><div class="l">خلاصة وأسئلة</div><div class="m">٥ دقائق</div></div>
+  </div><div class="total"><span class="pill navy">الإجمالي: ١٢٠ دقيقة من التعلم التفاعلي</span></div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٣ من ٣٠</span></footer>
+</section>
+<!-- ===== 4 ===== -->
+<section class="slide teal"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">سؤال البداية</div><h2>قبل أن نبدأ</h2></header>
+  <div class="content split">
+    <div class="side-text">
+      <div class="statement">لو أردتم تدريب موظف جديد على تدقيق الفواتير...</div>
+      <p class="subline">هل الأفضل كتابة كتيب ضخم يحتوي آلاف الشروط التفصيلية، أم عرض مئات الفواتير الصحيحة والخاطئة السابقة ليشاهد الأنماط بنفسه؟</p>
+    </div>
+    <div class="side"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="6" width="32" height="36" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M16 16h16M16 24h16M16 32h10" stroke="#0e8a82" stroke-width="2.5" stroke-linecap="round"/><circle cx="34" cy="32" r="5" fill="#ffc93c"/></svg></div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٤ من ٣٠</span></footer>
+</section>
+<!-- ===== 5 ===== -->
+<section class="slide dark"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ١ · الأساسيات</div><h2>ما هو تعلّم الآلة؟</h2></header>
+  <div class="content">
+    <div class="statement">تعلّم الآلة أسلوب يقوم فيه الحاسوب بـ <span class="mark">استنتاج القواعد بنفسه</span> من خلال فحص كميات ضخمة من البيانات السابقة.</div>
+    <p class="subline">بدلاً من أن نبرمج كل حالة يدوياً، نزوّد النظام بأمثلة مصنفة وهو يستخلص النموذج الرياضي الرابط بينها.</p>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٥ من ٣٠</span></footer>
+</section>
+<!-- ===== 6 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ١ · الأساسيات</div><h2>مراحل تعلّم الآلة في بيئة العمل</h2></header>
+  <div class="content">
+    <div class="steps">
+      <div class="step teal"><div class="sn">١</div><div class="ic lg"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="36" height="32" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M14 18h20M14 26h20M14 34h12" stroke="#0e8a82" stroke-width="2.5" stroke-linecap="round"/></svg></div><h3>جمع الأمثلة</h3><p>تغذية النظام بآلاف السجلات والمستندات السابقة.</p></div>
+      <div class="chev"><svg viewBox="0 0 24 40" aria-hidden="true"><path d="M5 5l14 15L5 35" fill="none" stroke="#f26b4f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step coral"><div class="sn">٢</div><div class="ic lg"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="16" cy="16" r="6" fill="#f26b4f"/><circle cx="32" cy="16" r="6" fill="#ffc93c"/><circle cx="24" cy="32" r="6" fill="#0e8a82"/><path d="M16 16l8 16 8-16" stroke="#1e2a4a" stroke-width="2" fill="none"/></svg></div><h3>استخراج الأنماط</h3><p>حساب الأوزان والعلاقات الإحصائية بين المعطيات والنتائج.</p></div>
+      <div class="chev"><svg viewBox="0 0 24 40" aria-hidden="true"><path d="M5 5l14 15L5 35" fill="none" stroke="#f26b4f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step sun"><div class="sn">٣</div><div class="ic lg"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l6 14 14 6-14 6-6 14-6-14-14-6 14-6z" fill="#ffc93c" stroke="#1e2a4a" stroke-width="2"/></svg></div><h3>التطبيق والتنبؤ</h3><p>استخدام النموذج على معاملة جديدة لم يشاهدها من قبل.</p></div>
+    </div>
+    <p class="subline center">كلما زادت جودة الأمثلة وتنوعها، كانت النتيجة أكثر دقة وفائدة.</p>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٦ من ٣٠</span></footer>
+</section>
+<!-- ===== 7 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ١ · الأساسيات</div><h2>البيانات هي الوقود الأساسي</h2></header>
+  <div class="content"><div class="cards c3">
+    <div class="card teal"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="10" width="36" height="28" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><circle cx="18" cy="24" r="5" fill="#0e8a82"/><circle cx="30" cy="24" r="5" fill="#2ec4b6"/></svg></div><h3>حجم البيانات</h3><p>يحتاج النموذج أمثلة كافية لتغطية الحالات الشائعة والمعتادة في العمل.</p></div>
+    <div class="card coral"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 38h32M12 28l10-14 8 8 10-12" fill="none" stroke="#f26b4f" stroke-width="3" stroke-linecap="round"/></svg></div><h3>تنوع البيانات</h3><p>إذا كانت الأمثلة من نوع واحد فقط، سيفشل النموذج عند مواجهة أي استثناء.</p></div>
+    <div class="card sun"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l4 10h11l-9 7 3 11-9-7-9 7 3-11-9-7h11z" fill="#ffc93c" stroke="#1e2a4a" stroke-width="2"/></svg></div><h3>نظافة ودقة البيانات</h3><p>المدخلات المشوهة تقود حتماً لقرارات خاطئة (Garbage In, Garbage Out).</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٧ من ٣٠</span></footer>
+</section>
+<!-- ===== 8 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ١ · الأساسيات</div><h2>مثال واقعي: فرز فواتير المشتريات</h2></header>
+  <div class="content split">
+    <div class="side-text">
+      <div class="lead">كيف تفرز المنظومة الفواتير تلقائياً؟</div>
+      <ul class="plain">
+        <li><strong>المُدخل:</strong> صورة الفاتورة واسم المورّد والمبلغ والبنود.</li>
+        <li><strong>التدريب السابق:</strong> عشرة آلاف فاتورة مصنفة تاريخياً حسب الأقسام.</li>
+        <li><strong>النتيجة:</strong> اقتراح القسم المالي المختص ونسبة الثقة في التوجيه.</li>
+      </ul>
+    </div>
+    <div class="card navy wide"><div class="lab">قاعدة ذهبية</div><h3>النموذج لا يفهم المحاسبة كما يفهمها الإنسان</h3><p>هو فقط يلاحظ أن كلمة «صيانة شبكات» ارتبطت بنسبة 98% بقسم تقنية المعلومات في السجلات السابقة فيقترح توجيهها هناك.</p></div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٨ من ٣٠</span></footer>
+</section>
+<!-- ===== 9 ===== -->
+<section class="slide dark"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٢ · النقلة النوعية</div><h2>ثورة الذكاء الاصطناعي التوليدي</h2></header>
+  <div class="content">
+    <div class="statement">الذكاء التمييزي يصنّف ما يراه... والذكاء التوليدي <span class="mark">يبتكر شيئاً جديداً</span> لم يكن موجوداً من قبل.</div>
+    <p class="subline">من التعرف على المعاملات إلى صياغة الرسائل، تلخيص التقارير، وتوليد الأفكار الإبداعية في ثوانٍ معدودة.</p>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٩ من ٣٠</span></footer>
+</section>
+<!-- ===== 10 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٢ · النقلة النوعية</div><h2>التمييزي مقابل التوليدي</h2></header>
+  <div class="content"><div class="vs">
+    <div></div><div class="vh navy">الذكاء التمييزي (التصنيفي)</div><div class="vh teal">الذكاء التوليدي (الإنشائي)</div>
+    <div class="vl">السؤال الرئيسي</div><div class="vc">«ما هو هذا الشيء؟»</div><div class="vc">«اصنع لي شيئاً شبيهاً بهذا!»</div>
+    <div class="vl">المخرجات</div><div class="vc">تصنيف، رقم، أو قرار نعم/لا</div><div class="vc">نص كامل، صورة، بريد، أو كود</div>
+    <div class="vl">مثال في العمل</div><div class="vc">تحديد هل البريد احتيالي أم سليم</div><div class="vc">صياغة رد مهني واعتذار رسمي لعميل</div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٠ من ٣٠</span></footer>
+</section>
+<!-- ===== 11 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٢ · النقلة النوعية</div><h2>كيف تعمل النماذج اللغوية الكبيرة (LLMs)؟</h2></header>
+  <div class="content"><div class="cards c3">
+    <div class="card teal"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 18h24M12 26h16" stroke="#0e8a82" stroke-width="3" stroke-linecap="round"/></svg></div><h3>التنبؤ بالكلمة التالية</h3><p>يتوقع النموذج الكلمة الأكثر احتمالاً للسياق، كلمة تلو الأخرى، بسرعة فائقة.</p></div>
+    <div class="card coral"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16" fill="none" stroke="#f26b4f" stroke-width="3"/><path d="M24 16v8l6 4" stroke="#f26b4f" stroke-width="2.5" fill="none"/></svg></div><h3>فهم السياق الممتد</h3><p>لا ينظر للكلمة السابقة فقط، بل يربط بين فقرات المستند بالكامل لاستيعاب الموضوع.</p></div>
+    <div class="card sun"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="10" width="32" height="28" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M16 24h16" stroke="#e0a800" stroke-width="3"/></svg></div><h3>ليس محرك بحث</h3><p>هو لا ينسخ من قاعدة بيانات ثابتة، بل يعيد تركيب المفاهيم بأسلوب لغوي أصيل.</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١١ من ٣٠</span></footer>
+</section>
+<!-- ===== 12 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٢ · النقلة النوعية</div><h2>تطبيقات التوليد في بيئات الأعمال</h2></header>
+  <div class="content"><div class="cards c4">
+    <div class="card teal"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="8" width="28" height="32" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2"/><path d="M16 18h16M16 26h16" stroke="#0e8a82" stroke-width="2.5"/></svg></div><h3>النصوص والتقارير</h3><p>صياغة مسودات العقود، الخطابات الرسمية، وتلخيص الاجتماعات.</p></div>
+    <div class="card coral"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="10" width="32" height="28" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2"/><circle cx="18" cy="20" r="4" fill="#f26b4f"/><path d="M8 32l10-8 8 6 14-11v9H8z" fill="#f26b4f" opacity=".4"/></svg></div><h3>الوسائط والتصاميم</h3><p>إنشاء تصاميم ورسوم بيانية توضيحية للعروض التقديمية.</p></div>
+    <div class="card sun"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 16l-8 8 8 8M34 16l8 8-8 8M28 10l-8 28" fill="none" stroke="#e0a800" stroke-width="2.8" stroke-linecap="round"/></svg></div><h3>معادلات الجداول</h3><p>كتابة معادلات Excel المتقدمة وتحويل الأسئلة الحسابية إلى صيغ جاهزة.</p></div>
+    <div class="card navy"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 8v32M14 16v16M34 16v16M8 22v4M40 22v4" stroke="#1e2a4a" stroke-width="3" stroke-linecap="round"/></svg></div><h3>التسجيلات الصوتية</h3><p>تفريغ المحاضرات والاجتماعات وتحويل النصوص إلى تسجيلات صوتية نقية.</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٢ من ٣٠</span></footer>
+</section>
+<!-- ===== 13 ===== -->
+<section class="slide dark"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٣ · فن صياغة الأوامر</div><h2>هندسة المطالبة (Prompting)</h2></header>
+  <div class="content">
+    <div class="statement">جودة الإجابة تعتمد مباشرة على <span class="mark">جودة السؤال</span>: الأمر الغامض يعطي نتيجة مشتتة.</div>
+    <p class="subline">التعامل مع النموذج التوليدي يشبه تفويض زميل عمل ذكي: يحتاج سياقاً واضحاً، هدفاً محدداً، وشروطاً دقيقة.</p>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٣ من ٣٠</span></footer>
+</section>
+<!-- ===== 14 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٣ · فن صياغة الأوامر</div><h2>أركان المطالبة المهنية الأربعة</h2></header>
+  <div class="content"><div class="cards c4">
+    <div class="card teal"><div class="lab">الركن الأول</div><h3>الدور والسياق</h3><p>حدد صفة النموذج: «بصفتك مستشاراً مالياً خبيراً في قطاع التدريب...»</p></div>
+    <div class="card sun"><div class="lab">الركن الثاني</div><h3>المهمة المحددة</h3><p>الفعل الصريح: «لخّص التقرير واستخرج المخاطر المحتملة...»</p></div>
+    <div class="card coral"><div class="lab">الركن الثالث</div><h3>القيود والشروط</h3><p>ما يجب تجنبه: «لا تتجاوز 4 نقاط، وتجنب استخدام المصطلحات الإنجليزية...»</p></div>
+    <div class="card navy"><div class="lab">الركن الرابع</div><h3>صيغة المخرج</h3><p>الشكل المطلوب: «اعرض النتيجة في جدول يتضمن العمود (المخاطرة) و(الحل المقترح)...»</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٤ من ٣٠</span></footer>
+</section>
+<!-- ===== 15 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٣ · فن صياغة الأوامر</div><h2>مقارنة تطبيقية: أمر ضعيف مقابل أمر متكامل</h2></header>
+  <div class="content split">
+    <div class="prompt-box" style="flex:1; border-color:var(--coral);">
+      <span class="prompt-tag p-rule">أمر ضعيف وعام</span>
+      <div class="prompt-text">«اكتب لي رسالة اعتذار لعميل تأخر طلبه.»</div>
+      <div class="ex"><b>النتيجة المتوقعة</b>رسالة عامة وركيكة قد لا تناسب سياسة الشركة ولا تذكر تفاصيل العميل.</div>
+    </div>
+    <div class="prompt-box" style="flex:1.3; border-color:var(--teal);">
+      <span class="prompt-tag p-role">أمر مهني متكامل</span>
+      <div class="prompt-text">«بصفتك مدير خدمة العملاء، اكتب بريداً رسمياً ولطيفاً للعميل (أحمد) نعتذر فيه عن تأخر شحن المواد التدريبية لمدة يومين بسبب الأحوال الجوية، واعرض عليه رمز خصم 15% للطلب القادم في فقرتين فقط.»</div>
+      <div class="ex"><b>النتيجة المتوقعة</b>مسودة جاهزة للإرسال تعكس احترافية المؤسسة وتحتوي كل الشروط بدقة.</div>
+    </div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٥ من ٣٠</span></footer>
+</section>
+<!-- ===== 16 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٣ · فن صياغة الأوامر</div><h2>سر الاحتراف: التوجيه بالأمثلة (Few-Shot)</h2></header>
+  <div class="content split">
+    <div class="side-text">
+      <div class="lead">أقصر طريق للحصول على النمط المطلوب هو إعطاء مثال سابق!</div>
+      <p class="subline">عندما تضع في طلبك نموذجاً سابقاً لرسالة أو تقرير معتمد، يتبع الذكاء الاصطناعي الأسلوب نفسه والنبرة والتنسيق بحذافيره.</p>
+    </div>
+    <div class="callout"><div class="callout-t">معادلة الإنتاجية</div><div class="callout-b">أمر دقيق + مثال سابق =</div><div class="callout-t">مخرجات قابلة للاعتماد الفوري دون إعادة تعديل.</div></div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٦ من ٣٠</span></footer>
+</section>
+<!-- ===== 17 ===== -->
+<section class="slide teal"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div>
+  <div class="content center-all">
+    <div class="bigicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 19h27v11a11 11 0 0 1-11 11h-5a11 11 0 0 1-11-11z" fill="#ffc93c" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/><path d="M35 23h3a5.500 5.500 0 0 1 0 11h-5" fill="none" stroke="#1e2a4a" stroke-width="2.5"/><path d="M15 5c-2 3 2 4 0 8M22 5c-2 3 2 4 0 8M29 5c-2 3 2 4 0 8" stroke="#f26b4f" stroke-width="2.600" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="statement c">استراحة قهوة وتنشيط</div>
+    <div class="timepill">١٠ دقائق</div>
+    <p class="subline">بعدها: الهلوسة وكيف نكتشف الهفوات والأكاذيب الواثقة في بيئة العمل.</p>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٧ من ٣٠</span></footer>
+</section>
+<!-- ===== 18 ===== -->
+<section class="slide dark"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٤ · الأمان والحدود</div><h2>ظاهرة الهلوسة (Hallucination)</h2></header>
+  <div class="content">
+    <div class="statement">النماذج اللغوية لا تفكر ولا تملك ضميراً: هي مصممة لإكمال النص، وأحياناً <span class="mark">تختلق معلومات زائفة بثقة تامة!</span></div>
+    <p class="subline">قد يذكر النموذج أرقاماً وهمية، مواد قانونية غير موجودة، أو مراجع مختلقة بلغة مقنعة جداً ورصينة.</p>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٨ من ٣٠</span></footer>
+</section>
+<!-- ===== 19 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٤ · الأمان والحدود</div><h2>لماذا تحدث الهلوسة؟</h2></header>
+  <div class="content"><div class="cards c3">
+    <div class="card coral"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16" fill="#fde7e0" stroke="#f26b4f" stroke-width="2.5"/><path d="M24 14v12M24 32v2" stroke="#c8442a" stroke-width="3" stroke-linecap="round"/></svg></div><h3>توليد احتمالي بحت</h3><p>النموذج يربط الكلمات إحصائياً ولا يتحقق من صحة الوقائع في العالم الحقيقي.</p></div>
+    <div class="card sun"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 38l14-28 14 28H10z" fill="#fff3cf" stroke="#ffc93c" stroke-width="2.5"/><path d="M24 22v8M24 34v2" stroke="#1e2a4a" stroke-width="2.5" stroke-linecap="round"/></svg></div><h3>الرغبة في الإجابة دائماً</h3><p>النموذج مبرمج لمساعدة المستخدم ونادراً ما يقول «لا أعرف» إلا إذا تم تقييده صراحة.</p></div>
+    <div class="card navy"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="8" width="28" height="32" rx="3" fill="#e7eaf5" stroke="#1e2a4a" stroke-width="2"/><path d="M18 20h12M18 28h8" stroke="#1e2a4a" stroke-width="2.5"/></svg></div><h3>غياب المصادر الحية</h3><p>إذا لم تزوّد النموذج بالمستند المصدري، سيعتمد على ذاكرته الإحصائية العامة فقط.</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">١٩ من ٣٠</span></footer>
+</section>
+<!-- ===== 20 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٤ · الأمان والحدود</div><h2>فخ الثقة المفرطة (Fluent but Wrong)</h2></header>
+  <div class="content split">
+    <div class="card coral wide" style="flex:1;">
+      <div class="lab">الخطر الأكبر</div>
+      <h3>الفصاحة اللغوية لا تعني الصحة الحسابية أو القانونية</h3>
+      <p>أخطر الأخطاء هي التي تُكتب بلغة عربية فصحى وبلاغة لا تشوبها شائبة، فتجعل القارئ يثق بها دون تدقيق في الأرقام والأسماء.</p>
+    </div>
+    <div class="card teal wide" style="flex:1;">
+      <div class="lab">الحل الإداري</div>
+      <h3>مبدأ القلم الأصفر للتدقيق</h3>
+      <p>درّب عينك على تظليل كل رقم، اسم شخص، تاريخ، أو بند نظامي للرجوع إلى ملف المصدر المعتمد والتأكد منه شخصياً.</p>
+    </div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٠ من ٣٠</span></footer>
+</section>
+<!-- ===== 21 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٤ · الأمان والحدود</div><h2>القواعد الثلاث لحماية المنشأة</h2></header>
+  <div class="content"><div class="cards c3">
+    <div class="card coral"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6l16 8v12c0 10-8 16-16 18-8-2-16-8-16-18V14z" fill="#fff" stroke="#f26b4f" stroke-width="2.5"/><path d="M24 18v8M24 30v2" stroke="#f26b4f" stroke-width="2.5" stroke-linecap="round"/></svg></div><h3>حظر البيانات الحساسة</h3><p>لا ترفع أسماء العملاء، أرقام الهويات، أو كشوف الرواتب والمعلومات المالية السرية في المنصات العامة.</p></div>
+    <div class="card sun"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="14" fill="#fff" stroke="#ffc93c" stroke-width="2.5"/><path d="M18 24l4 4 8-8" fill="none" stroke="#1e2a4a" stroke-width="2.5" stroke-linecap="round"/></svg></div><h3>المسؤولية القانونية عليك أنت</h3><p>أنت صاحب التوقيع والاعتماد النهائي أمام إدارتك وعملائك، ولا يمكنك لوم الأداة عند حدوث خطأ.</p></div>
+    <div class="card teal"><div class="ic "><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="10" width="24" height="28" rx="3" fill="#fff" stroke="#0e8a82" stroke-width="2.5"/><path d="M18 18h12M18 24h12M18 30h8" stroke="#0e8a82" stroke-width="2"/></svg></div><h3>اعتماد المصادر الرسمية</h3><p>اجعل الأداة تلخص نصوصك المرفقة فقط، واطلب منها صراحة: «لا تضف أي معلومة من خارج هذا الملف».</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢١ من ٣٠</span></footer>
+</section>
+<!-- ===== 22 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٥ · التطبيقات المكتبية</div><h2>أين يتألق الذكاء التوليدي في العمل؟</h2></header>
+  <div class="content"><div class="cards c4">
+    <div class="card teal"><div class="lab">المهمة الأولى</div><h3>التلخيص والاستخلاص</h3><p>استخراج النقاط الجوهرية والقرارات من محاضر الاجتماعات المطولة في لحظات.</p></div>
+    <div class="card coral"><div class="lab">المهمة الثانية</div><h3>المسودات الأولية</h3><p>التغلب على متلازمة الصفحة البيضاء والبدء بمسودة قابلة للتحسين والصقل.</p></div>
+    <div class="card sun"><div class="lab">المهمة الثالثة</div><h3>إعادة الصياغة والتنقيح</h3><p>تحويل الملاحظات السريعة إلى بريد مهني بنبرة رسمية ولطيفة تناسب الإدارة.</p></div>
+    <div class="card navy"><div class="lab">المهمة الرابعة</div><h3>استمطار الأفكار</h3><p>اقتراح خيارات تسويقية، أفكار للتدريب، وأسئلة استبيان موجهة للمستفيدين.</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٢ من ٣٠</span></footer>
+</section>
+<!-- ===== 23 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٥ · التطبيقات المكتبية</div><h2>متى نستخدمه ومتى نتجنبه؟</h2></header>
+  <div class="content split">
+    <div class="card teal wide" style="flex:1;">
+      <div class="lab" style="color:var(--teal);">مناسب تماماً للاستخدام</div>
+      <ul class="plain">
+        <li>كتابة مسودة أولية لبريد أو تقرير عام.</li>
+        <li>تلخيص نص أنت تملك مصدره بالكامل.</li>
+        <li>اقتراح أفكار أو صياغات تسويقية بديلة.</li>
+        <li>شرح مفاهيم جديدة أو تبسيط نصوص معقدة.</li>
+      </ul>
+    </div>
+    <div class="card coral wide" style="flex:1;">
+      <div class="lab" style="color:var(--coral-d);">ممنوع أو خطر بدون تدقيق كامل</div>
+      <ul class="plain">
+        <li>الحسابات المالية الدقيقة وكشوف الأجور.</li>
+        <li>القرارات القانونية والعقود الملزمة.</li>
+        <li>البيانات السرية وغير المصرح بنشرها.</li>
+        <li>البحث عن حقائق تاريخية دون التحقق من مصادرها.</li>
+      </ul>
+    </div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٣ من ٣٠</span></footer>
+</section>
+<!-- ===== 24 ===== -->
+<section class="slide teal"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٦ · النشاط العملي</div><h2>المختبر التطبيقي للجلسة الثانية</h2></header>
+  <div class="content split">
+    <div class="side-text">
+      <div class="statement">حان وقت الممارسة والتطبيق المباشر!</div>
+      <p class="subline">سنقوم معاً بفحص سيناريوهات حقيقية: هل الأوامر مكتملة الأركان؟ وكيف نكشف الهلوسة في التقارير الإدارية بالقلم الأصفر؟</p>
+    </div>
+    <div class="side"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M24 14v10l8 5" stroke="#0e8a82" stroke-width="3" stroke-linecap="round"/></svg></div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٤ من ٣٠</span></footer>
+</section>
+<!-- ===== 25 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٦ · النشاط العملي</div><h2>السيناريوهات العملية ١ إلى ٣</h2></header>
+  <div class="content"><div class="cards c3">
+    <div class="card teal"><div class="lab">سيناريو ١</div><h3>كتابة جدول رواتب الموظفين</h3><p>«اطلب من الذكاء الاصطناعي حساب الضرائب والبدلات وصرف الرواتب مباشرة دون تدقيق.»</p><div class="ex"><b>التصنيف</b>ممنوع وخطر · أرقام مالية ملزمة تتطلب قواعد دقيقة ومراجعة بشرية.</div></div>
+    <div class="card coral"><div class="lab">سيناريو ٢</div><h3>إعادة صياغة شكوى عميل</h3><p>«تحويل شكوى غاضبة مليئة بالانفعال إلى ملخص مهني هادئ يحدد جوهر المشكلة.»</p><div class="ex"><b>التصنيف</b>استخدام ممتاز · يتألق الذكاء التوليدي في ضبط النبرة والتلخيص.</div></div>
+    <div class="card sun"><div class="lab">سيناريو ٣</div><h3>البحث عن بنود نظام العمل</h3><p>«سؤال الأداة العامة عن رقم المادة القانونية التي تنظم مكافأة نهاية الخدمة.»</p><div class="ex"><b>التصنيف</b>يحتاج تدقيقاً حذراً · قد يهلوس النموذج بأرقام مواد ملغاة أو قديمة.</div></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٥ من ٣٠</span></footer>
+</section>
+<!-- ===== 26 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٦ · النشاط العملي</div><h2>السيناريوهات العملية ٤ إلى ٦</h2></header>
+  <div class="content"><div class="cards c3">
+    <div class="card navy"><div class="lab">سيناريو ٤</div><h3>توليد خطة تدريب مقترحة</h3><p>«طلب هيكل عام ومقترحات لمحاور ورشة عمل حول مهارات التواصل الداخلي.»</p><div class="ex"><b>التصنيف</b>استخدام ممتاز · يساعد على كسر حاجز البداية وتوليد أفكار متنوعة.</div></div>
+    <div class="card teal"><div class="lab">سيناريو ٥</div><h3>استخراج بنود التعاقد من مستند مرفق</h3><p>«تزويد الأداة بالعقد المعتمد وطلب استخراج تواريخ الدفعات في جدول منظم.»</p><div class="ex"><b>التصنيف</b>استخدام قوي وآمن · بشرط حصر الإجابة في النص المرفق والتدقيق.</div></div>
+    <div class="card coral"><div class="lab">سيناريو ٦</div><h3>رفع قاعدة بيانات العملاء للتحليل</h3><p>«نسخ أرقام هواتف العملاء وعناوينهم في منصة دردشة ذكاء اصطناعي مجانية.»</p><div class="ex"><b>التصنيف</b>ممنوع ومخالف للسياسات · انتهاك مباشر لخصوصية وأمن بيانات المؤسسة.</div></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٦ من ٣٠</span></footer>
+</section>
+<!-- ===== 27 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٧ · مفاهيم شائعة</div><h2>خرافات وحقائق حول الذكاء التوليدي</h2></header>
+  <div class="content"><div class="cards c2">
+    <div class="card coral wide"><div class="lab" style="color:var(--coral-d);">خرافة شائعة</div><h3>«الذكاء الاصطناعي يفهم تماماً ما يكتبه ويعرف الحقائق.»</h3><p><strong>الحقيقة:</strong> النماذج اللغوية تتنبأ بالسياق الأكثر احتمالاً ولا تمتلك وعياً بالمعنى ولا تتحقق من صدق الكلام ذاتياً.</p></div>
+    <div class="card teal wide"><div class="lab" style="color:var(--teal);">خرافة شائعة</div><h3>«المطالبة البسيطة كافية دائماً للوصول للنتيجة المطلوبة.»</h3><p><strong>الحقيقة:</strong> كلما زادت دقة السياق والشروط والأمثلة، ارتفعت جودة واحترافية النتيجة بنسبة تتجاوز 80%.</p></div>
+  </div></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٧ من ٣٠</span></footer>
+</section>
+<!-- ===== 28 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٨ · الخلاصة</div><h2>خمس وصايا للعمل الذكي مع نماذج التوليد</h2></header>
+  <div class="content"><ol class="obj">
+    <li class="teal"><span class="num">١</span><span>الذكاء التوليدي صانع مسودات بارع، لكنه ليس صانع قرارات مستقلة.</span></li>
+    <li class="coral"><span class="num">٢</span><span>المطالبة الناجحة تتضمن دائماً: الدور، المهمة، الشروط، وصيغة المخرج.</span></li>
+    <li class="sun"><span class="num">٣</span><span>استخدم الأمثلة السابقة في أوامرك لتضمن التطابق مع أسلوب شركتك.</span></li>
+    <li class="navy"><span class="num">٤</span><span>احذر الثقة المفرطة والهلوسة، وافحص الأرقام والأسماء بالقلم الأصفر.</span></li>
+    <li class="teal"><span class="num">٥</span><span>حافظ على سرية بيانات شركتك وعملائك ولا ترفعها أبداً للمنصات العامة.</span></li>
+  </ol></div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٨ من ٣٠</span></footer>
+</section>
+<!-- ===== 29 ===== -->
+<section class="slide "><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><div class="eyebrow">القسم ٨ · الخلاصة</div><h2>مراجعة وتأمّل</h2></header>
+  <div class="content split">
+    <div class="card navy wide" style="flex:1;">
+      <h3>سؤال للتطبيق العملي غداً</h3>
+      <p>ما هي أول مهمة كتابية أو روتينية في عملك ستبدأ بصياغة مطالبة احترافية رباعية الأركان لمساعدتك في إنجازها؟</p>
+    </div>
+    <div class="card sun wide" style="flex:1;">
+      <h3>تذكر دائماً</h3>
+      <p>«الأداة تضاعف إنتاجية الموظف الذكي الحذر، ولا تغني أبداً عن مهارته وحكمه البشري السليم.»</p>
+    </div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٢٩ من ٣٠</span></footer>
+</section>
+<!-- ===== 30 ===== -->
+<section class="slide dark"><div class="slide-brand"><img src="../../assets/formal templates/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div>
+  <div class="content center-all">
+    <div class="statement c">أسئلة ونقاش مفتوح</div>
+    <p class="subline">شكراً لحضوركم وتفاعلكم المتميز في الجلسة الثانية.</p>
+    <div class="nextbox" style="margin-top:1.4rem;background:rgba(255,255,255,.12);border:2px solid var(--sun);border-radius:1rem;padding:.9rem 1.6rem;font-size:1.5rem;color:var(--sun);font-weight:bold;">
+      في المرة القادمة · الجلسة ٣: أدوات الذكاء الاصطناعي في بيئة العمل والتطبيقات المكتبية المتقدمة
+    </div>
+  </div>
+  <footer class="footer"><span>تعلّم الآلة والذكاء الاصطناعي التوليدي · الجلسة الثانية</span><span class="pn">٣٠ من ٣٠</span></footer>
+</section>
+</body>
+</html>

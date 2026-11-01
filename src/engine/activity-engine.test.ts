@@ -15,6 +15,7 @@ import {
   recordCompletion,
 } from "./progress-store.ts";
 import { SESSION_1, getActivity, listActivities } from "../content/session-1.ts";
+import { SESSION_2, listActivitiesSession2 } from "../content/session-2.ts";
 
 function collectFiles(dir: string): string[] {
   const results: string[] = [];
@@ -307,4 +308,28 @@ test("bucket-sort, sequence, matching, odd-one-out, and draft-review nudge gentl
     "2026-10-29T10:05:00Z"
   );
   assert.equal(after["part-1-basics"].bestMasteryPercent, 95);
+});
+
+test("session 2 curriculum exists and contains valid multi-mechanic activities", () => {
+  assert.equal(SESSION_2.number, 2);
+  assert.equal(SESSION_2.trainerName, "عبدالرحمن عيسى");
+  assert.equal(SESSION_2.hijriDate, "جمادى الأولى 1448");
+
+  const activities = listActivitiesSession2();
+  assert.equal(activities.length, 6);
+
+  for (const activity of activities) {
+    const actualMechanics = new Set(activity.prompts.map((p) => p.mechanic));
+    assert.ok(
+      actualMechanics.size >= 3,
+      `Expected "${activity.slug}" to mix at least 3 mechanics, found ${actualMechanics.size}`
+    );
+    for (const declared of activity.mechanicsUsed) {
+      assert.equal(
+        actualMechanics.has(declared),
+        true,
+        `Declared mechanic "${declared}" missing from prompts in "${activity.slug}"`
+      );
+    }
+  }
 });
