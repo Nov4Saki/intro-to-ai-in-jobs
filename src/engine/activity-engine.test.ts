@@ -321,7 +321,7 @@ test("session 2 curriculum exists and contains valid multi-mechanic activities",
   assert.equal(SESSION_2.hijriDate, "جمادى الأولى 1448");
 
   const activities = listActivitiesSession2();
-  assert.equal(activities.length, 5);
+  assert.equal(activities.length, 8);
 
   const allMechanicsAcrossS2 = new Set<string>();
   for (const activity of activities) {
@@ -464,10 +464,10 @@ test("every session 2 activity and warmup plays cleanly end-to-end across mixed 
 test("unified content registry lists all sessions and resolves all activities by slug", () => {
   assert.equal(ALL_SESSIONS.length, 2);
   const allActs = listAllActivities();
-  assert.equal(allActs.length, 13);
+  assert.equal(allActs.length, 16);
 
   const slugs = new Set(allActs.map((a) => a.slug));
-  assert.equal(slugs.size, 13, "Slugs across sessions must be unique");
+  assert.equal(slugs.size, 16, "Slugs across sessions must be unique");
 
   for (const act of allActs) {
     const found = findActivity(act.slug);
