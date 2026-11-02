@@ -16,6 +16,7 @@ import {
 } from "./progress-store.ts";
 import { SESSION_1, getActivity, listActivities } from "../content/session-1.ts";
 import { SESSION_2, listActivitiesSession2 } from "../content/session-2.ts";
+import { SESSION_3, listActivitiesSession3 } from "../content/session-3.ts";
 import {
   ALL_SESSIONS,
   findActivity,
@@ -461,13 +462,159 @@ test("every session 2 activity and warmup plays cleanly end-to-end across mixed 
   }
 });
 
+test("session 3 curriculum exists and contains valid multi-mechanic activities", () => {
+  assert.equal(SESSION_3.number, 3);
+  assert.equal(SESSION_3.trainerName, "عبدالرحمن عيسى");
+  assert.equal(SESSION_3.hijriDate, "جمادى الأولى 1448");
+
+  const activities = listActivitiesSession3();
+  assert.equal(activities.length, 8);
+
+  const allMechanicsAcrossS3 = new Set<string>();
+  for (const activity of activities) {
+    const actualMechanics = new Set(activity.prompts.map((p) => p.mechanic));
+    for (const m of actualMechanics) allMechanicsAcrossS3.add(m);
+
+    assert.ok(
+      actualMechanics.size >= 3,
+      `Expected "${activity.slug}" to mix at least 3 mechanics, found ${actualMechanics.size}`
+    );
+    for (const declared of activity.mechanicsUsed) {
+      assert.equal(
+        actualMechanics.has(declared),
+        true,
+        `Declared mechanic "${declared}" missing from prompts in "${activity.slug}"`
+      );
+    }
+  }
+
+  // Ensure all 7 mechanics are utilized across Session 3
+  for (const expectedType of [
+    "bucket-sort",
+    "matching",
+    "sequence",
+    "draft-review",
+    "myth-fact",
+    "odd-one-out",
+    "choice",
+  ]) {
+    assert.equal(
+      allMechanicsAcrossS3.has(expectedType),
+      true,
+      `Expected session 3 to include game mechanic "${expectedType}"`
+    );
+  }
+});
+
+test("every session 3 activity and warmup plays cleanly end-to-end across mixed mechanics", () => {
+  // Verify warmup
+  let warmupState = startActivity({
+    slug: "s3-warmup",
+    partBadge: "التمهيد",
+    slideRange: "الشريحة 4 و 5",
+    title: SESSION_3.warmupPrompt.title,
+    shortTitle: SESSION_3.warmupPrompt.title,
+    subtitle: "",
+    mechanicsUsed: ["bucket-sort"],
+    agendaSlot: "",
+    estimatedMinutes: 1,
+    learningGoal: "",
+    prompts: [SESSION_3.warmupPrompt],
+    closingTakeaway: "",
+  });
+  for (const item of SESSION_3.warmupPrompt.items) {
+    warmupState = submitResponse(warmupState, {
+      mechanic: "bucket-sort",
+      itemId: item.id,
+      bucketId: item.bucketId,
+    }).state;
+  }
+  assert.equal(warmupState.currentVerdict?.promptResolved, true);
+  assert.equal(warmupState.currentVerdict?.outcome, "accurate");
+
+  // Verify all 8 activities of Session 3
+  for (const activity of listActivitiesSession3()) {
+    let state = startActivity(activity);
+
+    while (!state.completed) {
+      const prompt = getCurrentPrompt(state);
+
+      if (prompt.mechanic === "bucket-sort") {
+        assert.ok(prompt.buckets.length >= 2);
+        assert.ok(prompt.items.length >= 3);
+        for (const item of prompt.items) {
+          state = submitResponse(state, {
+            mechanic: "bucket-sort",
+            itemId: item.id,
+            bucketId: item.bucketId,
+          }).state;
+        }
+      } else if (prompt.mechanic === "myth-fact") {
+        state = submitResponse(state, {
+          mechanic: "myth-fact",
+          judgment: prompt.reality,
+        }).state;
+      } else if (prompt.mechanic === "odd-one-out") {
+        const oddItems = prompt.items.filter((i) => i.isOdd);
+        assert.equal(
+          oddItems.length,
+          1,
+          `Odd-one-out "${prompt.id}" must have exactly 1 odd item`
+        );
+        state = submitResponse(state, {
+          mechanic: "odd-one-out",
+          itemId: oddItems[0].id,
+        }).state;
+      } else if (prompt.mechanic === "choice") {
+        state = submitResponse(state, {
+          mechanic: "choice",
+          optionId: prompt.correctOptionId,
+        }).state;
+      } else if (prompt.mechanic === "matching") {
+        for (const pair of prompt.pairs) {
+          state = submitResponse(state, {
+            mechanic: "matching",
+            conceptPairId: pair.id,
+            examplePairId: pair.id,
+          }).state;
+        }
+      } else if (prompt.mechanic === "draft-review") {
+        const flawed = prompt.segments
+          .filter((s) => s.isFlawed)
+          .map((s) => s.id);
+        assert.ok(
+          flawed.length > 0,
+          `Draft review "${prompt.id}" must have at least one flawed segment`
+        );
+        state = submitResponse(state, {
+          mechanic: "draft-review",
+          flaggedSegmentIds: flawed,
+        }).state;
+      } else if (prompt.mechanic === "sequence") {
+        state = submitResponse(state, {
+          mechanic: "sequence",
+          orderedStepIds: prompt.stepsInOrder.map((s) => s.id),
+        }).state;
+      }
+
+      assert.ok(state.currentVerdict?.promptResolved);
+      assert.equal(state.currentVerdict?.outcome, "accurate");
+      state = advancePrompt(state);
+    }
+
+    const summary = summarizeSession(state);
+    assert.equal(summary.masteryPercent, 100);
+    assert.equal(summary.accurateCount, activity.prompts.length);
+  }
+});
+
 test("unified content registry lists all sessions and resolves all activities by slug", () => {
-  assert.equal(ALL_SESSIONS.length, 2);
+  assert.equal(ALL_SESSIONS.length, 3);
   const allActs = listAllActivities();
-  assert.equal(allActs.length, 16);
+  assert.equal(allActs.length, 24);
 
   const slugs = new Set(allActs.map((a) => a.slug));
-  assert.equal(slugs.size, 16, "Slugs across sessions must be unique");
+  assert.equal(slugs.size, 24, "Slugs across sessions must be unique");
 
   for (const act of allActs) {
     const found = findActivity(act.slug);

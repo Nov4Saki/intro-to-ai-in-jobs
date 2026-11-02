@@ -84,6 +84,37 @@ const WORKFLOW_STEPS_SESSION_2 = [
   },
 ] as const;
 
+const WORKFLOW_STEPS_SESSION_3 = [
+  {
+    title: "تحديد المشكلة (المكسب السريع)",
+    body: "اختيار تحدٍ ملموس ومتكرر يقع في مربع فائدة عالية وسهولة تنفيذ لإثبات الجدوى.",
+    lip: "deck-lip-teal",
+    medallion: "bg-[var(--medallion-teal)] text-[var(--medallion-teal-ink)]",
+    Icon: Sparkle,
+  },
+  {
+    title: "جاهزية البيانات والحماية",
+    body: "التأكد من توفر بيانات كافية ومنظمة مع حجب الأسماء والمعلومات السرية والمالية.",
+    lip: "deck-lip-indigo",
+    medallion: "bg-[var(--medallion-indigo)] text-[var(--medallion-indigo-ink)]",
+    Icon: ShieldCheck,
+  },
+  {
+    title: "بطاقة المشروع التجريبي",
+    body: "صياغة Pilot Canvas تحدد المشكلة، المراجع البشري، ومؤشر النجاح الرقمي الدقيق.",
+    lip: "deck-lip-gold",
+    medallion: "bg-[var(--medallion-gold)] text-[var(--medallion-gold-ink)]",
+    Icon: Article,
+  },
+  {
+    title: "خطة الـ ٣٠ يوماً والمراجعة",
+    body: "تنفيذ تجربة محكومة عبر 4 أسابيع مع قياس الأخطاء واتخاذ قرار التوسع أو التعديل.",
+    lip: "deck-lip-coral",
+    medallion: "bg-[var(--medallion-coral)] text-[var(--medallion-coral-ink)]",
+    Icon: UserCheck,
+  },
+] as const;
+
 export function SessionHubView({
   sessions,
 }: {
@@ -94,7 +125,11 @@ export function SessionHubView({
   const firstActivity = session.activities[0];
 
   const workflowSteps =
-    session.number === 2 ? WORKFLOW_STEPS_SESSION_2 : WORKFLOW_STEPS_SESSION_1;
+    session.number === 3
+      ? WORKFLOW_STEPS_SESSION_3
+      : session.number === 2
+      ? WORKFLOW_STEPS_SESSION_2
+      : WORKFLOW_STEPS_SESSION_1;
 
   return (
     <div className="min-h-[100dvh] bg-[var(--surface-page)] text-[var(--text-primary)]">
@@ -130,7 +165,12 @@ export function SessionHubView({
                         : "border border-[var(--border-subtle)] bg-[var(--surface-card)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]"
                     }`}
                   >
-                    الجلسة {s.number}: {s.number === 1 ? "الأساسيات" : "تعلّم الآلة والتوليد"}
+                    الجلسة {s.number}:{" "}
+                    {s.number === 1
+                      ? "الأساسيات"
+                      : s.number === 2
+                      ? "تعلّم الآلة والتوليد"
+                      : "تطبيقات الأعمال"}
                   </button>
                 );
               })}
@@ -170,7 +210,12 @@ export function SessionHubView({
                     : "border border-[var(--border-subtle)] bg-[var(--surface-page)] text-[var(--text-secondary)]"
                 }`}
               >
-                الجلسة {s.number}: {s.number === 1 ? "الأساسيات" : "تعلّم الآلة والتوليد"}
+                الجلسة {s.number}:{" "}
+                {s.number === 1
+                  ? "الأساسيات"
+                  : s.number === 2
+                  ? "تعلّم الآلة والتوليد"
+                  : "تطبيقات الأعمال"}
               </button>
             );
           })}

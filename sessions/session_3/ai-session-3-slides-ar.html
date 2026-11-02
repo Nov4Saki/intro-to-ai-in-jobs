@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</title>
+<style>
+:root{--ink:#17212b;--paper:#f3f4f1;--line:#d9dcd5;--mute:#66707a;--body:#3b4651;
+  --pet:#0f5c70;--pet-t:#dcebef;--cop:#bf6a2c;--cop-t:#f6e6d8;--sag:#6b8a5c;--sag-t:#e5ecdf;--plm:#6a4468;--plm-t:#ece1ea;--red:#b04a3f;--red-t:#f6e2de;--gold:#e8a468}
+*{box-sizing:border-box;margin:0;padding:0;letter-spacing:0!important;text-transform:none!important}
+html{font-size:calc(min(96vw,170vh)/80)}
+body{font-family:"Segoe UI",Tahoma,"Noto Sans Arabic","DejaVu Sans Condensed",system-ui,Arial,sans-serif;background:#0d141b;color:var(--ink);padding:2vh 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.slide{position:relative;width:80rem;height:45rem;margin:0 auto 2vh;background:var(--paper);overflow:hidden;
+  display:flex;flex-direction:column;padding:2.6rem 11.5rem 4.6rem 4.5rem;box-shadow:0 .5rem 2rem rgba(0,0,0,.4);--sb:#17212b}
+.slide>*{position:relative;z-index:1}
+.p0{--sb:#17212b}.p1{--sb:#0f5c70}.p2{--sb:#a85a22}.p3{--sb:#4f6f43}.p4{--sb:#5a3a58}.p5{--sb:#0f5c70}
+.slide::before{content:'';position:absolute;z-index:0;right:0;top:0;bottom:0;width:7.5rem;background:var(--sb)}
+.nosb{padding:2.6rem 5rem 4.6rem}
+.nosb::before{display:none}
+.sbar{position:absolute;z-index:1;right:0;top:2.7rem;width:7.5rem;text-align:center;color:#fff;padding:0 .6rem}
+.sbar small{display:block;font-size:1.1rem;opacity:.8}
+.sbar b{display:block;font-size:3.6rem;font-weight:300;line-height:1.15;margin:.2rem 0 .5rem}
+.sbar span{display:block;font-size:1.05rem;line-height:1.45;border-top:.07rem solid rgba(255,255,255,.4);padding-top:.6rem}
+
+/* header */
+header{margin-bottom:1.5rem}
+.kick{font-size:1.2rem;font-weight:700;color:var(--cop);margin-bottom:.3rem}
+h2{font-size:2.9rem;line-height:1.4;font-weight:800;color:var(--ink)}
+.hbar{width:3.8rem;height:.35rem;background:var(--sb);margin-top:.5rem;border-radius:.2rem}
+.content{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+
+/* tinted panels */
+.cards{display:grid;gap:1.5rem}
+.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr);gap:1.2rem}
+.c3.t2{gap:1.3rem 1.5rem}
+.card{--c:var(--pet);--t:var(--pet-t);background:var(--t);border-radius:.5rem;border-inline-start:.4rem solid var(--c);padding:1.4rem 1.5rem}
+.pet{--c:var(--pet);--t:var(--pet-t)}.cop{--c:var(--cop);--t:var(--cop-t)}.sag{--c:var(--sag);--t:var(--sag-t)}.plm{--c:var(--plm);--t:var(--plm-t)}.red{--c:var(--red);--t:var(--red-t)}
+.ch{display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem}
+.ci{flex:none;width:2.8rem;height:2.8rem;display:block}
+.ci svg{width:2.8rem;height:2.8rem}
+.ci.wi{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:1.6rem}
+.card h3{font-size:1.65rem;line-height:1.4;color:var(--ink)}
+.card p{font-size:1.38rem;line-height:1.6;color:var(--body)}
+.c4 .card{padding:1.2rem 1.1rem}.c4 .card h3{font-size:1.45rem}.c4 .card p{font-size:1.22rem}.c4 .ci,.c4 .ci svg{width:2.4rem;height:2.4rem}
+.ex{margin-top:1rem;background:rgba(255,255,255,.7);border-radius:.4rem;padding:.7rem 1rem;font-size:1.25rem;line-height:1.55}
+.ex b{display:block;font-size:1rem;color:var(--c);margin-bottom:.1rem}
+.tmin{display:inline-block;background:var(--c);color:#fff;font-size:1.1rem;font-weight:700;border-radius:2rem;padding:.1rem .9rem;margin-bottom:.6rem}
+
+/* text */
+.split{flex-direction:row;align-items:center;gap:3rem}
+.side-text{flex:1}
+.statement{font-size:3.4rem;line-height:1.55;font-weight:800;max-width:60rem;text-wrap:balance}
+.statement.c{font-size:6rem;line-height:1.3;font-weight:900;max-width:none}
+.mark{color:var(--gold);text-decoration:underline;text-decoration-thickness:.17rem;text-underline-offset:.55rem;text-decoration-color:rgba(232,164,104,.55)}
+.subline{font-size:1.5rem;color:var(--mute);line-height:1.6}.subline.center{text-align:center;margin-top:1.6rem}
+.lead{font-size:1.55rem;margin-bottom:1.5rem;line-height:1.6;color:var(--body)}
+
+/* dark / deep / plum */
+.dark,.deep,.plum,.cover{color:#fff}
+.dark{background:linear-gradient(135deg,#101820,#1b2a38)}
+.deep{background:linear-gradient(135deg,#0b3f4e,#126a80)}
+.plum{background:linear-gradient(135deg,#3a2540,#58365e)}
+.dark h2,.deep h2,.plum h2{color:#fff}
+.dark .hbar,.deep .hbar,.plum .hbar{background:var(--gold)}
+.dark .kick,.deep .kick,.plum .kick{color:var(--gold)}
+.dark .subline,.deep .subline,.plum .subline{color:rgba(255,255,255,.8)}
+.dark::after,.deep::after,.plum::after{content:'';position:absolute;left:-9rem;bottom:-12rem;width:30rem;height:30rem;border-radius:50%;border:.1rem solid rgba(255,255,255,.1);box-shadow:0 0 0 3rem rgba(255,255,255,.025),0 0 0 6rem rgba(255,255,255,.02);pointer-events:none;z-index:0}
+.center-all{align-items:center;text-align:center;justify-content:center}
+.timepill{border:.1rem solid rgba(232,164,104,.8);color:var(--gold);border-radius:2rem;padding:.4rem 1.8rem;font-size:1.9rem;font-weight:700;margin:1.2rem 0 1.4rem}
+.bigicon{flex:none;width:13rem;height:13rem;border-radius:50%;background:rgba(255,255,255,.95);display:grid;place-items:center;box-shadow:0 0 0 .9rem rgba(255,255,255,.1)}
+.bigicon svg{width:6.6rem;height:6.6rem}
+.center-all .bigicon{margin-bottom:1.6rem}
+.nextbox{margin-top:2rem;display:inline-block;border:.1rem solid rgba(232,164,104,.8);color:var(--gold);border-radius:.5rem;padding:.6rem 2rem;font-size:1.6rem;font-weight:700}
+
+/* cover */
+.cover{background:linear-gradient(135deg,#0a3a48,#0f5c70 65%,#17788f);flex-direction:row;align-items:center;gap:2rem;padding:3rem 5rem 4.6rem}
+.cover .txt{flex:1.25}
+.ctag{display:flex;align-items:center;gap:.9rem;color:var(--gold);font-size:1.2rem;font-weight:700;margin-bottom:1.8rem}
+.ctag i{display:block;width:2.6rem;height:.18rem;background:var(--gold)}
+.cover h1{font-size:3.7rem;line-height:1.5;font-weight:900;margin-bottom:1.2rem}
+.cover .mk{color:var(--gold);white-space:nowrap}
+.cover .sub{font-size:1.5rem;line-height:1.7;color:rgba(255,255,255,.85);max-width:35rem;margin-bottom:2.2rem}
+.cmeta{display:flex}
+.cmeta div{padding-inline-end:2.2rem;margin-inline-end:2.2rem;border-inline-end:.07rem solid rgba(255,255,255,.3)}
+.cmeta div:last-child{border:0;margin:0}
+.cmeta small{display:block;font-size:1.05rem;color:rgba(255,255,255,.65)}.cmeta b{font-size:1.35rem;font-weight:700}
+.cover .art{flex:1;width:31rem;height:auto}
+
+/* objectives */
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem 1.4rem}
+.ot{display:flex;align-items:center;gap:1.1rem;background:var(--t);border-radius:.5rem;border-inline-start:.4rem solid var(--c);padding:1.1rem 1.3rem;min-height:5.6rem}
+.on{flex:none;font-size:2.6rem;font-weight:300;color:var(--c);line-height:1;width:2.4rem;text-align:center}
+.otx{font-size:1.5rem;line-height:1.55;font-weight:600}
+.ot.goal{background:var(--ink);color:#fff;border-color:var(--gold)}
+.ot.goal .otx{font-weight:700;color:#fff}
+
+/* gantt agenda */
+.gantt{display:grid;gap:.45rem}
+.grow,.gaxis{display:grid;grid-template-columns:20rem 1fr;gap:1rem;align-items:center}
+.gl{display:flex;gap:.9rem;align-items:baseline;font-size:1.35rem;line-height:1.35}
+.gl b{flex:none;width:3.2rem;color:var(--mute);font-size:1.1rem}
+.gl span{font-weight:700}
+.gtrack{position:relative;height:3rem;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - .07rem),var(--line) calc(25% - .07rem),var(--line) 25%)}
+.gtrack.axis{height:1.8rem;background:none}
+.gtrack.axis span{position:absolute;top:0;transform:translateX(50%);font-size:1rem;color:var(--mute);white-space:nowrap}
+.gbar{position:absolute;top:.4rem;bottom:.4rem;border-radius:.4rem;color:#fff;font-size:1rem;font-weight:700;display:grid;place-items:center;background:var(--c)}
+.gbar.pet{--c:var(--pet);background:var(--pet)}.gbar.cop{background:var(--cop)}.gbar.sag{background:var(--sag)}.gbar.plm{background:var(--plm)}
+.gbar.brk{background:repeating-linear-gradient(45deg,#c7ccc4 0 .4rem,#e4e7e1 .4rem .8rem);color:var(--ink)}
+.total{margin-top:1.2rem;font-size:1.35rem;font-weight:800;text-align:center}
+
+/* chevrons */
+.cvs{display:grid;gap:.5rem}.cvs.n4{grid-template-columns:repeat(4,1fr)}.cvs.n3{grid-template-columns:repeat(3,1fr)}
+.cvh{height:4.6rem;background:var(--c);color:#fff;display:flex;align-items:center;gap:.7rem;padding-inline:1.7rem 2.2rem;clip-path:polygon(1.5rem 0,100% 0,calc(100% - 1.5rem) 50%,100% 100%,1.5rem 100%,0 50%)}
+.cvh b{flex:none;display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;border:.1rem solid rgba(255,255,255,.8);font-size:1.2rem}
+.cvh span{font-size:1.45rem;font-weight:800;line-height:1.3}
+.cv p{padding:1.1rem 1.1rem 0;font-size:1.35rem;line-height:1.65;color:var(--body)}
+
+/* departments */
+.pband{display:flex;align-items:center;gap:1.1rem;background:#e4e8e9;border-radius:.5rem;padding:.9rem 1.3rem;font-size:1.38rem;line-height:1.55;margin-bottom:1.3rem}
+.pband b{flex:none;color:var(--pet);font-size:1.15rem;border-inline-end:.07rem solid #b9c3c7;padding-inline-end:1rem}
+.wbar{display:flex;align-items:center;gap:1rem;background:var(--red-t);border-inline-start:.4rem solid var(--red);border-radius:.5rem;padding:.9rem 1.3rem;margin-top:1.3rem;font-size:1.32rem;line-height:1.55}
+.wi2{flex:none;display:grid;place-items:center;width:2.3rem;height:2.3rem;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:1.4rem}
+
+/* before/after */
+.ba{display:flex;align-items:center;gap:1.2rem}
+.bacard{flex:1;border-radius:.6rem;padding:1.4rem 1.6rem}
+.bacard.before{background:var(--red-t);border-inline-start:.4rem solid var(--red)}
+.bacard.after{background:var(--pet-t);border-inline-start:.4rem solid var(--pet)}
+.bal{font-size:1.3rem;font-weight:800;margin-bottom:.7rem}
+.before .bal{color:var(--red)}.after .bal{color:var(--pet)}
+.bacard ul{list-style:none;display:grid;gap:.6rem}
+.bacard li{font-size:1.4rem;line-height:1.55;padding-inline-start:1.2rem;position:relative}
+.bacard li::before{content:'';position:absolute;inset-inline-start:0;top:.7rem;width:.5rem;height:.5rem;border-radius:50%;background:currentColor;opacity:.5}
+.arr{flex:none;display:grid;place-items:center;width:3.2rem;height:3.2rem;border-radius:50%;border:.1rem solid var(--ink);color:var(--ink)}
+.arr svg{width:1.7rem;height:1.7rem}
+
+/* question grid */
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
+.qc{display:flex;gap:1.1rem;align-items:flex-start;background:#fff;border:.07rem solid var(--line);border-radius:.5rem;padding:1.4rem 1.4rem}
+.qn{flex:none;display:grid;place-items:center;width:3.2rem;height:3.2rem;background:var(--c);color:#fff;border-radius:.4rem;font-size:1.7rem;font-weight:800}
+.qc h3{font-size:1.5rem;margin-bottom:.3rem}.qc p{font-size:1.3rem;line-height:1.55;color:var(--body)}
+
+/* matrix */
+.mx{display:grid;grid-template-columns:2.2rem 1fr 1fr;grid-template-rows:1fr 1fr auto;gap:.6rem;height:26rem}
+.ylab{grid-row:1/3;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.1rem;font-weight:700;color:var(--mute)}
+.q{border-radius:.6rem;padding:1rem 1.2rem}
+.q h3{font-size:1.5rem;margin-bottom:.2rem}.q p{font-size:1.2rem;color:inherit;opacity:.9;margin-bottom:.5rem}
+.its{display:flex;gap:.4rem;flex-wrap:wrap}.its span{font-size:1.05rem;border:.07rem solid currentColor;border-radius:2rem;padding:.1rem .7rem;background:rgba(255,255,255,.55);color:var(--ink)}
+.q.best{background:var(--pet);color:#fff}.q.best .its span{color:var(--ink)}
+.q.plan{background:var(--pet-t)}.q.low{background:var(--sag-t)}.q.skip{background:#e3e6e1}
+.xl{text-align:center;font-size:1.1rem;font-weight:700;color:var(--mute)}
+
+/* risk ladder */
+.lad{display:grid;gap:.9rem}
+.lh,.lr{display:grid;grid-template-columns:8rem 1fr 1fr;gap:1.2rem;align-items:center}
+.lh{font-size:1.1rem;font-weight:700;color:var(--mute);padding:0 1.4rem}
+.lr{background:var(--t);border-inline-start:.4rem solid var(--c);border-radius:.5rem;padding:1.2rem 1.4rem;font-size:1.35rem;line-height:1.55}
+.lv{display:grid;place-items:center;background:var(--c);color:#fff;font-weight:800;border-radius:.4rem;padding:.3rem 0;font-size:1.3rem}
+
+/* versus */
+.versus{display:flex;align-items:stretch}
+.vcard{flex:1;background:#fff;border:.07rem solid var(--line);border-radius:.6rem;overflow:hidden}
+.vt{background:var(--c);color:#fff;padding:.9rem 1.4rem;font-size:1.7rem;font-weight:800}
+.vr{padding:.9rem 1.4rem;border-bottom:.07rem solid var(--line)}.vr:last-child{border:0}
+.vr span{display:block;font-size:1.05rem;color:var(--mute);font-weight:700}.vr b{font-size:1.38rem;line-height:1.55;font-weight:600}
+.vsb{flex:none;align-self:center;margin:0 1rem;font-size:1.2rem;font-weight:700;color:var(--mute)}
+
+/* form cards */
+.fm{display:grid;gap:.7rem}
+.fmr{--c:var(--pet);--t:var(--pet-t);display:grid;grid-template-columns:14rem 1fr;background:#fff;border:.07rem solid var(--line);border-radius:.5rem;overflow:hidden;min-height:4.2rem}
+.fmr.cop{--c:var(--cop);--t:var(--cop-t)}.fmr.sag{--c:var(--sag);--t:var(--sag-t)}.fmr.plm{--c:var(--plm);--t:var(--plm-t)}
+.fml{background:var(--t);border-inline-end:.35rem solid var(--c);padding:.8rem 1.2rem;font-weight:800;font-size:1.35rem;display:flex;align-items:center}
+.fmv{padding:.8rem 1.3rem;font-size:1.35rem;line-height:1.55;display:flex;align-items:center}
+.fmv.hint{color:#9aa3a9}
+
+/* checklist */
+.ck{display:grid;gap:.8rem}
+.ckr{display:flex;align-items:center;gap:1.3rem;padding:1.2rem 1.5rem;background:#fff;border:.07rem solid var(--line);border-radius:.5rem;font-size:1.65rem}
+.ckr.bad{background:var(--red-t);border-color:#e6bdb6}
+.cb{flex:none;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--sag);display:grid;place-items:center}
+.cb svg{width:1.5rem;height:1.5rem}.cb.w{background:var(--red);color:#fff;font-weight:800;font-size:1.6rem}
+
+/* trainer notes */
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.4rem}
+.krow{display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.07);border:.07rem solid rgba(255,255,255,.2);border-radius:.6rem;padding:1rem 1.2rem;color:#fff}
+.kn{flex:none;display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:50%;border:.1rem solid rgba(255,255,255,.6);font-weight:700}
+.kwhy{font-size:1.28rem;line-height:1.55}
+
+/* roadmap */
+.rm{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;padding-top:1.2rem}
+.rm::before{content:'';position:absolute;inset-inline:0;top:1.2rem;border-top:.15rem solid var(--ink);z-index:0}
+.rmi{position:relative;z-index:1;background:var(--t);border-radius:.5rem;border-top:.35rem solid var(--c);padding:2.1rem 1.3rem 1.4rem}
+.rmw{position:absolute;top:-1.2rem;inset-inline-start:1.1rem;background:var(--c);color:#fff;border-radius:2rem;padding:.25rem 1rem;font-size:1.15rem;font-weight:800}
+.rmi h3{font-size:1.7rem;margin-bottom:.4rem}.rmi p{font-size:1.3rem;line-height:1.6;color:var(--body)}
+
+/* takeaways */
+.kls{display:grid;gap:.8rem}
+.kl{display:flex;align-items:center;gap:1.2rem;padding:.8rem 1.2rem;font-size:1.5rem;line-height:1.5;border-radius:.5rem;background:#fff;border:.07rem solid var(--line)}
+.kl:nth-child(odd){background:var(--pet-t);border-color:transparent}
+.kno{flex:none;display:grid;place-items:center;width:2.8rem;height:2.8rem;border-radius:.4rem;background:var(--sb);color:#fff;font-weight:800;font-size:1.5rem}
+.kl b{font-weight:800}
+
+/* review */
+.rv{display:grid;grid-template-columns:1.25fr 1fr;gap:1.6rem;align-items:stretch}
+.rv h3{font-size:1.8rem;margin-bottom:.9rem}
+.rq ol{padding-inline-start:1.8rem;list-style-type:arabic-indic;font-size:1.4rem;line-height:1.65;display:grid;gap:.7rem}
+.rf p{font-size:1.5rem;line-height:1.7;color:var(--ink)}
+
+/* footer + progress */
+.footer{position:absolute;z-index:2;left:4.5rem;right:11.5rem;bottom:1.1rem;padding-top:.7rem}
+.nosb .footer{left:5rem;right:5rem}
+.footer .fr{display:flex;justify-content:space-between;font-size:1rem;color:var(--mute)}
+.footer .pn{font-weight:700}
+.prog{position:absolute;left:0;right:0;top:0;height:.12rem;background:var(--line)}
+.prog i{display:block;height:.12rem;background:var(--sb)}
+.dark .footer .fr,.deep .footer .fr,.plum .footer .fr,.cover .footer .fr{color:rgba(255,255,255,.65)}
+.dark .prog,.deep .prog,.plum .prog,.cover .prog{background:rgba(255,255,255,.18)}
+.dark .prog i,.deep .prog i,.plum .prog i,.cover .prog i{background:var(--gold)}
+
+/* ---- print ---- */
+@page{size:13.333in 7.5in;margin:0}
+@media print{
+  html{font-size:16px}
+  html,body{width:13.333in;margin:0;padding:0;background:#fff}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .slide{width:13.333in;height:7.49in;margin:0;box-shadow:none;break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid}
+  .slide:last-of-type{break-after:auto;page-break-after:auto}
+}
+
+/* Corporate Branding Logo Styles */
+.slide{background:#fff url('assets/background.jpg') no-repeat center center / cover!important}
+.slide.cover{background:linear-gradient(135deg,rgba(10,58,72,0.92) 0%,rgba(15,92,112,0.94) 65%,rgba(23,120,143,0.96) 100%), url('assets/background.jpg') no-repeat center center / cover!important}
+.slide.dark{background:linear-gradient(135deg,rgba(16,24,32,0.94),rgba(27,42,56,0.96)), url('assets/background.jpg') no-repeat center center / cover!important}
+.slide.deep{background:linear-gradient(135deg,rgba(11,63,78,0.94),rgba(18,106,128,0.96)), url('assets/background.jpg') no-repeat center center / cover!important}
+.slide.plum{background:linear-gradient(135deg,rgba(58,37,64,0.94),rgba(88,54,94,0.96)), url('assets/background.jpg') no-repeat center center / cover!important}
+
+.slide-brand{position:absolute;left:4.5rem;top:1.2rem;z-index:20;display:flex;align-items:center;pointer-events:none}
+.brand-logo{height:5.6rem;width:auto;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.1))}
+.dark .brand-logo,.deep .brand-logo,.plum .brand-logo,.cover .brand-logo{filter:brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0,0,0,.4))}
+header{padding-inline-end:22rem}
+.cover-brand{margin-bottom:0.8rem}
+.cover-logo{height:6.6rem;width:auto;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,.45))}
+.cover h1{font-size:3.5rem!important;line-height:1.3!important;margin-bottom:0.8rem!important}
+.cover .sub{font-size:1.35rem!important;line-height:1.5!important;margin-bottom:1.2rem!important}
+
+</style>
+</head>
+<body>
+<!-- ===== 1 ===== -->
+<section class="slide p0 cover nosb">
+  <div class="txt">
+    <div class="cover-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="cover-logo"></div>
+    <div class="ctag"><i></i>دورة تدريبية في الذكاء الاصطناعي · الجلسة ٣ من ٥</div>
+    <h1>تطبيقات الذكاء الاصطناعي <span class="mk">في الأعمال</span></h1>
+    <div class="sub">أين يفيد الذكاء الاصطناعي في عملنا، وكيف نختار الحالة المناسبة ونجرّبها بأمان</div>
+    <div class="cmeta"><div><small>المدرّب</small><b>عبدالرحمن عيسى</b></div><div><small>التاريخ</small><b>جمادى الأولى 1448</b></div></div>
+  </div>
+  <svg class="art" style="overflow:visible;direction:ltr" viewBox="0 0 560 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="لوحة بيانات وخطوط تربط الرسوم بمركز واحد">
+  <g fill="none" stroke="#fff" stroke-opacity=".30" stroke-width="2" stroke-dasharray="3 8" stroke-linecap="round">
+    <path d="M200 150L250 222M360 150L310 222M200 350L250 278M360 350L310 278"/>
+  </g>
+  <circle cx="280" cy="250" r="62" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="1.5"/>
+  <circle cx="280" cy="250" r="44" fill="#0b4756" stroke="#e8a468" stroke-width="3"/>
+  <path d="M280 222l5.500 17 17 5.500-17 5.500-5.500 17-5.500-17-17-5.500 17-5.500z" fill="#e8a468"/>
+  <!-- bar chart panel -->
+  <g>
+    <rect x="30" y="50" width="170" height="130" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
+    <path d="M50 160h130" stroke="#fff" stroke-opacity=".4" stroke-width="2"/>
+    <rect x="58" y="128" width="20" height="32" rx="3" fill="#fff" fill-opacity=".35"/><rect x="88" y="110" width="20" height="50" rx="3" fill="#fff" fill-opacity=".35"/>
+    <rect x="118" y="120" width="20" height="40" rx="3" fill="#fff" fill-opacity=".35"/><rect x="148" y="78" width="20" height="82" rx="3" fill="#e8a468"/>
+    <rect x="50" y="64" width="46" height="7" rx="3.500" fill="#fff" fill-opacity=".7"/>
+  </g>
+  <!-- line chart panel -->
+  <g>
+    <rect x="360" y="50" width="170" height="130" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
+    <path d="M380 160h130" stroke="#fff" stroke-opacity=".4" stroke-width="2"/>
+    <path d="M382 148L416 124L448 136L482 98L512 84" fill="none" stroke="#e8a468" stroke-width="3.500" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="#0b4756" stroke="#e8a468" stroke-width="2.500"><circle cx="382" cy="148" r="5"/><circle cx="416" cy="124" r="5"/><circle cx="448" cy="136" r="5"/><circle cx="482" cy="98" r="5"/><circle cx="512" cy="84" r="5"/></g>
+    <rect x="380" y="64" width="46" height="7" rx="3.500" fill="#fff" fill-opacity=".7"/>
+  </g>
+  <!-- table panel -->
+  <g>
+    <rect x="30" y="320" width="170" height="130" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
+    <rect x="46" y="336" width="138" height="16" rx="4" fill="#fff" fill-opacity=".28"/>
+    <g fill="#fff" fill-opacity=".38"><rect x="46" y="364" width="70" height="7" rx="3.500"/><rect x="132" y="364" width="52" height="7" rx="3.500"/><rect x="46" y="384" width="90" height="7" rx="3.500"/><rect x="152" y="384" width="32" height="7" rx="3.500"/><rect x="46" y="404" width="60" height="7" rx="3.500"/><rect x="122" y="404" width="62" height="7" rx="3.500"/></g>
+    <rect x="46" y="424" width="42" height="10" rx="5" fill="#e8a468"/>
+  </g>
+  <!-- chat panel -->
+  <g>
+    <rect x="360" y="320" width="170" height="130" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
+    <rect x="376" y="338" width="100" height="30" rx="10" fill="#fff" fill-opacity=".30"/>
+    <rect x="414" y="380" width="100" height="30" rx="10" fill="#e8a468" fill-opacity=".9"/>
+    <rect x="376" y="420" width="70" height="16" rx="8" fill="#fff" fill-opacity=".30"/>
+  </g>
+</svg><footer class="footer"><div class="prog"><i style="width:2.8%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١ من ٣٦</span></div></footer></section>
+
+<!-- ===== 2 ===== -->
+<section class="slide p0"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجلسة</small><b>٠٣</b><span>من ٥</span></aside><header><h2>ماذا ستتعلمون اليوم</h2><div class="hbar"></div></header><div class="content"><div class="ogrid"><div class="ot pet"><span class="on">١</span><span class="otx">التعرّف على أبرز مجالات استخدام الذكاء الاصطناعي في الأعمال</span></div><div class="ot cop"><span class="on">٢</span><span class="otx">ربط كل تطبيق بمشكلة عمل واضحة</span></div><div class="ot sag"><span class="on">٣</span><span class="otx">تقييم الفكرة من حيث الفائدة والبيانات والمخاطر</span></div><div class="ot plm"><span class="on">٤</span><span class="otx">اختيار حالة صغيرة مناسبة للبدء</span></div><div class="ot pet"><span class="on">٥</span><span class="otx">وضع خطة تجريبية بسيطة بمراجعة بشرية</span></div><div class="ot goal"><span class="otx">هدف اليوم: أن تخرجوا بفكرة تجريبية صغيرة لإدارتكم.</span></div></div></div><footer class="footer"><div class="prog"><i style="width:5.6%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢ من ٣٦</span></div></footer></section>
+
+<!-- ===== 3 ===== -->
+<section class="slide p0"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجلسة</small><b>٠٣</b><span>من ٥</span></aside><header><h2>ساعتان معًا</h2><div class="hbar"></div></header><div class="content"><div class="gantt">
+    <div class="gaxis"><div class="gl"></div><div class="gtrack axis"><span style="right:0%;transform:translateX(0%)">٠:٠٠</span><span style="right:25%;transform:translateX(50%)">٠:٣٠</span><span style="right:50%;transform:translateX(50%)">١:٠٠</span><span style="right:75%;transform:translateX(50%)">١:٣٠</span><span style="right:100%;transform:translateX(100%)">٢:٠٠</span></div></div><div class="grow"><div class="gl"><b>٠:٠٠</b><span>مراجعة وتوقعات</span></div><div class="gtrack"><div class="gbar pet" style="right:0.000%;width:8.333%">١٠ د</div></div></div><div class="grow"><div class="gl"><b>٠:١٠</b><span>أساسيات التطبيقات</span></div><div class="gtrack"><div class="gbar cop" style="right:8.333%;width:12.500%">١٥ د</div></div></div><div class="grow"><div class="gl"><b>٠:٢٥</b><span>التطبيقات حسب الإدارة</span></div><div class="gtrack"><div class="gbar sag" style="right:20.833%;width:25.000%">٣٠ د</div></div></div><div class="grow"><div class="gl"><b>٠:٥٥</b><span>استراحة</span></div><div class="gtrack"><div class="gbar brk" style="right:45.833%;width:8.333%">١٠ د</div></div></div><div class="grow"><div class="gl"><b>١:٠٥</b><span>اختيار الحالة وتقييمها</span></div><div class="gtrack"><div class="gbar plm" style="right:54.167%;width:16.667%">٢٠ د</div></div></div><div class="grow"><div class="gl"><b>١:٢٥</b><span>نشاط: بطاقة مشروع</span></div><div class="gtrack"><div class="gbar pet" style="right:70.833%;width:20.833%">٢٥ د</div></div></div><div class="grow"><div class="gl"><b>١:٥٠</b><span>مراجعة وخطة ٣٠ يومًا</span></div><div class="gtrack"><div class="gbar cop" style="right:91.667%;width:8.333%">١٠ د</div></div></div></div>
+    <div class="total">الإجمالي: ١٢٠ دقيقة</div></div><footer class="footer"><div class="prog"><i style="width:8.3%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣ من ٣٦</span></div></footer></section>
+
+<!-- ===== 4 ===== -->
+<section class="slide p0"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجلسة</small><b>٠٣</b><span>من ٥</span></aside><header><h2>ماذا تذكرون من الجلستين السابقتين؟</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c3">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="12" width="24" height="30" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="7" width="24" height="30" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="20" y="2" width="24" height="30" rx="3" fill="#c9a24b" fill-opacity=".55" stroke="#1e2a4a" stroke-width="2.500"/><path d="M26 11h12M26 17h12M26 23h7" stroke="#1e2a4a" stroke-width="2.500" stroke-linecap="round"/></svg></span><h3>تعلّم الآلة</h3></div><p>أنظمة تتعلّم من الأمثلة لتصنّف وتتوقّع.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="29" height="36" rx="3.5" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M11 15h17M11 22h17M11 29h9" stroke="#0f5c70" stroke-width="2.8" stroke-linecap="round"/><path d="M41 20l4.500 4.500-16 16-6.500 2 2-6.500z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>الذكاء التوليدي</h3></div><p>ينشئ محتوى جديدًا كالنصوص والصور.</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="8.500" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5"/><path d="M7 43c0-10 7-16 17-16s17 6 17 16z" fill="#4aa3ba" fill-opacity=".45" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>المراجعة البشرية</h3></div><p>قد يخطئ ويبدو واثقًا، فنراجع دائمًا.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:11.1%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٤ من ٣٦</span></div></footer></section>
+
+<!-- ===== 5 ===== -->
+<section class="slide p0 deep nosb"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><h2>قبل أن نبدأ</h2><div class="hbar"></div></header>
+  <div class="content split">
+    <div class="side-text">
+      <div class="statement">ما المهمة المتكررة في عملك التي تتمنى أن تنتهي أسرع؟</div>
+      <p class="subline">اكتبوها في سطر واحد. سنعود إليها في النشاط.</p>
+    </div>
+    <div class="bigicon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19" fill="#fff" stroke="#1e2a4a" stroke-width="2.800"/><path d="M24 12v13l8 5" fill="none" stroke="#bf6a2c" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div><footer class="footer"><div class="prog"><i style="width:13.9%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٥ من ٣٦</span></div></footer></section>
+
+<!-- ===== 6 ===== -->
+<section class="slide p1 dark nosb"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><h2>ما معنى «تطبيق» في الأعمال؟</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="statement">الذكاء الاصطناعي <span class="mark">أداة لحل مشكلة عمل</span>، وليس غاية بحد ذاته.</div>
+    <p class="subline">نبدأ دائمًا من المشكلة، ثم نسأل: هل تناسبها هذه الأداة؟</p>
+  </div><footer class="footer"><div class="prog"><i style="width:16.7%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٦ من ٣٦</span></div></footer></section>
+
+<!-- ===== 7 ===== -->
+<section class="slide p1"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠١</b><span>أساسيات التطبيقات</span></aside><header><h2>ثلاث فوائد محتملة</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c3">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19" fill="#fff" stroke="#1e2a4a" stroke-width="2.800"/><path d="M24 12v13l8 5" fill="none" stroke="#bf6a2c" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>تسريع المهام المتكررة</h3></div><p>يتولى النسخة الأولى أو الفرز الأولي، فيوفّر وقتًا للمهام الأهم.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="5" width="36" height="38" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="13" width="24" height="7" rx="2" fill="none" stroke="#bf6a2c" stroke-width="2.500"/><path d="M12 29h24M12 36h14" stroke="#1e2a4a" stroke-width="2.600" stroke-linecap="round"/></svg></span><h3>توحيد الجودة</h3></div><p>يساعد على اتساق الصياغة والتصنيف بين الموظفين.</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="13" fill="#fff" stroke="#1e2a4a" stroke-width="3"/><path d="M13 20a7 7 0 0 1 7-7" stroke="#4aa3ba" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 30l12 12" stroke="#bf6a2c" stroke-width="6" stroke-linecap="round"/></svg></span><h3>دعم القرار</h3></div><p>يلخّص المعلومات ويُبرز ما يستحق الانتباه، والقرار للإنسان.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:19.4%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٧ من ٣٦</span></div></footer></section>
+
+<!-- ===== 8 ===== -->
+<section class="slide p1"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠١</b><span>أساسيات التطبيقات</span></aside><header><h2>من المشكلة إلى التطبيق</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="cvs n4"><div class="cv pet"><div class="cvh"><b>١</b><span>مشكلة عمل</span></div><p>مثال: فرز الرسائل الواردة يستغرق وقتًا.</p></div><div class="cv cop"><div class="cvh"><b>٢</b><span>نوع المهمة</span></div><p>تصنيف؟ توقّع؟ استخراج؟ كتابة؟</p></div><div class="cv sag"><div class="cvh"><b>٣</b><span>الأداة المناسبة</span></div><p>جاهزة أو مخصّصة، ومعتمدة في مؤسستكم.</p></div><div class="cv plm"><div class="cvh"><b>٤</b><span>مراجعة وقياس</span></div><p>إنسان يراجع، ونقارن بما كان قبل التجربة.</p></div></div>
+  </div><footer class="footer"><div class="prog"><i style="width:22.2%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٨ من ٣٦</span></div></footer></section>
+
+<!-- ===== 9 ===== -->
+<section class="slide p1"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠١</b><span>أساسيات التطبيقات</span></aside><header><h2>أربعة أنواع من المهام</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c4">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="16" y="4" width="16" height="9" rx="2" fill="#1e2a4a"/><path d="M24 13v6M9 19h30M9 19v6M24 19v6M39 19v6" stroke="#1e2a4a" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="3" y="25" width="12" height="14" rx="2.5" fill="#c9a24b"/><rect x="18" y="25" width="12" height="14" rx="2.5" fill="#4aa3ba"/><rect x="33" y="25" width="12" height="14" rx="2.5" fill="#bf6a2c"/></svg></span><h3>تصنيف وفرز</h3></div><p>يضع الرسائل والطلبات في فئاتها.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="28" width="7" height="13" rx="1.5" fill="#1e2a4a"/><rect x="16" y="21" width="7" height="20" rx="1.5" fill="#1e2a4a"/><rect x="27" y="13" width="7" height="28" rx="1.5" fill="#1e2a4a"/><rect x="38" y="6" width="7" height="35" rx="1.5" fill="none" stroke="#bf6a2c" stroke-width="2.5" stroke-dasharray="3.5 3.5"/></svg></span><h3>توقّع</h3></div><p>يقدّر الطلب أو الاحتياج اعتمادًا على سجلات سابقة.</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="5" width="36" height="38" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="13" width="24" height="7" rx="2" fill="none" stroke="#bf6a2c" stroke-width="2.500"/><path d="M12 29h24M12 36h14" stroke="#1e2a4a" stroke-width="2.600" stroke-linecap="round"/></svg></span><h3>استخراج معلومات</h3></div><p>يقرأ فاتورة أو نموذجًا ويحوّله إلى بيانات.</p></div>
+    <div class="card plm"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="29" height="36" rx="3.5" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M11 15h17M11 22h17M11 29h9" stroke="#0f5c70" stroke-width="2.8" stroke-linecap="round"/><path d="M41 20l4.500 4.500-16 16-6.500 2 2-6.500z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>كتابة وتلخيص</h3></div><p>يصيغ مسودة أو يختصر نصًّا طويلًا.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:25.0%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٩ من ٣٦</span></div></footer></section>
+
+<!-- ===== 10 ===== -->
+<section class="slide p1"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠١</b><span>أساسيات التطبيقات</span></aside><header><h2>الإنسان في الحلقة</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="cvs n3"><div class="cv pet"><div class="cvh"><b>١</b><span>الأداة تقترح</span></div><p>مسودة أو تصنيف أو توقّع.</p></div><div class="cv cop"><div class="cvh"><b>٢</b><span>الموظف يراجع</span></div><p>يصحّح الأخطاء ويكمل ما ينقص.</p></div><div class="cv sag"><div class="cvh"><b>٣</b><span>الإنسان يقرّر</span></div><p>القرار والمسؤولية تبقيان عليه.</p></div></div>
+    <p class="subline center">الأداة تساعد، لكنها لا تتحمل المسؤولية.</p>
+  </div><footer class="footer"><div class="prog"><i style="width:27.8%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٠ من ٣٦</span></div></footer></section>
+
+<!-- ===== 11 ===== -->
+<section class="slide p1"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠١</b><span>أساسيات التطبيقات</span></aside><header><h2>متى نتوخى الحذر؟</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c3">
+    <div class="card red"><div class="ch"><span class="ci wi">!</span><h3>قرارات تمسّ المال أو الحقوق</h3></div><p>لا تُترك للأداة وحدها: يلزم قرار ومراجعة بشرية.</p></div>
+    <div class="card red"><div class="ch"><span class="ci wi">!</span><h3>مهام تتطلب دقة كاملة</h3></div><p>مثل حساب نهائي أو بند قانوني: تحقّقوا من كل رقم وكل بند.</p></div>
+    <div class="card red"><div class="ch"><span class="ci wi">!</span><h3>مهام فيها معلومات سرية</h3></div><p>لا تُستخدم إلا في أداة اعتمدتها مؤسستكم.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:30.6%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١١ من ٣٦</span></div></footer></section>
+
+<!-- ===== 12 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>ست إدارات، ست فرص</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c3 t2">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 7h36v25H21l-9 8v-8H6z" fill="#fff" stroke="#1e2a4a" stroke-width="2.500" stroke-linejoin="round"/><circle cx="16" cy="19.500" r="2.800" fill="#bf6a2c"/><circle cx="24" cy="19.500" r="2.800" fill="#c9a24b"/><circle cx="32" cy="19.500" r="2.800" fill="#0f5c70"/></svg></span><h3>خدمة العملاء</h3></div><p>رسائل وشكاوى كثيرة تحتاج إلى فرز ورد.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3l5.500 15.500L45 24l-15.500 5.500L24 45l-5.500-15.500L3 24l15.500-5.500z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.500" stroke-linejoin="round"/></svg></span><h3>التسويق والمبيعات</h3></div><p>حاجة دائمة إلى نصوص وأفكار وفهم للعملاء.</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="8.500" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5"/><path d="M7 43c0-10 7-16 17-16s17 6 17 16z" fill="#4aa3ba" fill-opacity=".45" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>الموارد البشرية</h3></div><p>أسئلة متكررة ومستندات تحتاج إلى صياغة.</p></div>
+    <div class="card plm"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="28" width="7" height="13" rx="1.5" fill="#1e2a4a"/><rect x="16" y="21" width="7" height="20" rx="1.5" fill="#1e2a4a"/><rect x="27" y="13" width="7" height="28" rx="1.5" fill="#1e2a4a"/><rect x="38" y="6" width="7" height="35" rx="1.5" fill="none" stroke="#bf6a2c" stroke-width="2.5" stroke-dasharray="3.5 3.5"/></svg></span><h3>المالية</h3></div><p>فواتير ومستندات تُدخل يدويًا وتحتاج دقة.</p></div>
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="12" width="24" height="30" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="7" width="24" height="30" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="20" y="2" width="24" height="30" rx="3" fill="#c9a24b" fill-opacity=".55" stroke="#1e2a4a" stroke-width="2.500"/><path d="M26 11h12M26 17h12M26 23h7" stroke="#1e2a4a" stroke-width="2.500" stroke-linecap="round"/></svg></span><h3>العمليات والمشتريات</h3></div><p>طلب ومخزون وموردون وتأخيرات.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="9" width="38" height="34" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><path d="M5 19h38" stroke="#1e2a4a" stroke-width="2.500"/><path d="M15 4v8M33 4v8" stroke="#1e2a4a" stroke-width="2.800" stroke-linecap="round"/><circle cx="16" cy="28" r="2.600" fill="#4aa3ba"/><circle cx="24" cy="28" r="2.600" fill="#4aa3ba"/><circle cx="32" cy="28" r="2.600" fill="#bf6a2c"/><circle cx="16" cy="36" r="2.600" fill="#4aa3ba"/><circle cx="24" cy="36" r="2.600" fill="#c9a24b"/></svg></span><h3>الشؤون الإدارية</h3></div><p>اجتماعات ومراسلات وملفات كثيرة.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:33.3%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٢ من ٣٦</span></div></footer></section>
+
+<!-- ===== 13 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>خدمة العملاء</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="pband"><b>المشكلة المعتادة</b><span>رسائل وشكاوى كثيرة تصل يوميًا، ويجب فهمها وتوجيهها والرد عليها.</span></div>
+    <div class="cards c3"><div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="16" y="4" width="16" height="9" rx="2" fill="#1e2a4a"/><path d="M24 13v6M9 19h30M9 19v6M24 19v6M39 19v6" stroke="#1e2a4a" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="3" y="25" width="12" height="14" rx="2.5" fill="#c9a24b"/><rect x="18" y="25" width="12" height="14" rx="2.5" fill="#4aa3ba"/><rect x="33" y="25" width="12" height="14" rx="2.5" fill="#bf6a2c"/></svg></span><h3>فرز الشكاوى وتوجيهها</h3></div><p>يصنّف الرسالة ويقترح الجهة المختصة.</p></div><div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 7h36v25H21l-9 8v-8H6z" fill="#fff" stroke="#1e2a4a" stroke-width="2.500" stroke-linejoin="round"/><circle cx="16" cy="19.500" r="2.800" fill="#bf6a2c"/><circle cx="24" cy="19.500" r="2.800" fill="#c9a24b"/><circle cx="32" cy="19.500" r="2.800" fill="#0f5c70"/></svg></span><h3>اقتراح ردود</h3></div><p>يكتب مسودة رد يراجعها الموظف قبل الإرسال.</p></div><div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="4" width="34" height="40" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><circle cx="15" cy="15" r="2.600" fill="#bf6a2c"/><circle cx="15" cy="24" r="2.600" fill="#0f5c70"/><circle cx="15" cy="33" r="2.600" fill="#c9a24b"/><path d="M22 15h13M22 24h13M22 33h9" stroke="#1e2a4a" stroke-width="2.800" stroke-linecap="round"/></svg></span><h3>تلخيص المحادثات</h3></div><p>يختصر محادثة طويلة قبل تحويلها إلى زميل.</p></div></div>
+    <div class="wbar"><span class="wi2">!</span><span><b>احذروا:</b> لا يُرسل ردٌّ دون مراجعة، ولا تُدخلوا بيانات العملاء في أداة غير معتمدة.</span></div>
+  </div><footer class="footer"><div class="prog"><i style="width:36.1%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٣ من ٣٦</span></div></footer></section>
+
+<!-- ===== 14 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>التسويق والمبيعات</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="pband"><b>المشكلة المعتادة</b><span>حاجة مستمرة إلى نصوص وأفكار جديدة، وإلى فهم آراء العملاء.</span></div>
+    <div class="cards c3"><div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="29" height="36" rx="3.5" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M11 15h17M11 22h17M11 29h9" stroke="#0f5c70" stroke-width="2.8" stroke-linecap="round"/><path d="M41 20l4.500 4.500-16 16-6.500 2 2-6.500z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>صياغة مسودات</h3></div><p>نسخة أولى من إعلان أو رسالة أو منشور.</p></div><div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3l5.500 15.500L45 24l-15.500 5.500L24 45l-5.500-15.500L3 24l15.500-5.500z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.500" stroke-linejoin="round"/></svg></span><h3>اقتراح أفكار وعناوين</h3></div><p>بدائل متعددة تختارون منها.</p></div><div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="13" fill="#fff" stroke="#1e2a4a" stroke-width="3"/><path d="M13 20a7 7 0 0 1 7-7" stroke="#4aa3ba" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 30l12 12" stroke="#bf6a2c" stroke-width="6" stroke-linecap="round"/></svg></span><h3>تحليل آراء العملاء</h3></div><p>يلخّص التعليقات ويُبرز المواضيع المتكررة.</p></div></div>
+    <div class="wbar"><span class="wi2">!</span><span><b>احذروا:</b> تحقّقوا من صحة كل ادعاء قبل النشر، وراجعوا النبرة وهوية العلامة.</span></div>
+  </div><footer class="footer"><div class="prog"><i style="width:38.9%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٤ من ٣٦</span></div></footer></section>
+
+<!-- ===== 15 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>الموارد البشرية</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="pband"><b>المشكلة المعتادة</b><span>أسئلة متكررة من الموظفين، ومستندات كثيرة تحتاج إلى صياغة وفرز.</span></div>
+    <div class="cards c3"><div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="4" width="26" height="35" rx="3.5" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M13 14h14M13 20h14M13 26h8" stroke="#1e2a4a" stroke-width="2.5" stroke-linecap="round"/><circle cx="36" cy="36" r="9" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2"/><path d="M36 31v10M31 36h10" stroke="#1e2a4a" stroke-width="2.5" stroke-linecap="round"/></svg></span><h3>صياغة وصف وظيفي مبدئي</h3></div><p>مسودة يعدّلها المختصون.</p></div><div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 7h36v25H21l-9 8v-8H6z" fill="#fff" stroke="#1e2a4a" stroke-width="2.500" stroke-linejoin="round"/><circle cx="16" cy="19.500" r="2.800" fill="#bf6a2c"/><circle cx="24" cy="19.500" r="2.800" fill="#c9a24b"/><circle cx="32" cy="19.500" r="2.800" fill="#0f5c70"/></svg></span><h3>الإجابة عن أسئلة السياسات</h3></div><p>من وثائق معتمدة فقط.</p></div><div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="4" width="34" height="40" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><circle cx="15" cy="15" r="2.600" fill="#bf6a2c"/><circle cx="15" cy="24" r="2.600" fill="#0f5c70"/><circle cx="15" cy="33" r="2.600" fill="#c9a24b"/><path d="M22 15h13M22 24h13M22 33h9" stroke="#1e2a4a" stroke-width="2.800" stroke-linecap="round"/></svg></span><h3>تلخيص استبيانات الموظفين</h3></div><p>يُبرز الملاحظات المتكررة.</p></div></div>
+    <div class="wbar"><span class="wi2">!</span><span><b>احذروا:</b> لا يُترك قرار التوظيف أو الترقية للأداة، وبيانات الموظفين شخصية وحسّاسة.</span></div>
+  </div><footer class="footer"><div class="prog"><i style="width:41.7%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٥ من ٣٦</span></div></footer></section>
+
+<!-- ===== 16 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>المالية</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="pband"><b>المشكلة المعتادة</b><span>فواتير ومستندات كثيرة تُدخل يدويًا، والمراجعة تحتاج إلى دقة.</span></div>
+    <div class="cards c3"><div class="card plm"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="5" width="36" height="38" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="13" width="24" height="7" rx="2" fill="none" stroke="#bf6a2c" stroke-width="2.500"/><path d="M12 29h24M12 36h14" stroke="#1e2a4a" stroke-width="2.600" stroke-linecap="round"/></svg></span><h3>قراءة الفواتير</h3></div><p>يستخرج التاريخ والمبلغ والمورّد ويحوّلها إلى بيانات.</p></div><div class="card plm"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="13" fill="#fff" stroke="#1e2a4a" stroke-width="3"/><path d="M13 20a7 7 0 0 1 7-7" stroke="#4aa3ba" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 30l12 12" stroke="#bf6a2c" stroke-width="6" stroke-linecap="round"/></svg></span><h3>كشف غير المعتاد</h3></div><p>ينبّه إلى عملية تختلف عن المعتاد لمراجعتها.</p></div><div class="card plm"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="28" width="7" height="13" rx="1.5" fill="#1e2a4a"/><rect x="16" y="21" width="7" height="20" rx="1.5" fill="#1e2a4a"/><rect x="27" y="13" width="7" height="28" rx="1.5" fill="#1e2a4a"/><rect x="38" y="6" width="7" height="35" rx="1.5" fill="none" stroke="#bf6a2c" stroke-width="2.5" stroke-dasharray="3.5 3.5"/></svg></span><h3>توقّع المصروفات</h3></div><p>تقدير مبني على سجلات سابقة.</p></div></div>
+    <div class="wbar"><span class="wi2">!</span><span><b>احذروا:</b> راجعوا كل رقم: الأدوات التوليدية قد تخطئ في الحساب، والبيانات المالية سرّية.</span></div>
+  </div><footer class="footer"><div class="prog"><i style="width:44.4%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٦ من ٣٦</span></div></footer></section>
+
+<!-- ===== 17 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>العمليات والمشتريات</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="pband"><b>المشكلة المعتادة</b><span>التخطيط للطلب والمخزون، والتعامل مع الموردين والتأخيرات.</span></div>
+    <div class="cards c3"><div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="28" width="7" height="13" rx="1.5" fill="#1e2a4a"/><rect x="16" y="21" width="7" height="20" rx="1.5" fill="#1e2a4a"/><rect x="27" y="13" width="7" height="28" rx="1.5" fill="#1e2a4a"/><rect x="38" y="6" width="7" height="35" rx="1.5" fill="none" stroke="#bf6a2c" stroke-width="2.5" stroke-dasharray="3.5 3.5"/></svg></span><h3>توقّع الطلب والمخزون</h3></div><p>يقدّر الاحتياج القادم اعتمادًا على السجلات.</p></div><div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="12" width="24" height="30" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="7" width="24" height="30" rx="3" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="20" y="2" width="24" height="30" rx="3" fill="#c9a24b" fill-opacity=".55" stroke="#1e2a4a" stroke-width="2.500"/><path d="M26 11h12M26 17h12M26 23h7" stroke="#1e2a4a" stroke-width="2.500" stroke-linecap="round"/></svg></span><h3>مقارنة عروض الموردين</h3></div><p>يلخّص العروض في جدول ليسهل القرار.</p></div><div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19" fill="#fff" stroke="#1e2a4a" stroke-width="2.800"/><path d="M24 12v13l8 5" fill="none" stroke="#bf6a2c" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>تنبيه بالتأخير</h3></div><p>ينبّه عند تأخر طلب عن موعده.</p></div></div>
+    <div class="wbar"><span class="wi2">!</span><span><b>احذروا:</b> جودة السجلات السابقة تحدّد جودة التوقّع، والحالات الاستثنائية تحتاج إلى حكم بشري.</span></div>
+  </div><footer class="footer"><div class="prog"><i style="width:47.2%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٧ من ٣٦</span></div></footer></section>
+
+<!-- ===== 18 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>الشؤون الإدارية</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="pband"><b>المشكلة المعتادة</b><span>اجتماعات ومراسلات وملفات كثيرة تأخذ وقتًا في الترتيب والمتابعة.</span></div>
+    <div class="cards c3"><div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="9" width="38" height="34" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><path d="M5 19h38" stroke="#1e2a4a" stroke-width="2.500"/><path d="M15 4v8M33 4v8" stroke="#1e2a4a" stroke-width="2.800" stroke-linecap="round"/><circle cx="16" cy="28" r="2.600" fill="#4aa3ba"/><circle cx="24" cy="28" r="2.600" fill="#4aa3ba"/><circle cx="32" cy="28" r="2.600" fill="#bf6a2c"/><circle cx="16" cy="36" r="2.600" fill="#4aa3ba"/><circle cx="24" cy="36" r="2.600" fill="#c9a24b"/></svg></span><h3>تلخيص الاجتماعات</h3></div><p>يستخرج القرارات والمهام من الملاحظات.</p></div><div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="29" height="36" rx="3.5" fill="#fff" stroke="#1e2a4a" stroke-width="2.5"/><path d="M11 15h17M11 22h17M11 29h9" stroke="#0f5c70" stroke-width="2.8" stroke-linecap="round"/><path d="M41 20l4.500 4.500-16 16-6.500 2 2-6.500z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>صياغة المراسلات</h3></div><p>مسودة خطاب أو بريد بنبرة مناسبة.</p></div><div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="16" y="4" width="16" height="9" rx="2" fill="#1e2a4a"/><path d="M24 13v6M9 19h30M9 19v6M24 19v6M39 19v6" stroke="#1e2a4a" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="3" y="25" width="12" height="14" rx="2.5" fill="#c9a24b"/><rect x="18" y="25" width="12" height="14" rx="2.5" fill="#4aa3ba"/><rect x="33" y="25" width="12" height="14" rx="2.5" fill="#bf6a2c"/></svg></span><h3>ترتيب الملفات</h3></div><p>يصنّف المستندات ويقترح أسماء واضحة.</p></div></div>
+    <div class="wbar"><span class="wi2">!</span><span><b>احذروا:</b> تأكدوا من القرارات والتواريخ والأسماء، وحافظوا على سرية المحاضر.</span></div>
+  </div><footer class="footer"><div class="prog"><i style="width:50.0%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٨ من ٣٦</span></div></footer></section>
+
+<!-- ===== 19 ===== -->
+<section class="slide p2"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٢</b><span>التطبيقات حسب الإدارة</span></aside><header><h2>مثال: فرز رسائل العملاء</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="ba">
+      <div class="bacard before"><div class="bal">قبل</div>
+        <ul><li>الموظف يقرأ كل رسالة بنفسه.</li><li>يقرّر لمن تُحوَّل.</li><li>ثم يكتب الرد من الصفر.</li></ul></div>
+      <span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div class="bacard after"><div class="bal">بعد</div>
+        <ul><li>الأداة تقترح الجهة وتلخّص الرسالة.</li><li>الموظف يؤكد أو يصحّح التوجيه.</li><li>يراجع مسودة الرد قبل إرسالها.</li></ul></div>
+    </div>
+    <p class="subline center">مثال افتراضي. ما لم يتغيّر: الموظف يتحمل القرار النهائي.</p>
+  </div><footer class="footer"><div class="prog"><i style="width:52.8%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">١٩ من ٣٦</span></div></footer></section>
+
+<!-- ===== 20 ===== -->
+<section class="slide p2 deep nosb"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div>
+  <div class="content center-all">
+    <div class="bigicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 19h27v11a11 11 0 0 1-11 11h-5a11 11 0 0 1-11-11z" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/><path d="M35 23h3a5.500 5.500 0 0 1 0 11h-5" fill="none" stroke="#1e2a4a" stroke-width="2.5"/><path d="M15 5c-2 3 2 4 0 8M22 5c-2 3 2 4 0 8M29 5c-2 3 2 4 0 8" stroke="#bf6a2c" stroke-width="2.600" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="statement c">استراحة</div>
+    <div class="timepill">١٠ دقائق</div>
+    <p class="subline">بعدها: كيف نختار الحالة المناسبة ونقيّمها.</p>
+  </div><footer class="footer"><div class="prog"><i style="width:55.6%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٠ من ٣٦</span></div></footer></section>
+
+<!-- ===== 21 ===== -->
+<section class="slide p3 plum nosb"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><header><h2>كيف نختار الحالة الأولى؟</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="statement">ابدأوا <span class="mark">بمشكلة صغيرة وواضحة</span>، لا بأداة مبهرة.</div>
+    <p class="subline">النجاح الصغير يبني الثقة، ويكشف ما يلزم قبل التوسّع.</p>
+  </div><footer class="footer"><div class="prog"><i style="width:58.3%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢١ من ٣٦</span></div></footer></section>
+
+<!-- ===== 22 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>أربعة أسئلة قبل البدء</h2><div class="hbar"></div></header>
+  <div class="content"><div class="qgrid">
+    <div class="qc pet"><span class="qn">١</span><div><h3>ما المشكلة بالضبط؟</h3><p>جملة واحدة يفهمها الجميع.</p></div></div>
+    <div class="qc cop"><span class="qn">٢</span><div><h3>هل لدينا ما يلزم؟</h3><p>بيانات أو نصوص مناسبة ومسموح باستخدامها.</p></div></div>
+    <div class="qc sag"><span class="qn">٣</span><div><h3>ماذا لو أخطأت الأداة؟</h3><p>ما حجم الضرر، وكيف نكتشف الخطأ؟</p></div></div>
+    <div class="qc plm"><span class="qn">٤</span><div><h3>من يراجع النتيجة؟</h3><p>شخص محدّد مسؤول عن اعتمادها.</p></div></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:61.1%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٢ من ٣٦</span></div></footer></section>
+
+<!-- ===== 23 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>الفائدة مقابل سهولة التنفيذ</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="mx">
+      <div class="ylab">الفائدة (من الأقل إلى الأعلى)</div>
+      <div class="q best"><h3>ابدأوا هنا</h3><p>فائدة عالية وتنفيذ سهل.</p><div class="its"><span>تلخيص المحاضر</span><span>مسودات الرسائل</span></div></div>
+      <div class="q plan"><h3>خطّطوا لها</h3><p>فائدة عالية لكن تحتاج جهدًا.</p><div class="its"><span>توقّع الطلب</span><span>قراءة المستندات</span></div></div>
+      <div class="q low"><h3>عند توفّر الوقت</h3><p>سهلة لكن فائدتها أقل.</p><div class="its"><span>تسمية الملفات</span></div></div>
+      <div class="q skip"><h3>أجّلوها</h3><p>صعبة وفائدتها غير واضحة.</p><div class="its"><span>مشروع كبير بلا هدف</span></div></div>
+      <div class="xl0"></div><div class="xl">سهل التنفيذ</div><div class="xl">صعب التنفيذ</div>
+    </div>
+    <p class="subline center">أمثلة افتراضية للتوضيح فقط.</p>
+  </div><footer class="footer"><div class="prog"><i style="width:63.9%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٣ من ٣٦</span></div></footer></section>
+
+<!-- ===== 24 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>مستوى الخطر يحدّد المراجعة</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="lad">
+      <div class="lh"><span></span><span>مثال</span><span>ما المطلوب</span></div>
+      <div class="lr sag"><span class="lv">منخفض</span><span>مسودة داخلية لا يراها أحد خارج الفريق.</span><span>مراجعة سريعة من كاتبها.</span></div>
+      <div class="lr cop"><span class="lv">متوسط</span><span>رسالة أو تقرير يصل إلى عميل أو إلى الإدارة.</span><span>مراجعة كاملة قبل الإرسال.</span></div>
+      <div class="lr red"><span class="lv">مرتفع</span><span>قرار يمسّ مالًا أو حقوق أشخاص.</span><span>القرار بشري، والأداة مساعد فقط.</span></div>
+    </div>
+  </div><footer class="footer"><div class="prog"><i style="width:66.7%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٤ من ٣٦</span></div></footer></section>
+
+<!-- ===== 25 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>أربع مخاطر رئيسية</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c4">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l17 6v12c0 10.500-7 18.500-17 22C14 40.500 7 32.500 7 22V10z" fill="#4aa3ba" fill-opacity=".35" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 24l6 6 11-12" fill="none" stroke="#bf6a2c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>الخصوصية</h3></div><p>تسرّب بيانات العملاء أو الموظفين إلى أداة غير آمنة.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="13" fill="#fff" stroke="#1e2a4a" stroke-width="3"/><path d="M13 20a7 7 0 0 1 7-7" stroke="#4aa3ba" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 30l12 12" stroke="#bf6a2c" stroke-width="6" stroke-linecap="round"/></svg></span><h3>الدقة</h3></div><p>إجابات تبدو صحيحة وهي خاطئة.</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="8.500" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5"/><path d="M7 43c0-10 7-16 17-16s17 6 17 16z" fill="#4aa3ba" fill-opacity=".45" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>الانحياز</h3></div><p>تكرار تحيّز موجود في الأمثلة القديمة.</p></div>
+    <div class="card plm"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="8" fill="#fff" stroke="#1e2a4a" stroke-width="2.800"/><path d="M24 4v7M24 37v7M4 24h7M37 24h7M9.900 9.900l5 5M33.100 33.100l5 5M9.900 38.100l5-5M33.100 14.900l5-5" stroke="#1e2a4a" stroke-width="4" stroke-linecap="round"/></svg></span><h3>الاعتماد الزائد</h3></div><p>الثقة بالنتيجة دون مراجعة.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:69.4%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٥ من ٣٦</span></div></footer></section>
+
+<!-- ===== 26 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>هل بياناتنا جاهزة؟</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c3">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="5" width="36" height="38" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="13" width="24" height="7" rx="2" fill="none" stroke="#bf6a2c" stroke-width="2.500"/><path d="M12 29h24M12 36h14" stroke="#1e2a4a" stroke-width="2.600" stroke-linecap="round"/></svg></span><h3>صحيحة</h3></div><p>خالية من الأخطاء الواضحة والتكرار.</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="9" width="38" height="34" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><path d="M5 19h38" stroke="#1e2a4a" stroke-width="2.500"/><path d="M15 4v8M33 4v8" stroke="#1e2a4a" stroke-width="2.800" stroke-linecap="round"/><circle cx="16" cy="28" r="2.600" fill="#4aa3ba"/><circle cx="24" cy="28" r="2.600" fill="#4aa3ba"/><circle cx="32" cy="28" r="2.600" fill="#bf6a2c"/><circle cx="16" cy="36" r="2.600" fill="#4aa3ba"/><circle cx="24" cy="36" r="2.600" fill="#c9a24b"/></svg></span><h3>محدّثة</h3></div><p>تعكس الوضع الحالي لا القديم.</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l17 6v12c0 10.500-7 18.500-17 22C14 40.500 7 32.500 7 22V10z" fill="#4aa3ba" fill-opacity=".35" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 24l6 6 11-12" fill="none" stroke="#bf6a2c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>مسموح بها</h3></div><p>تأكدوا من السياسة وحماية البيانات الشخصية.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:72.2%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٦ من ٣٦</span></div></footer></section>
+
+<!-- ===== 27 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>أداة جاهزة أم حل مخصّص؟</h2><div class="hbar"></div></header>
+  <div class="content">
+    <div class="versus">
+      <div class="vcard pet"><div class="vt">أداة جاهزة</div>
+        <div class="vr"><span>ماذا تعني</span><b>خدمة أو برنامج يمكن البدء به سريعًا.</b></div>
+        <div class="vr"><span>متى تناسب</span><b>مهام عامة كالكتابة والتلخيص.</b></div>
+        <div class="vr"><span>احذروا</span><b>تأكدوا من سياسة البيانات واعتماد المؤسسة لها.</b></div></div>
+      <div class="vsb">أو</div>
+      <div class="vcard cop"><div class="vt">حل مخصّص</div>
+        <div class="vr"><span>ماذا يعني</span><b>نظام يُضبط لمؤسستكم ولبياناتها.</b></div>
+        <div class="vr"><span>متى يناسب</span><b>مهام خاصة بعملكم وبيانات داخلية.</b></div>
+        <div class="vr"><span>احذروا</span><b>يحتاج إلى وقت وخبرة وميزانية.</b></div></div>
+    </div>
+  </div><footer class="footer"><div class="prog"><i style="width:75.0%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٧ من ٣٦</span></div></footer></section>
+
+<!-- ===== 28 ===== -->
+<section class="slide p3"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٣</b><span>اختيار الحالة وتقييمها</span></aside><header><h2>كيف نعرف أن التجربة نجحت؟</h2><div class="hbar"></div></header>
+  <div class="content"><div class="cards c3">
+    <div class="card pet"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19" fill="#fff" stroke="#1e2a4a" stroke-width="2.800"/><path d="M24 12v13l8 5" fill="none" stroke="#bf6a2c" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3>الوقت</h3></div><p>هل أُنجزت المهمة أسرع مما كانت؟</p></div>
+    <div class="card cop"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="5" width="36" height="38" rx="4" fill="#fff" stroke="#1e2a4a" stroke-width="2.500"/><rect x="12" y="13" width="24" height="7" rx="2" fill="none" stroke="#bf6a2c" stroke-width="2.500"/><path d="M12 29h24M12 36h14" stroke="#1e2a4a" stroke-width="2.600" stroke-linecap="round"/></svg></span><h3>الجودة</h3></div><p>هل قلّت الأخطاء أو الملاحظات؟</p></div>
+    <div class="card sag"><div class="ch"><span class="ci"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="8.500" fill="#c9a24b" stroke="#1e2a4a" stroke-width="2.5"/><path d="M7 43c0-10 7-16 17-16s17 6 17 16z" fill="#4aa3ba" fill-opacity=".45" stroke="#1e2a4a" stroke-width="2.5" stroke-linejoin="round"/></svg></span><h3>رضا الناس</h3></div><p>هل ارتاح الموظفون والعملاء؟</p></div>
+  </div>
+  <p class="subline center">قارنوا دائمًا بما كان قبل التجربة.</p></div><footer class="footer"><div class="prog"><i style="width:77.8%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٨ من ٣٦</span></div></footer></section>
+
+<!-- ===== 29 ===== -->
+<section class="slide p4"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٤</b><span>نشاط عملي</span></aside><header><h2>بطاقة مشروع تجريبي</h2><div class="hbar"></div></header>
+  <div class="content">
+    <p class="lead">اعملوا في مجموعات من ٣ إلى ٤ أشخاص. اختاروا إدارة واحدة، وأكملوا بطاقة مشروع صغير. <b>٢٥ دقيقة.</b></p>
+    <div class="cards c3">
+      <div class="card pet"><span class="tmin">٥ دقائق</span><h3>اختاروا</h3><p>إدارة ومشكلة صغيرة وواضحة.</p></div>
+      <div class="card cop"><span class="tmin">١٠ دقائق</span><h3>أكملوا البطاقة</h3><p>اكتبوا الحقول الخمسة بإيجاز.</p></div>
+      <div class="card sag"><span class="tmin">١٠ دقائق</span><h3>اعرضوا</h3><p>دقيقتان تقريبًا لكل مجموعة.</p></div>
+    </div>
+  </div><footer class="footer"><div class="prog"><i style="width:80.6%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٢٩ من ٣٦</span></div></footer></section>
+
+<!-- ===== 30 ===== -->
+<section class="slide p4"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٤</b><span>نشاط عملي</span></aside><header><h2>بطاقة المشروع</h2><div class="hbar"></div></header><div class="content"><div class="fm"><div class="fmr pet"><div class="fml">المشكلة</div><div class="fmv hint">ما الذي يتكرر أو يستغرق وقتًا؟</div></div><div class="fmr cop"><div class="fml">نوع المهمة</div><div class="fmv hint">تصنيف، توقّع، استخراج، أم كتابة؟</div></div><div class="fmr sag"><div class="fml">البيانات المطلوبة</div><div class="fmv hint">ما النصوص أو السجلات اللازمة، وهل يُسمح باستخدامها؟</div></div><div class="fmr plm"><div class="fml">المخاطر والمراجعة</div><div class="fmv hint">ماذا لو أخطأت الأداة، ومن يراجع؟</div></div><div class="fmr pet"><div class="fml">مؤشر النجاح</div><div class="fmv hint">كيف سنعرف أن التجربة نجحت؟</div></div></div></div><footer class="footer"><div class="prog"><i style="width:83.3%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣٠ من ٣٦</span></div></footer></section>
+
+<!-- ===== 31 ===== -->
+<section class="slide p4"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٤</b><span>نشاط عملي</span></aside><header><h2>مثال مكتمل: خدمة العملاء</h2><div class="hbar"></div></header><div class="content"><div class="fm"><div class="fmr pet"><div class="fml">المشكلة</div><div class="fmv ">فرز الشكاوى الواردة وتوجيهها يستغرق وقتًا.</div></div><div class="fmr cop"><div class="fml">نوع المهمة</div><div class="fmv ">تصنيف.</div></div><div class="fmr sag"><div class="fml">البيانات المطلوبة</div><div class="fmv ">رسائل سابقة مصنّفة، بعد إخفاء البيانات الشخصية.</div></div><div class="fmr plm"><div class="fml">المخاطر والمراجعة</div><div class="fmv ">توجيه خاطئ. الموظف يؤكد كل توجيه قبل اعتماده.</div></div><div class="fmr pet"><div class="fml">مؤشر النجاح</div><div class="fmv ">قلّ وقت الفرز، وقلّ عدد الرسائل الموجَّهة إلى جهة خاطئة.</div></div></div><p class="subline center">مثال افتراضي للتوضيح.</p></div><footer class="footer"><div class="prog"><i style="width:86.1%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣١ من ٣٦</span></div></footer></section>
+
+<!-- ===== 32 ===== -->
+<section class="slide p4"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٤</b><span>نشاط عملي</span></aside><header><h2>ماذا يجب أن يتضمن عرضكم؟</h2><div class="hbar"></div></header>
+  <div class="content"><div class="ck">
+    <div class="ckr"><span class="cb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>المشكلة واضحة في جملة واحدة</span></div>
+    <div class="ckr"><span class="cb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>التجربة صغيرة ويمكن تنفيذها في شهر</span></div>
+    <div class="ckr"><span class="cb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>هناك شخص محدّد يراجع النتيجة</span></div>
+    <div class="ckr bad"><span class="cb w">!</span><span>لا بيانات سرية في أداة غير معتمدة</span></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:88.9%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣٢ من ٣٦</span></div></footer></section>
+
+<!-- ===== 33 ===== -->
+<section class="slide p5"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٥</b><span>الختام</span></aside><header><h2>خطة تجريبية في ٣٠ يومًا</h2><div class="hbar"></div></header>
+  <div class="content"><div class="rm">
+    <div class="rmi pet"><span class="rmw">الأسبوع ١</span><h3>اختاروا</h3><p>مشكلة صغيرة، وأمثلة من العمل بعد حماية البيانات.</p></div>
+    <div class="rmi cop"><span class="rmw">الأسبوع ٢</span><h3>جرّبوا</h3><p>مع مجموعة صغيرة وأداة معتمدة.</p></div>
+    <div class="rmi sag"><span class="rmw">الأسبوع ٣</span><h3>راجعوا</h3><p>سجّلوا الأخطاء وقارنوا بما كان قبل التجربة.</p></div>
+    <div class="rmi plm"><span class="rmw">الأسبوع ٤</span><h3>قرّروا</h3><p>وسّعوا التجربة أو عدّلوها أو أوقفوها.</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:91.7%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣٣ من ٣٦</span></div></footer></section>
+
+<!-- ===== 34 ===== -->
+<section class="slide p5"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٥</b><span>الختام</span></aside><header><h2>خمس أفكار رئيسية</h2><div class="hbar"></div></header><div class="content"><div class="kls"><div class="kl"><span class="kno">١</span><span><b>ابدأوا بمشكلة عمل</b> لا بأداة.</span></div><div class="kl"><span class="kno">٢</span><span><b>اربطوا المهمة بنوعها:</b> تصنيف أو توقّع أو استخراج أو كتابة.</span></div><div class="kl"><span class="kno">٣</span><span><b>قدّروا الفائدة وسهولة التنفيذ</b> والمخاطر قبل البدء.</span></div><div class="kl"><span class="kno">٤</span><span><b>الإنسان يراجع ويقرّر،</b> والبيانات السرية تُحمى.</span></div><div class="kl"><span class="kno">٥</span><span><b>جرّبوا صغيرًا، وقيسوا،</b> ثم قرّروا.</span></div></div></div><footer class="footer"><div class="prog"><i style="width:94.4%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣٤ من ٣٦</span></div></footer></section>
+
+<!-- ===== 35 ===== -->
+<section class="slide p5"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div><aside class="sbar"><small>الجزء</small><b>٠٥</b><span>الختام</span></aside><header><h2>مراجعة وتأمّل</h2><div class="hbar"></div></header>
+  <div class="content"><div class="rv">
+    <div class="card pet rq"><h3>أسئلة المراجعة</h3>
+      <ol><li>ما أنواع المهام الأربعة التي يجيدها الذكاء الاصطناعي؟</li>
+          <li>ما الأسئلة الأربعة قبل اختيار حالة للتجربة؟</li>
+          <li>كيف يحدّد مستوى الخطر مقدار المراجعة؟</li></ol></div>
+    <div class="card cop rf"><h3>تأمّل</h3>
+      <p>ما المهمة التي ستبدأون بها في إدارتكم، ومن سيراجع نتيجتها؟</p></div>
+  </div></div><footer class="footer"><div class="prog"><i style="width:97.2%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣٥ من ٣٦</span></div></footer></section>
+
+<!-- ===== 36 ===== -->
+<section class="slide p5 dark nosb"><div class="slide-brand"><img src="assets/logo-transparent.png" alt="شركة حلول المستقبل للتدريب" class="brand-logo"></div>
+  <div class="content center-all">
+    <div class="statement c">أسئلة؟</div>
+    <p class="subline">لنتحدث عمّا تناولناه اليوم.</p>
+    <div class="nextbox">إلى اللقاء في الجلسة ٤</div>
+  </div><footer class="footer"><div class="prog"><i style="width:100.0%"></i></div><div class="fr"><span>تطبيقات الذكاء الاصطناعي في الأعمال · الجلسة الثالثة</span><span class="pn">٣٦ من ٣٦</span></div></footer></section>
+</body>
+</html>
