@@ -115,6 +115,37 @@ const WORKFLOW_STEPS_SESSION_3 = [
   },
 ] as const;
 
+const WORKFLOW_STEPS_SESSION_4 = [
+  {
+    title: "اختيار الأداة المتخصصة",
+    body: "تحديد الأداة الملائمة لمهام 2026+ (كتابة بخصوصية ZDR، بحث موثق، تفريغ صوتي، أو مخططات).",
+    lip: "deck-lip-teal",
+    medallion: "bg-[var(--medallion-teal)] text-[var(--medallion-teal-ink)]",
+    Icon: Cpu,
+  },
+  {
+    title: "الأركان الخمسة للطلب",
+    body: "بناء موجه أوامر متكامل يحدد الدور، المهمة، السياق، الشكل، والنبرة والقيود الصريحة.",
+    lip: "deck-lip-indigo",
+    medallion: "bg-[var(--medallion-indigo)] text-[var(--medallion-indigo-ink)]",
+    Icon: NotePencil,
+  },
+  {
+    title: "الحوار التكراري والتوجيه",
+    body: "توجيه الأداة مرحلياً لتعديل النبرة وحجم المخرجات وسد الثغرات دون البدء من الصفر.",
+    lip: "deck-lip-gold",
+    medallion: "bg-[var(--medallion-gold)] text-[var(--medallion-gold-ink)]",
+    Icon: ChatCenteredDots,
+  },
+  {
+    title: "فحص مواطن الضعف والأمان",
+    body: "تدقيق الأرقام والوقائع ومراجعة الأقران وتطبيق القواعد الصارمة لحماية بيانات المنشأة.",
+    lip: "deck-lip-coral",
+    medallion: "bg-[var(--medallion-coral)] text-[var(--medallion-coral-ink)]",
+    Icon: ShieldCheck,
+  },
+] as const;
+
 export function SessionHubView({
   sessions,
 }: {
@@ -125,7 +156,9 @@ export function SessionHubView({
   const firstActivity = session.activities[0];
 
   const workflowSteps =
-    session.number === 3
+    session.number === 4
+      ? WORKFLOW_STEPS_SESSION_4
+      : session.number === 3
       ? WORKFLOW_STEPS_SESSION_3
       : session.number === 2
       ? WORKFLOW_STEPS_SESSION_2
@@ -170,7 +203,9 @@ export function SessionHubView({
                       ? "الأساسيات"
                       : s.number === 2
                       ? "تعلّم الآلة والتوليد"
-                      : "تطبيقات الأعمال"}
+                      : s.number === 3
+                      ? "تطبيقات الأعمال"
+                      : "استخدام الأدوات"}
                   </button>
                 );
               })}
@@ -215,7 +250,9 @@ export function SessionHubView({
                   ? "الأساسيات"
                   : s.number === 2
                   ? "تعلّم الآلة والتوليد"
-                  : "تطبيقات الأعمال"}
+                  : s.number === 3
+                  ? "تطبيقات الأعمال"
+                  : "استخدام الأدوات"}
               </button>
             );
           })}
