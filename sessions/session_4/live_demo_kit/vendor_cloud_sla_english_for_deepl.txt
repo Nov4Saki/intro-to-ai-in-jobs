@@ -1,0 +1,13 @@
+Service Level Agreement (SLA) & Data Protection Clause (Vendor: Enterprise Cloud Suite 2026)
+
+1. Service Availability & Uptime Guarantee:
+The Provider guarantees a monthly service availability of ninety-nine point ninety-five percent (99.95%), excluding scheduled maintenance windows pre-approved by the Customer with a minimum forty-eight (48) hours prior written notice.
+
+2. Incident Resolution Times (RTO & RPO):
+In the event of an unplanned service disruption classified as Critical (Severity 1), the Provider commits to a Recovery Time Objective (RTO) of not more than four (4) consecutive hours, and a Recovery Point Objective (RPO) of not more than fifteen (15) minutes of data transaction loss.
+
+3. Data Sovereignty & Zero-Retention Artificial Intelligence Clause:
+All Customer data, queries, logs, and artifacts processed via automated or generative AI modules shall remain strictly encrypted at rest (AES-256) and in transit (TLS 1.3) within national data borders. The Provider expressly warrants that Customer inputs shall not be retained, cached beyond session termination, or utilized for foundational model retraining.
+
+4. Service Credits & Liquidated Damages:
+Failure to achieve the stipulated monthly uptime SLA shall entitle the Customer to a pro-rata service credit calculated at five percent (5%) of the monthly recurring fee for each cumulative hour of unexcused outage, capped at fifty percent (50%) of the applicable billing cycle.
