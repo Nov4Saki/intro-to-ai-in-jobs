@@ -3,8 +3,15 @@ import { SESSION_1, getActivity as getActivity1, listActivities as listActivitie
 import { SESSION_2, getActivitySession2 as getActivity2, listActivitiesSession2 as listActivities2 } from "./session-2.ts";
 import { SESSION_3, getActivitySession3 as getActivity3, listActivitiesSession3 as listActivities3 } from "./session-3.ts";
 import { SESSION_4, getActivitySession4 as getActivity4, listActivitiesSession4 as listActivities4 } from "./session-4.ts";
+import { SESSION_5, getActivitySession5 as getActivity5, listActivitiesSession5 as listActivities5 } from "./session-5.ts";
 
-export const ALL_SESSIONS: readonly Session[] = [SESSION_1, SESSION_2, SESSION_3, SESSION_4];
+export const ALL_SESSIONS: readonly Session[] = [
+  SESSION_1,
+  SESSION_2,
+  SESSION_3,
+  SESSION_4,
+  SESSION_5,
+];
 
 export function getAllSessions(): readonly Session[] {
   return ALL_SESSIONS;
@@ -20,6 +27,7 @@ export function listAllActivities(): readonly Activity[] {
     ...listActivities2(),
     ...listActivities3(),
     ...listActivities4(),
+    ...listActivities5(),
   ];
 }
 
@@ -28,8 +36,9 @@ export function findActivity(slug: string): Activity | undefined {
     getActivity1(slug) ??
     getActivity2(slug) ??
     getActivity3(slug) ??
-    getActivity4(slug)
+    getActivity4(slug) ??
+    getActivity5(slug)
   );
 }
 
-export { SESSION_1, SESSION_2, SESSION_3, SESSION_4 };
+export { SESSION_1, SESSION_2, SESSION_3, SESSION_4, SESSION_5 };

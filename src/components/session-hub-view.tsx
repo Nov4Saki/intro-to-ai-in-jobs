@@ -9,7 +9,10 @@ import {
   ChatCenteredDots,
   CheckCircle,
   Cpu,
+  Lifebuoy,
+  Lock,
   NotePencil,
+  Scales,
   ShieldCheck,
   Sparkle,
   UserCheck,
@@ -146,6 +149,37 @@ const WORKFLOW_STEPS_SESSION_4 = [
   },
 ] as const;
 
+const WORKFLOW_STEPS_SESSION_5 = [
+  {
+    title: "فحص وتصنيف البيانات",
+    body: "التمييز الصارم بين البيانات العامة والداخلية وبيانات PII الحساسة لمنع التسرب السحابي.",
+    lip: "deck-lip-teal",
+    medallion: "bg-[var(--medallion-teal)] text-[var(--medallion-teal-ink)]",
+    Icon: ShieldCheck,
+  },
+  {
+    title: "تقنيات الإخفاء والتنقية",
+    body: "تطبيق PII Scrubbing والتعمية والترميز والعناصر النائبة قبل إرسال أي نص للأدوات.",
+    lip: "deck-lip-indigo",
+    medallion: "bg-[var(--medallion-indigo)] text-[var(--medallion-indigo-ink)]",
+    Icon: Lock,
+  },
+  {
+    title: "اختبارات الانحياز والمبادئ",
+    body: "إجراء اختبار التبديل (Swap Test) لكشف التحيزات، واختبار الصفحة الأولى للشفافية.",
+    lip: "deck-lip-gold",
+    medallion: "bg-[var(--medallion-gold)] text-[var(--medallion-gold-ink)]",
+    Icon: Scales,
+  },
+  {
+    title: "بروتوكول الطوارئ والميثاق",
+    body: "اتباع تسلسل الاحتواء الفوري عند التسرب وتطبيق ميثاق المنشأة الأخلاقي والمسؤول.",
+    lip: "deck-lip-coral",
+    medallion: "bg-[var(--medallion-coral)] text-[var(--medallion-coral-ink)]",
+    Icon: Lifebuoy,
+  },
+] as const;
+
 export function SessionHubView({
   sessions,
 }: {
@@ -156,7 +190,9 @@ export function SessionHubView({
   const firstActivity = session.activities[0];
 
   const workflowSteps =
-    session.number === 4
+    session.number === 5
+      ? WORKFLOW_STEPS_SESSION_5
+      : session.number === 4
       ? WORKFLOW_STEPS_SESSION_4
       : session.number === 3
       ? WORKFLOW_STEPS_SESSION_3
@@ -205,7 +241,9 @@ export function SessionHubView({
                       ? "تعلّم الآلة والتوليد"
                       : s.number === 3
                       ? "تطبيقات الأعمال"
-                      : "استخدام الأدوات"}
+                      : s.number === 4
+                      ? "استخدام الأدوات"
+                      : "الخصوصية والأخلاقيات"}
                   </button>
                 );
               })}
@@ -252,7 +290,9 @@ export function SessionHubView({
                   ? "تعلّم الآلة والتوليد"
                   : s.number === 3
                   ? "تطبيقات الأعمال"
-                  : "استخدام الأدوات"}
+                  : s.number === 4
+                  ? "استخدام الأدوات"
+                  : "الخصوصية والأخلاقيات"}
               </button>
             );
           })}
